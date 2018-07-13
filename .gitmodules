@@ -1,0 +1,217 @@
+[borg]
+	pushDefault = locutus
+	collective = emacsg
+[submodule "async"]
+	path = lib/async
+	url = git@github.com:jwiegley/emacs-async.git
+[submodule "auto-compile"]
+	path = lib/auto-compile
+	url = git@github.com:emacscollective/auto-compile.git
+[submodule "borg"]
+	path = lib/borg
+	url = git@github.com:emacscollective/borg.git
+[submodule "closql"]
+	path = lib/closql
+	url = git@github.com:emacscollective/closql.git
+[submodule "company"]
+	path = lib/company
+	url = git@github.com:company-mode/company-mode.git
+[submodule "counsel-projectile"]
+	path = lib/counsel-projectile
+	url = git@github.com:ericdanan/counsel-projectile.git
+[submodule "dash"]
+	path = lib/dash
+	url = git@github.com:magnars/dash.el.git
+	no-makeinfo = dash-template.texi
+[submodule "diff-hl"]
+	path = lib/diff-hl
+	url = git@github.com:dgutov/diff-hl.git
+[submodule "doom-themes"]
+	path = lib/doom-themes
+	url = git@github.com:hlissner/emacs-doom-themes.git
+[submodule "elisp-slime-nav"]
+	path = lib/elisp-slime-nav
+	url = git@github.com:purcell/elisp-slime-nav.git
+[submodule "emacsql"]
+	path = lib/emacsql
+	url = git@github.com:skeeto/emacsql.git
+	no-byte-compile = emacsql-pg.el
+[submodule "epkg"]
+	path = lib/epkg
+	url = git@github.com:emacscollective/epkg.git
+[submodule "evil"]
+	path = lib/evil
+	url = git@github.com:emacs-evil/evil.git
+[submodule "evil-collection"]
+	path = lib/evil-collection
+	url = git@github.com:emacs-evil/evil-collection.git
+[submodule "evil-commentary"]
+	path = lib/evil-commentary
+	url = git@github.com:linktohack/evil-commentary.git
+[submodule "flycheck"]
+	path = lib/flycheck
+	url = git@github.com:flycheck/flycheck.git
+[submodule "general"]
+	path = lib/general
+	url = git@github.com:noctuid/general.el.git
+[submodule "ghub"]
+	path = lib/ghub
+	url = git@github.com:magit/ghub.git
+[submodule "git-modes"]
+	path = lib/git-modes
+	url = git@github.com:magit/git-modes.git
+[submodule "helm"]
+	path = lib/helm
+	url = git@github.com:emacs-helm/helm
+[submodule "helm-ag"]
+	path = lib/helm-ag
+	url = git@github.com:syohex/emacs-helm-ag
+[submodule "helm-projectil"]
+	path = lib/helm-projectil
+	url = git@github.com:bbatsov/helm-projectile
+[submodule "helm-swoop"]
+	path = lib/helm-swoop
+	url = git@github.com:shingofukuyama/helm-swoop
+[submodule "hydra"]
+	path = lib/hydra
+	url = git@github.com:abo-abo/hydra.git
+[submodule "magit"]
+	path = lib/magit
+	url = git@github.com:magit/magit.git
+	recursive-byte-compile = true
+	info-path = Documentation
+[submodule "magit-popup"]
+	path = lib/magit-popup
+	url = git@github.com:magit/magit-popup.git
+[submodule "no-littering"]
+	path = lib/no-littering
+	url = git@github.com:emacscollective/no-littering.git
+[submodule "packed"]
+	path = lib/packed
+	url = git@github.com:emacscollective/packed.git
+[submodule "popup"]
+	path = lib/popup
+	url = git@github.com:auto-complete/popup-el.git
+[submodule "projectile"]
+	path = lib/projectile
+	url = git@github.com:bbatsov/projectile.git
+[submodule "swiper"]
+	path = lib/swiper
+	url = git@github.com:abo-abo/swiper.git
+[submodule "undo-tree"]
+	path = lib/undo-tree
+	url = http://www.dr-qubit.org/git/undo-tree.git
+[submodule "use-package"]
+	path = lib/use-package
+	url = git@github.com:jwiegley/use-package.git
+[submodule "which-key"]
+	path = lib/which-key
+	url = git@github.com:justbur/emacs-which-key.git
+[submodule "with-editor"]
+	path = lib/with-editor
+	url = git@github.com:magit/with-editor.git
+[submodule "lib/async"]
+	path = lib/async
+	url = git@github.com:jwiegley/emacs-async.git
+[submodule "lib/auto-compile"]
+	path = lib/auto-compile
+	url = git@github.com:emacscollective/auto-compile.git
+[submodule "lib/borg"]
+	path = lib/borg
+	url = git@github.com:emacscollective/borg.git
+[submodule "lib/closql"]
+	path = lib/closql
+	url = git@github.com:emacscollective/closql.git
+[submodule "lib/company"]
+	path = lib/company
+	url = git@github.com:company-mode/company-mode.git
+[submodule "lib/counsel-projectile"]
+	path = lib/counsel-projectile
+	url = git@github.com:ericdanan/counsel-projectile.git
+[submodule "lib/dash"]
+	path = lib/dash
+	url = git@github.com:magnars/dash.el.git
+[submodule "lib/diff-hl"]
+	path = lib/diff-hl
+	url = git@github.com:dgutov/diff-hl.git
+[submodule "lib/doom-themes"]
+	path = lib/doom-themes
+	url = git@github.com:hlissner/emacs-doom-themes.git
+[submodule "lib/elisp-slime-nav"]
+	path = lib/elisp-slime-nav
+	url = git@github.com:purcell/elisp-slime-nav.git
+[submodule "lib/emacsql"]
+	path = lib/emacsql
+	url = git@github.com:skeeto/emacsql.git
+[submodule "lib/epkg"]
+	path = lib/epkg
+	url = git@github.com:emacscollective/epkg.git
+[submodule "lib/evil"]
+	path = lib/evil
+	url = git@github.com:emacs-evil/evil.git
+[submodule "lib/evil-collection"]
+	path = lib/evil-collection
+	url = git@github.com:emacs-evil/evil-collection.git
+[submodule "lib/evil-commentary"]
+	path = lib/evil-commentary
+	url = git@github.com:linktohack/evil-commentary.git
+[submodule "lib/flycheck"]
+	path = lib/flycheck
+	url = git@github.com:flycheck/flycheck.git
+[submodule "lib/general"]
+	path = lib/general
+	url = git@github.com:noctuid/general.el.git
+[submodule "lib/ghub"]
+	path = lib/ghub
+	url = git@github.com:magit/ghub.git
+[submodule "lib/git-modes"]
+	path = lib/git-modes
+	url = git@github.com:magit/git-modes.git
+[submodule "lib/helm"]
+	path = lib/helm
+	url = git@github.com:emacs-helm/helm
+[submodule "lib/helm-ag"]
+	path = lib/helm-ag
+	url = git@github.com:syohex/emacs-helm-ag
+[submodule "lib/helm-projectil"]
+	path = lib/helm-projectil
+	url = git@github.com:bbatsov/helm-projectile
+[submodule "lib/helm-swoop"]
+	path = lib/helm-swoop
+	url = git@github.com:shingofukuyama/helm-swoop
+[submodule "lib/hydra"]
+	path = lib/hydra
+	url = git@github.com:abo-abo/hydra.git
+[submodule "lib/magit"]
+	path = lib/magit
+	url = git@github.com:magit/magit.git
+[submodule "lib/magit-popup"]
+	path = lib/magit-popup
+	url = git@github.com:magit/magit-popup.git
+[submodule "lib/no-littering"]
+	path = lib/no-littering
+	url = git@github.com:emacscollective/no-littering.git
+[submodule "lib/packed"]
+	path = lib/packed
+	url = git@github.com:emacscollective/packed.git
+[submodule "lib/popup"]
+	path = lib/popup
+	url = git@github.com:auto-complete/popup-el.git
+[submodule "lib/projectile"]
+	path = lib/projectile
+	url = git@github.com:bbatsov/projectile.git
+[submodule "lib/swiper"]
+	path = lib/swiper
+	url = git@github.com:abo-abo/swiper.git
+[submodule "lib/undo-tree"]
+	path = lib/undo-tree
+	url = http://www.dr-qubit.org/git/undo-tree.git
+[submodule "lib/use-package"]
+	path = lib/use-package
+	url = git@github.com:jwiegley/use-package.git
+[submodule "lib/which-key"]
+	path = lib/which-key
+	url = git@github.com:justbur/emacs-which-key.git
+[submodule "lib/with-editor"]
+	path = lib/with-editor
+	url = git@github.com:magit/with-editor.git
