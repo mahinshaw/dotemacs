@@ -66,18 +66,6 @@
 [submodule "git-modes"]
 	path = lib/git-modes
 	url = git@github.com:magit/git-modes.git
-[submodule "helm"]
-	path = lib/helm
-	url = git@github.com:emacs-helm/helm
-[submodule "helm-ag"]
-	path = lib/helm-ag
-	url = git@github.com:syohex/emacs-helm-ag
-[submodule "helm-projectil"]
-	path = lib/helm-projectil
-	url = git@github.com:bbatsov/helm-projectile
-[submodule "helm-swoop"]
-	path = lib/helm-swoop
-	url = git@github.com:shingofukuyama/helm-swoop
 [submodule "hydra"]
 	path = lib/hydra
 	url = git@github.com:abo-abo/hydra.git
