@@ -26,6 +26,9 @@
 [submodule "diff-hl"]
 	path = lib/diff-hl
 	url = git@github.com:dgutov/diff-hl.git
+[submodule "diminish"]
+	path = lib/diminish
+	url = git@github.com:myrjola/diminish.el.git
 [submodule "doom-themes"]
 	path = lib/doom-themes
 	url = git@github.com:hlissner/emacs-doom-themes.git
@@ -48,6 +51,9 @@
 [submodule "evil-commentary"]
 	path = lib/evil-commentary
 	url = git@github.com:linktohack/evil-commentary.git
+[submodule "evil-magit"]
+	path = lib/evil-magit
+	url = git@github.com:emacs-evil/evil-magit.git
 [submodule "flycheck"]
 	path = lib/flycheck
 	url = git@github.com:flycheck/flycheck.git
@@ -75,41 +81,6 @@
 [submodule "hydra"]
 	path = lib/hydra
 	url = git@github.com:abo-abo/hydra.git
-[submodule "magit"]
-	path = lib/magit
-	url = git@github.com:magit/magit.git
-	recursive-byte-compile = true
-	info-path = Documentation
-[submodule "magit-popup"]
-	path = lib/magit-popup
-	url = git@github.com:magit/magit-popup.git
-[submodule "no-littering"]
-	path = lib/no-littering
-	url = git@github.com:emacscollective/no-littering.git
-[submodule "packed"]
-	path = lib/packed
-	url = git@github.com:emacscollective/packed.git
-[submodule "popup"]
-	path = lib/popup
-	url = git@github.com:auto-complete/popup-el.git
-[submodule "projectile"]
-	path = lib/projectile
-	url = git@github.com:bbatsov/projectile.git
-[submodule "swiper"]
-	path = lib/swiper
-	url = git@github.com:abo-abo/swiper.git
-[submodule "undo-tree"]
-	path = lib/undo-tree
-	url = http://www.dr-qubit.org/git/undo-tree.git
-[submodule "use-package"]
-	path = lib/use-package
-	url = git@github.com:jwiegley/use-package.git
-[submodule "which-key"]
-	path = lib/which-key
-	url = git@github.com:justbur/emacs-which-key.git
-[submodule "with-editor"]
-	path = lib/with-editor
-	url = git@github.com:magit/with-editor.git
 [submodule "lib/async"]
 	path = lib/async
 	url = git@github.com:jwiegley/emacs-async.git
@@ -167,15 +138,6 @@
 [submodule "lib/git-modes"]
 	path = lib/git-modes
 	url = git@github.com:magit/git-modes.git
-[submodule "lib/helm"]
-	path = lib/helm
-	url = git@github.com:emacs-helm/helm
-[submodule "lib/helm-ag"]
-	path = lib/helm-ag
-	url = git@github.com:syohex/emacs-helm-ag
-[submodule "lib/helm-projectil"]
-	path = lib/helm-projectil
-	url = git@github.com:bbatsov/helm-projectile
 [submodule "lib/helm-swoop"]
 	path = lib/helm-swoop
 	url = git@github.com:shingofukuyama/helm-swoop
@@ -213,5 +175,40 @@
 	path = lib/which-key
 	url = git@github.com:justbur/emacs-which-key.git
 [submodule "lib/with-editor"]
+	path = lib/with-editor
+	url = git@github.com:magit/with-editor.git
+[submodule "magit"]
+	path = lib/magit
+	url = git@github.com:magit/magit.git
+	recursive-byte-compile = true
+	info-path = Documentation
+[submodule "magit-popup"]
+	path = lib/magit-popup
+	url = git@github.com:magit/magit-popup.git
+[submodule "no-littering"]
+	path = lib/no-littering
+	url = git@github.com:emacscollective/no-littering.git
+[submodule "packed"]
+	path = lib/packed
+	url = git@github.com:emacscollective/packed.git
+[submodule "popup"]
+	path = lib/popup
+	url = git@github.com:auto-complete/popup-el.git
+[submodule "projectile"]
+	path = lib/projectile
+	url = git@github.com:bbatsov/projectile.git
+[submodule "swiper"]
+	path = lib/swiper
+	url = git@github.com:abo-abo/swiper.git
+[submodule "undo-tree"]
+	path = lib/undo-tree
+	url = http://www.dr-qubit.org/git/undo-tree.git
+[submodule "use-package"]
+	path = lib/use-package
+	url = git@github.com:jwiegley/use-package.git
+[submodule "which-key"]
+	path = lib/which-key
+	url = git@github.com:justbur/emacs-which-key.git
+[submodule "with-editor"]
 	path = lib/with-editor
 	url = git@github.com:magit/with-editor.git

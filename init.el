@@ -84,11 +84,11 @@
 (general-create-definer mah-leader
   :states '(normal motion)
   :keymaps 'override
-  :prefix "SPC")
+  :prefix mah-leader)
 
 (general-create-definer mah-local-leader
   :states '(normal motion)
-  :prefix ",")
+  :prefix mah-local-leader)
 (mah-local-leader
   :keymaps 'override
   "" nil)
@@ -124,8 +124,7 @@
   "hdk" 'describe-key
   "hdm" 'describe-mode
   "hdv" 'describe-variable
-  "u" 'universal-argument
-  )
+  "u" 'universal-argument)
 
 (general-def
   :states 'normal
@@ -160,6 +159,7 @@
   (evil-collection-init))
 
 (use-package evil-commentary
+  :after evil
   :config
   (evil-commentary-mode))
 
@@ -183,6 +183,7 @@
 
 ;;; Ivy et al.
 (use-package ivy
+  :diminish (ivy-mode . "I")
   :init
   (progn
     (setq ivy-use-virtual-buffers t
@@ -202,6 +203,24 @@
          ))
   :config
   (ivy-mode 1))
+
+;;; Magit et al.
+(use-package magit
+  :defer t
+  :bind (("C-x g"   . magit-status)
+         ("C-x M-g" . magit-dispatch-popup))
+  :init
+  (mah-leader
+    "gs" 'magit-status)
+  :config
+  (magit-add-section-hook 'magit-status-sections-hook
+                          'magit-insert-modules
+                          'magit-insert-stashes
+                          'append)
+  (setq magit-display-buffer-function #'magit-display-buffer-fullframe-status-v1))
+
+(use-package evil-magit
+  :after magit)
 
 ;;; General tooling
 (use-package dash
@@ -239,25 +258,13 @@
   (setq isearch-allow-scroll t))
 
 (use-package lisp-mode
+  :diminish (lisp-mode . "l")
   :config
   (add-hook 'emacs-lisp-mode-hook 'outline-minor-mode)
   (add-hook 'emacs-lisp-mode-hook 'reveal-mode)
   (defun indent-spaces-mode ()
     (setq indent-tabs-mode nil))
   (add-hook 'lisp-interaction-mode-hook #'indent-spaces-mode))
-
-(use-package magit
-  :defer t
-  :bind (("C-x g"   . magit-status)
-         ("C-x M-g" . magit-dispatch-popup))
-  :init
-  (mah-leader
-    "gs" 'magit-status)
-  :config
-  (magit-add-section-hook 'magit-status-sections-hook
-                          'magit-insert-modules
-                          'magit-insert-stashes
-                          'append))
 
 (use-package man
   :defer t
@@ -274,6 +281,7 @@
 
 (use-package projectile
   :config
+  (setq projectile-enable-caching t)
   (mah-leader
     "pl" 'projectile-switch-project
     "pI" 'projectile-invalidate-cache
@@ -318,7 +326,22 @@
                (list (regexp-quote (system-name)) nil nil)))
 
 (use-package which-key
-  :config (which-key-mode))
+  :config
+  (which-key-mode)
+  (which-key-declare-prefixes
+    (concat mah-leader " b") "buffers"
+    (concat mah-leader " e") "flycheck"
+    (concat mah-leader " f") "files"
+    (concat mah-leader " g") "git"
+    (concat mah-leader " h") "help"
+    (concat mah-leader " p") "projects"
+    (concat mah-leader " r") "resume"
+    (concat mah-leader " s") "search"
+    (concat mah-leader " t") "toggle"))
+ 
+(use-package with-editor
+  :defer t
+  :diminish with-editor-mode)
 
 ;;; language specific
 
