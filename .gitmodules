@@ -147,9 +147,6 @@
 [submodule "lib/git-modes"]
 	path = lib/git-modes
 	url = git@github.com:magit/git-modes.git
-[submodule "lib/helm-swoop"]
-	path = lib/helm-swoop
-	url = git@github.com:shingofukuyama/helm-swoop
 [submodule "lib/hydra"]
 	path = lib/hydra
 	url = git@github.com:abo-abo/hydra.git
