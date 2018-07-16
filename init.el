@@ -1,5 +1,10 @@
 ;;; init.el --- user-init-file                    -*- lexical-binding: t -*-
 
+;;; Commentary:
+;;; Configuration for Emacs.
+
+;;; Code:
+
 ;;; Early birds
 (progn ;     startup
   (defvar before-user-init-time (current-time)
@@ -65,7 +70,7 @@
   :config
   (progn
     (general-evil-setup)
-    (setq general-override-states '(normal visual motion))
+    ;; (setq general-override-states '(normal visual motion))
     (general-override-mode)))
 
 (use-package no-littering)
@@ -167,12 +172,12 @@
 
 (use-package company
   :defer t
-  :diminish (company-mode . "C")
+  :diminish (company-mode . " C")
   :init
   (setq company-idle-delay 0.2
         company-minimum-prefix-length 2
         company-require-match nil
-        company-tooltip-alight-annotations t
+        company-tooltip-align-annotations t
         company-tooltip-minimum-width 60)
   :config
   (general-def company-active-map
@@ -184,7 +189,7 @@
 
 ;;; Ivy et al.
 (use-package ivy
-  :diminish (ivy-mode . "I")
+  :diminish (ivy-mode . " I")
   :init
   (progn
     (setq ivy-use-virtual-buffers t
@@ -289,11 +294,18 @@
         kept-old-versions 0))
 (use-package flycheck :diminish (flycheck-mode ."f")
   :init
+  (setq flycheck-emacs-lisp-load-path 'inherit)
   (mah-leader
     "tf" 'flycheck-mode
-    "el" 'flycheck-list-errors
     "eb" 'flycheck-buffer
-    "ec" 'flycheck-clear))
+    "ec" 'flycheck-clear
+    "el" 'flycheck-list-errors
+    "en" 'flycheck-next-error
+    "ep" 'flycheck-previous-error
+    )
+  :config
+  (add-hook 'after-init-hook #'global-flycheck-mode))
+
 
 (use-package help
   :defer t
@@ -303,8 +315,9 @@
   (setq isearch-allow-scroll t))
 
 (use-package lisp-mode
-  :diminish (lisp-mode . "l")
+  :diminish (lisp-mode . " l")
   :config
+  ;; TODO investigate these modes.
   (add-hook 'emacs-lisp-mode-hook 'outline-minor-mode)
   (add-hook 'emacs-lisp-mode-hook 'reveal-mode)
   (defun indent-spaces-mode ()
@@ -385,9 +398,10 @@
                (list (regexp-quote (system-name)) nil nil)))
 
 (use-package which-key
+  :diminish 'which-key-mode
   :config
   (which-key-mode)
-  (which-key-declare-prefixes
+  (which-key-add-key-based-replacements
     (concat mah-leader " b") "buffers"
     (concat mah-leader " e") "flycheck"
     (concat mah-leader " f") "files"
@@ -406,6 +420,7 @@
 
 (use-package elisp-mode
   :defer t
+  :diminish '(emacs-lisp-mode . "Elisp")
   :init
   (progn
     (mah-local-leader
@@ -414,9 +429,11 @@
       "ef" 'eval-defun
       "eb" 'eval-buffer)
     (mah-company emacs-lisp-mode company-capf)
+    (add-hook 'emacs-lisp-mode-hook #'flycheck-mode)
     (add-hook 'emacs-lisp-mode-hook #'lispy-mode)))
 
 (use-package elisp-slime-nav
+  :diminish 'elisp-slime-nav-mode
   :init
   (progn
     (dolist (hook '(emacs-lisp-mode-hook ielm-mode-hook))
