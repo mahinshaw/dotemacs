@@ -1,15 +1,33 @@
 [borg]
 	pushDefault = locutus
 	collective = emacsg
+[submodule "ace-window"]
+	path = lib/ace-window
+	url = git@github.com:abo-abo/ace-window.git
+[submodule "amx"]
+	path = lib/amx
+	url = git@github.com:darwinawardwinner/amx.git
+[submodule "anzu"]
+	path = lib/anzu
+	url = git@github.com:syohex/emacs-anzu.git
 [submodule "async"]
 	path = lib/async
 	url = git@github.com:jwiegley/emacs-async.git
 [submodule "auto-compile"]
 	path = lib/auto-compile
 	url = git@github.com:emacscollective/auto-compile.git
+[submodule "avy"]
+	path = lib/avy
+	url = git@github.com:abo-abo/avy.git
 [submodule "borg"]
 	path = lib/borg
 	url = git@github.com:emacscollective/borg.git
+[submodule "cider"]
+	path = lib/cider
+	url = git@github.com:clojure-emacs/cider.git
+[submodule "clojure-mode"]
+	path = lib/clojure-mode
+	url = git@github.com:clojure-emacs/clojure-mode.git
 [submodule "closql"]
 	path = lib/closql
 	url = git@github.com:emacscollective/closql.git
@@ -69,6 +87,9 @@
 [submodule "hydra"]
 	path = lib/hydra
 	url = git@github.com:abo-abo/hydra.git
+[submodule "iedit"]
+	path = lib/iedit
+	url = git@github.com:victorhge/iedit.git
 [submodule "lib/async"]
 	path = lib/async
 	url = git@github.com:jwiegley/emacs-async.git
@@ -165,6 +186,12 @@
 [submodule "lib/with-editor"]
 	path = lib/with-editor
 	url = git@github.com:magit/with-editor.git
+[submodule "lispy"]
+	path = lib/lispy
+	url = git@github.com:abo-abo/lispy.git
+[submodule "lispyville"]
+	path = lib/lispyville
+	url = git@github.com:noctuid/lispyville.git
 [submodule "magit"]
 	path = lib/magit
 	url = git@github.com:magit/magit.git
@@ -185,6 +212,9 @@
 [submodule "projectile"]
 	path = lib/projectile
 	url = git@github.com:bbatsov/projectile.git
+[submodule "s"]
+	path = lib/s
+	url = git@github.com:magnars/s.el.git
 [submodule "swiper"]
 	path = lib/swiper
 	url = git@github.com:abo-abo/swiper.git

@@ -117,7 +117,7 @@
   "bd" 'kill-this-buffer
   "fs" 'save-buffer
   "fed" 'mah-find-init-file
-  
+
   "hdc" 'describe-char
   "hdf" 'describe-function
   "hdF" 'describe-face
@@ -141,8 +141,8 @@
 (general-nmap "s" (general-key-dispatch 'evil-substitute
                     :timeout 0.2
                     "s" 'split-window-vertically))
-                    
-                   
+
+
 
 ;;; Evil mode and related
 (use-package evil
@@ -187,6 +187,8 @@
   :init
   (progn
     (setq ivy-use-virtual-buffers t
+          ivy-use-selectable-prompt t
+          ivy-height 15
           ivy-count-format "(%d/%d) ")
     (mah-leader
       "SPC" 'counsel-M-x
@@ -198,9 +200,16 @@
       "sa" 'counsel-ag
       "ss" 'swiper)
     (general-def ivy-minibuffer-map
+      "C-f" 'ivy-scroll-down-command
+      "C-b" 'ivy-scroll-up-command
       "C-j" 'ivy-next-line
       "C-k" 'ivy-previous-line
-         ))
+      "C-l" 'ivy-alt-done
+      "C-h" 'ivy-backward-delete-char
+      )
+    (with-eval-after-load 'projectile
+      (setq projectile-completion-system 'ivy))
+    )
   :config
   (ivy-mode 1))
 
@@ -223,6 +232,35 @@
   :after magit)
 
 ;;; General tooling
+(use-package ace-window
+  :defer t
+  :config
+  (progn
+    (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l))
+    (mah-leader
+      "ws" 'ace-swap-window
+      "ww" 'ace-window)))
+
+(use-package anzu
+  :defer t
+  :config
+  (progn
+    (global-anzu-mode +1)
+    (general-def
+      :keymaps 'override
+      [remap query-replace] 'anzu-query-replace
+      [remap query-replace-regexp] 'anzu-query-replace-regexp
+      )))
+
+(use-package avy
+  :defer t
+  :config
+  (progn
+    (mah-leader
+      "gw" 'avy-goto-word-1
+      "gc" 'avy-goto-char-timer
+      "gl" 'avy-goto-line)))
+
 (use-package dash
   :config (dash-enable-font-lock))
 
@@ -241,8 +279,13 @@
   :when (version< "25" emacs-version)
   :config (global-eldoc-mode))
 
-(use-package flycheck
-  :diminish (flycheck-mode ."f")
+(use-package files
+  :config
+  (setq backup-by-copying t
+        delete-old-versions t
+        kept-new-versions 10
+        kept-old-versions 0))
+(use-package flycheck :diminish (flycheck-mode ."f")
   :init
   (mah-leader
     "tf" 'flycheck-mode
@@ -265,6 +308,22 @@
   (defun indent-spaces-mode ()
     (setq indent-tabs-mode nil))
   (add-hook 'lisp-interaction-mode-hook #'indent-spaces-mode))
+
+(use-package lispy
+  :defer t
+  :diminish lispy-mode
+  :config
+  ;; (lispy-set-key-theme '(lispy c-digits))
+  )
+
+(use-package lispyville
+  :defer t
+  :diminish '(lispyville-mode . "()")
+  :init
+  (lispyville-set-key-theme '(operators
+                              slurp/barf-cp
+                              wrap))
+  (add-hook 'lispy-mode-hook #'lispyville-mode))
 
 (use-package man
   :defer t
@@ -338,7 +397,7 @@
     (concat mah-leader " r") "resume"
     (concat mah-leader " s") "search"
     (concat mah-leader " t") "toggle"))
- 
+
 (use-package with-editor
   :defer t
   :diminish with-editor-mode)
@@ -349,12 +408,13 @@
   :defer t
   :init
   (progn
-    (mah-local-leader 
+    (mah-local-leader
       :keymaps 'emacs-lisp-mode-map
       "es" 'eval-last-sexp
       "ef" 'eval-defun
       "eb" 'eval-buffer)
-    (mah-company emacs-lisp-mode company-capf)))
+    (mah-company emacs-lisp-mode company-capf)
+    (add-hook 'emacs-lisp-mode-hook #'lispy-mode)))
 
 (use-package elisp-slime-nav
   :init
@@ -366,7 +426,20 @@
       "K" 'elisp-slime-nav-describe-elisp-thing-at-point)
     ))
 
-(progn ;     startup
+(use-package clojure-mode
+  :defer t
+  :config
+  (progn
+    (mah-local-leader 'clojure-mode-map
+      "'" 'cider-jack-in)))
+
+(use-package cider
+  :defer t
+  :config
+  (progn
+    (mah-local-leader 'cider-mode-mode)))
+
+(progn                                  ;     startup
   (message "Loading %s...done (%.3fs)" user-init-file
            (float-time (time-subtract (current-time)
                                       before-user-init-time)))
