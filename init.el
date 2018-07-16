@@ -175,11 +175,12 @@
         company-tooltip-alight-annotations t
         company-tooltip-minimum-width 60)
   :config
-  (define-key company-active-map (kbd "C-j") 'company-select-next-or-abort)
-  (define-key company-active-map (kbd "C-k") 'company-select-previous-or-abort)
+  (general-def company-active-map
+   "C-j" 'company-select-next-or-abort
+   "C-k" 'company-select-previous-or-abort
+   "C-l" 'company-complete-selection)
   (progn
-    (global-company-mode)
-    ))
+    (global-company-mode)))
 
 ;;; Ivy et al.
 (use-package ivy
@@ -197,6 +198,7 @@
       "fr" 'counsel-recentf
       "ha" 'counsel-apropos
       "rl" 'ivy-resume
+      "ry" 'counsel-yank-pop
       "sa" 'counsel-ag
       "ss" 'swiper)
     (general-def ivy-minibuffer-map
@@ -310,11 +312,9 @@
   (add-hook 'lisp-interaction-mode-hook #'indent-spaces-mode))
 
 (use-package lispy
-  :defer t
   :diminish lispy-mode
   :config
-  ;; (lispy-set-key-theme '(lispy c-digits))
-  )
+  (lispy-set-key-theme '(lispy paredit c-digits)))
 
 (use-package lispyville
   :defer t
