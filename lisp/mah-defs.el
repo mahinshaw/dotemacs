@@ -1,3 +1,6 @@
+;;; package --- mah-defs.el -*- lexical-binding: t -*-
+;;; Commentary:
+;;; Code:
 (defvar mah-is-mac (equal system-type 'darwin))
 (defvar mah-is-windows (equal system-type 'windows-nt))
 (defvar mah-is-linux (equal system-type 'gnu/linux))
@@ -11,3 +14,4 @@
   (find-file user-init-file))
 
 (provide 'mah-defs)
+;;; mah-defs.el ends here

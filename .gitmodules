@@ -34,9 +34,15 @@
 [submodule "company"]
 	path = lib/company
 	url = git@github.com:company-mode/company-mode.git
+[submodule "company-lsp"]
+	path = lib/company-lsp
+	url = git@github.com:tigersoldier/company-lsp.git
 [submodule "counsel-projectile"]
 	path = lib/counsel-projectile
 	url = git@github.com:ericdanan/counsel-projectile.git
+[submodule "dap-mode"]
+	path = lib/dap-mode
+	url = git@github.com:yyoncho/dap-mode.git
 [submodule "dash"]
 	path = lib/dash
 	url = git@github.com:magnars/dash.el.git
@@ -72,6 +78,9 @@
 [submodule "evil-magit"]
 	path = lib/evil-magit
 	url = git@github.com:emacs-evil/evil-magit.git
+[submodule "f"]
+	path = lib/f
+	url = git@github.com:rejeep/f.el.git
 [submodule "flycheck"]
 	path = lib/flycheck
 	url = git@github.com:flycheck/flycheck.git
@@ -189,6 +198,15 @@
 [submodule "lispyville"]
 	path = lib/lispyville
 	url = git@github.com:noctuid/lispyville.git
+[submodule "lsp"]
+	path = lib/lsp
+	url = git@github.com:emacs-lsp/lsp-mode.git
+[submodule "lsp-java"]
+	path = lib/lsp-java
+	url = git@github.com:emacs-lsp/lsp-java.git
+[submodule "lsp-ui"]
+	path = lib/lsp-ui
+	url = git@github.com:emacs-lsp/lsp-ui.git
 [submodule "magit"]
 	path = lib/magit
 	url = git@github.com:magit/magit.git
@@ -197,6 +215,9 @@
 [submodule "magit-popup"]
 	path = lib/magit-popup
 	url = git@github.com:magit/magit-popup.git
+[submodule "markdown-mode"]
+	path = lib/markdown-mode
+	url = git@github.com:jrblevin/markdown-mode.git
 [submodule "no-littering"]
 	path = lib/no-littering
 	url = git@github.com:emacscollective/no-littering.git
@@ -215,6 +236,9 @@
 [submodule "swiper"]
 	path = lib/swiper
 	url = git@github.com:abo-abo/swiper.git
+[submodule "tree-mode"]
+	path = lib/tree-mode
+	url = git@github.com:emacsorphanage/tree-mode.git
 [submodule "undo-tree"]
 	path = lib/undo-tree
 	url = http://www.dr-qubit.org/git/undo-tree.git

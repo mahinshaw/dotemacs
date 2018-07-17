@@ -1,6 +1,7 @@
 ;;; init.el --- user-init-file                    -*- lexical-binding: t -*-
 
 ;;; Commentary:
+
 ;;; Configuration for Emacs.
 
 ;;; Code:
@@ -85,6 +86,11 @@
 
 ;;; Long tail
 
+;;; Bindings without a prefix for normal and motion
+(general-create-definer mah-no-pref
+  :states '(normal motion)
+  :keymaps 'override)
+
 ;; leader map
 (general-create-definer mah-leader
   :states '(normal motion)
@@ -153,7 +159,14 @@
 (use-package evil
   :init
   (setq evil-want-C-u-scroll t
-        evil-want-integration nil)
+        evil-want-integration nil
+        evil-normal-state-cursor '("DarkGoldenrod2" box)
+        evil-insert-state-cursor '("chartreuse3" (bar . 2))
+        evil-emacs-state-cursor '("SkyBlue3" box)
+        evil-replace-state-cursor '("chocolate" (hbar . 2))
+        evil-visual-state-cursor '("gray" (hbar . 2))
+        evil-motion-state-cursor '("plum3" box)
+        )
   :config
   (evil-mode))
 
@@ -264,9 +277,11 @@
   :config
   (progn
     (mah-leader
-      "gw" 'avy-goto-word-1
-      "gc" 'avy-goto-char-timer
-      "gl" 'avy-goto-line)))
+      "jc" 'avy-goto-char-timer
+      "jd" 'counsel-dired-jump
+      "jl" 'avy-goto-line
+      "jw" 'avy-goto-word-1
+      )))
 
 (use-package dash
   :config (dash-enable-font-lock))
@@ -280,7 +295,13 @@
 
 (use-package dired
   :defer t
-  :config (setq dired-listing-switches "-alh"))
+  :config
+  (progn
+    (mah-no-pref
+     "-" 'dired-jump)
+    (general-def 'dired-mode-map
+      "-" 'dired-up-directory)
+    (setq dired-listing-switches "-alh")))
 
 (use-package eldoc
   :when (version< "25" emacs-version)
@@ -448,7 +469,41 @@
   :config
   (progn
     (mah-local-leader 'clojure-mode-map
-      "'" 'cider-jack-in)))
+      "'" 'cider-jack-in
+      "\"" 'cider-jack-in-cljs
+      "="  'cider-format-buffer
+
+      "e;" 'cider-eval-defun-to-comment
+      "eb" 'cider-eval-buffer
+      "ee" 'cider-eval-last-sexp
+      "ef" 'cider-eval-defun-at-point
+      "em" 'cider-macroexpand-1
+      "eM" 'cider-macroexpand-all
+      "eP" 'cider-pprint-eval-last-sexp
+      "er" 'cider-eval-region
+      "ew" 'cider-eval-last-sexp-and-replace
+
+      "gb" 'cider-pop-back
+      "gc" 'cider-classpath
+      "ge" 'cider-jump-to-compilation-error
+      "gn" 'cider-find-ns
+      "gr" 'cider-find-resource
+      "gs" 'cider-browse-spec
+      "gS" 'cider-browse-spec-all
+
+      "ha" 'cider-apropos
+      "hc" 'clojure-cheatsheet
+      "hg" 'cider-grimoire
+      "hh" 'cider-doc
+      "hj" 'cider-javadoc
+      "hn" 'cider-browse-ns
+      "hN" 'cider-browse-ns-all
+
+      )
+    (general-nmap 'clojure-mode-map
+      "gd" 'cider-find-var
+      "K" 'cider-doc)
+    ))
 
 (use-package cider
   :defer t

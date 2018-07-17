@@ -1,4 +1,7 @@
-;; Company
+;;; package --- mah-macros.el -*- lexical-binding: t -*-
+;;; Commentary:
+;;; Code:
+;;; Company
 
 (defvar mah-company-global-backends nil
   "List of backends to enable everywhere.")
@@ -16,3 +19,4 @@
        (add-hook ',hookname ',funcname))))
 
 (provide 'mah-macros)
+;;; mah-macros.el ends here
