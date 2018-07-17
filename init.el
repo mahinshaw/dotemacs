@@ -354,6 +354,11 @@
   :defer t
   :diminish '(lispyville-mode . "()")
   :init
+  (general-def '(insert emacs) 'lispyville-mode-map
+    "\"" 'lispy-doublequote
+    "(" 'lispy-parens
+    "[" 'lispy-brackets
+    "{" 'lispy-braces)
   (lispyville-set-key-theme '(operators
                               slurp/barf-cp
                               wrap))
@@ -451,7 +456,7 @@
       "eb" 'eval-buffer)
     (mah-company emacs-lisp-mode company-capf)
     (add-hook 'emacs-lisp-mode-hook #'flycheck-mode)
-    (add-hook 'emacs-lisp-mode-hook #'lispy-mode)))
+    (add-hook 'emacs-lisp-mode-hook #'lispyville-mode)))
 
 (use-package elisp-slime-nav
   :diminish 'elisp-slime-nav-mode
@@ -502,8 +507,7 @@
       )
     (general-nmap 'clojure-mode-map
       "gd" 'cider-find-var
-      "K" 'cider-doc)
-    ))
+      "K" 'cider-doc)))
 
 (use-package cider
   :defer t
