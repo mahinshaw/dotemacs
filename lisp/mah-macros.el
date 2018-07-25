@@ -1,6 +1,16 @@
 ;;; package --- mah-macros.el -*- lexical-binding: t -*-
 ;;; Commentary:
 ;;; Code:
+
+;;; straight.el/use-package
+(defmacro use-feature (pkg &rest args)
+  "A macro to make sure that straight will not import the PKG.
+This should be used for Emacs features/built-ins.
+ARGS will be passed to `use-package'."
+  (declare (indent 1))
+  `(use-package ,pkg
+     :straight nil
+     ,@args))
 ;;; Company
 
 (defvar mah-company-global-backends nil

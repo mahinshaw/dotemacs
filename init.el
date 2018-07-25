@@ -13,8 +13,8 @@
   (message "Loading Emacs...done (%.3fs)"
            (float-time (time-subtract before-user-init-time
                                       before-init-time)))
-  (setq user-init-file (or load-file-name buffer-file-name)
-        user-emacs-directory (file-name-directory user-init-file))
+  (setq-default user-init-file (or load-file-name buffer-file-name)
+                user-emacs-directory (file-name-directory user-init-file))
 
   (message "Loading %s..." user-init-file)
   (setq package-enable-at-startup nil)
@@ -30,53 +30,51 @@
   (menu-bar-mode 0))
 
 (push (concat user-emacs-directory "lisp") load-path)
-(push (concat user-emacs-directory "lib/borg") load-path)
-(require  'borg)
-(borg-initialize)
+
+;;; mah-straight.el - get the package manager going.
+(defvar bootstrap-version)
+(message "user-emacs-dir is %s" user-emacs-directory)
+(let ((bootstrap-file
+       (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
+      (bootstrap-version 5))
+  (unless (file-exists-p bootstrap-file)
+    (with-current-buffer
+        (url-retrieve-synchronously
+         "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
+         'silent 'inhibit-cookies)
+      (goto-char (point-max))
+      (eval-print-last-sexp)))
+  (load bootstrap-file nil nil))
+
+(require 'straight)
+(setq straight-use-package-by-default t)
+
+(progn ;    `use-package'
+  (straight-use-package 'use-package)
+  (require  'use-package)
+  (setq use-package-verbose t
+        use-package-always-defer t))
 
 (require 'mah-macros)
 (require 'mah-defs)
 
-(progn ;    `use-package'
-  (require  'use-package)
-  (setq use-package-verbose t))
-
-
-(use-package auto-compile
-  :demand t
-  :config
-  (auto-compile-on-load-mode)
-  (auto-compile-on-save-mode)
-  (setq auto-compile-display-buffer               nil)
-  (setq auto-compile-mode-line-counter            t)
-  (setq auto-compile-source-recreate-deletes-dest t)
-  (setq auto-compile-toggle-deletes-nonlib-dest   t)
-  (setq auto-compile-update-autoloads             t)
-  (add-hook 'auto-compile-inhibit-compile-hook
-            'auto-compile-inhibit-compile-detached-git-head))
-
-(use-package epkg
-  :defer t
-  :init (setq epkg-repository
-              (expand-file-name "var/epkgs/" user-emacs-directory)))
-
-(use-package custom
-  :no-require t
-  :config
-  (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
-  (when (file-exists-p custom-file)
-    (load custom-file)))
+(setq custom-file (expand-file-name "custom.el" user-emacs-directory))
+;; (when (file-exists-p custom-file)
+;;   (load custom-file))
 
 (use-package general
+  :demand t
   :config
   (progn
     (general-evil-setup)
     ;; (setq general-override-states '(normal visual motion))
     (general-override-mode)))
 
-(use-package no-littering)
+(use-package no-littering
+  :demand t)
 
 (use-package server
+  :demand t
   :config (or (server-running-p) (server-mode)))
 
 (progn ;     startup
@@ -106,10 +104,15 @@
 
 ;;; themes
 
-(require 'doom-themes)
-(setq doom-themes-enable-bold t
-      doom-themes-enable-italic t)
-(load-theme 'doom-spacegrey t)
+(use-package doom-themes
+  :demand t
+  :config
+  (progn
+    (setq doom-themes-enable-bold t
+          doom-themes-enable-italic t)
+    (load-theme 'doom-spacegrey t))
+  )
+
 
 (set-face-attribute 'default nil :font "Source Code Pro Semibold" :height 140)
 
@@ -181,10 +184,32 @@
   :config
   (evil-commentary-mode))
 
+(use-package evil-multiedit
+  :after evil
+  :init
+  (setq evil-multiedit-store-in-search-history t)
+  (general-vmap
+    "R" 'evil-multiedit-match-all
+    "M-d" 'evil-multiedit-match-and-next
+    "M-D" 'evil-multiedit-match-and-prev
+    "C-M-D" 'evil-multiedit-restore)
+  (general-nmap
+    "M-d" 'evil-multiedit-match-and-next
+    "M-D" 'evil-multiedit-match-and-prev)
+  (general-mmap
+    "RET" 'evil-multiedit-toggle-or-restrict-region)
+  (general-def 'evil-multiedit-state-map
+    "RET" 'evil-multiedit-toggle-or-restrict-region
+    "C-n" 'evil-multiedit-next
+    "C-p" 'evil-multiedit-prev)
+  (general-def 'evil-multiedit-insert-state-map
+    "C-n" 'evil-multiedit-next
+    "C-p" 'evil-multiedit-prev)
+  (evil-ex-define-cmd "ie[dit]" 'evil-multiedit-ex-match))
+
 ;;; Company
 
 (use-package company
-  :defer t
   :diminish (company-mode . " C")
   :init
   (setq company-idle-delay 0.2
@@ -225,17 +250,12 @@
       "C-j" 'ivy-next-line
       "C-k" 'ivy-previous-line
       "C-l" 'ivy-alt-done
-      "C-h" 'ivy-backward-delete-char
-      )
-    (with-eval-after-load 'projectile
-      (setq projectile-completion-system 'ivy))
-    )
+      "C-h" 'ivy-backward-delete-char))
   :config
   (ivy-mode 1))
 
 ;;; Magit et al.
 (use-package magit
-  :defer t
   :bind (("C-x g"   . magit-status)
          ("C-x M-g" . magit-dispatch-popup))
   :init
@@ -253,7 +273,6 @@
 
 ;;; General tooling
 (use-package ace-window
-  :defer t
   :config
   (progn
     (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l))
@@ -262,7 +281,6 @@
       "ww" 'ace-window)))
 
 (use-package anzu
-  :defer t
   :config
   (progn
     (global-anzu-mode +1)
@@ -272,8 +290,10 @@
       [remap query-replace-regexp] 'anzu-query-replace-regexp
       )))
 
+(use-package evil-anzu
+  :after evil)
+
 (use-package avy
-  :defer t
   :config
   (progn
     (mah-leader
@@ -293,21 +313,21 @@
   (add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh t)
   (add-hook 'dired-mode-hook 'diff-hl-dired-mode-unless-remote))
 
-(use-package dired
-  :defer t
+(use-feature dired
+  :demand t
   :config
   (progn
-    (mah-no-pref
+    (general-nmap
      "-" 'dired-jump)
     (general-def 'dired-mode-map
       "-" 'dired-up-directory)
     (setq dired-listing-switches "-alh")))
 
-(use-package eldoc
+(use-feature eldoc
   :when (version< "25" emacs-version)
   :config (global-eldoc-mode))
 
-(use-package files
+(use-feature files
   :config
   (setq backup-by-copying t
         delete-old-versions t
@@ -328,14 +348,13 @@
   (add-hook 'after-init-hook #'global-flycheck-mode))
 
 
-(use-package help
-  :defer t
+(use-feature help
   :config (temp-buffer-resize-mode))
 
 (progn ;    `isearch'
   (setq isearch-allow-scroll t))
 
-(use-package lisp-mode
+(use-feature lisp-mode
   :diminish (lisp-mode . " l")
   :config
   ;; TODO investigate these modes.
@@ -351,27 +370,28 @@
   (lispy-set-key-theme '(lispy paredit c-digits)))
 
 (use-package lispyville
-  :defer t
-  :diminish '(lispyville-mode . "()")
+  :diminish '(lispyville-mode . " ()");; (lispyville-mode-line-string " 🍰" " 🍰"))
   :init
   (general-def '(insert emacs) 'lispyville-mode-map
     "\"" 'lispy-doublequote
     "(" 'lispy-parens
     "[" 'lispy-brackets
     "{" 'lispy-braces)
-  (lispyville-set-key-theme '(operators
+  (lispyville-set-key-theme '(additional
+                              additional-wrap
+                              operators
                               slurp/barf-cp
-                              wrap))
+                              ;; wrap
+                              ))
   (add-hook 'lispy-mode-hook #'lispyville-mode))
 
 (use-package man
-  :defer t
   :config (setq Man-width 80))
 
 (use-package paren
   :config (show-paren-mode))
 
-(use-package prog-mode
+(use-feature prog-mode
   :config (global-prettify-symbols-mode)
   (defun indicate-buffer-boundaries-left ()
     (setq indicate-buffer-boundaries 'left))
@@ -379,7 +399,8 @@
 
 (use-package projectile
   :config
-  (setq projectile-enable-caching t)
+  (setq projectile-enable-caching t
+        projectile-completion-system 'ivy)
   (mah-leader
     "pl" 'projectile-switch-project
     "pI" 'projectile-invalidate-cache
@@ -393,7 +414,7 @@
     "pb" 'counsel-projectile-switch-buffer
     "pl" 'counsel-projectile-switch-project
     "pf" 'counsel-projectile-find-file
-    "sp" 'counsel-projectil-ag
+    "sp" 'counsel-projectile-ag
     )
   :config
   (counsel-projectile-mode))
@@ -409,14 +430,13 @@
   :when (version< "25" emacs-version)
   :config (save-place-mode))
 
-(use-package simple
+(use-feature simple
   :config (column-number-mode))
 
 (progn ;    `text-mode'
   (add-hook 'text-mode-hook #'indicate-buffer-boundaries-left))
 
 (use-package tramp
-  :defer t
   :config
   (add-to-list 'tramp-default-proxies-alist '(nil "\\`root\\'" "/ssh:%h:"))
   (add-to-list 'tramp-default-proxies-alist '("localhost" nil nil))
@@ -424,6 +444,7 @@
                (list (regexp-quote (system-name)) nil nil)))
 
 (use-package which-key
+  :demand t
   :diminish 'which-key-mode
   :config
   (which-key-mode)
@@ -439,38 +460,37 @@
     (concat mah-leader " t") "toggle"))
 
 (use-package with-editor
-  :defer t
   :diminish with-editor-mode)
 
 ;;; language specific
 
-(use-package elisp-mode
-  :defer t
+(use-feature elisp-mode
   :diminish '(emacs-lisp-mode . "Elisp")
   :init
   (progn
-    (mah-local-leader
-      :keymaps 'emacs-lisp-mode-map
-      "es" 'eval-last-sexp
-      "ef" 'eval-defun
-      "eb" 'eval-buffer)
     (mah-company emacs-lisp-mode company-capf)
     (add-hook 'emacs-lisp-mode-hook #'flycheck-mode)
-    (add-hook 'emacs-lisp-mode-hook #'lispyville-mode)))
+    (add-hook 'emacs-lisp-mode-hook #'lispyville-mode))
+  :config
+  (mah-local-leader
+    :keymaps 'emacs-lisp-mode-map
+    "es" 'eval-last-sexp
+    "ef" 'eval-defun
+    "eb" 'eval-buffer)
+  )
 
 (use-package elisp-slime-nav
   :diminish 'elisp-slime-nav-mode
   :init
   (progn
     (dolist (hook '(emacs-lisp-mode-hook ielm-mode-hook))
-      (add-hook hook 'elisp-slime-nav-mode))
-    (general-nmap emacs-lisp-mode-map
-      "gd" 'elisp-slime-nav-find-elisp-thing-at-point
-      "K" 'elisp-slime-nav-describe-elisp-thing-at-point)
-    ))
+      (add-hook hook 'elisp-slime-nav-mode)))
+  :config
+  (general-nmap emacs-lisp-mode-map
+    "gd" 'elisp-slime-nav-find-elisp-thing-at-point
+    "K" 'elisp-slime-nav-describe-elisp-thing-at-point))
 
 (use-package clojure-mode
-  :defer t
   :config
   (progn
     (mah-local-leader 'clojure-mode-map
@@ -510,11 +530,18 @@
       "K" 'cider-doc)))
 
 (use-package cider
-  :defer t
   :config
   (progn
     (mah-local-leader 'cider-mode-mode)))
 
+
+(use-package terraform-mode
+  :config (add-hook 'terraform-mode-hook #'terraform-format-on-save-mode))
+
+(use-package company-terraform
+  :config (add-hook 'terraform-mode-hook #'company-terraform-init))
+
+;;; End packages
 (progn                                  ;     startup
   (message "Loading %s...done (%.3fs)" user-init-file
            (float-time (time-subtract (current-time)
@@ -533,7 +560,8 @@
     (when (file-exists-p file)
       (load file))))
 
-(load custom-file)
+(when (file-exists-p custom-file)
+  (load custom-file))
 ;; Local Variables:
 ;; indent-tabs-mode: nil
 ;; End:

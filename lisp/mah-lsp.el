@@ -21,20 +21,17 @@
 	company-lsp-async t
 	company-lsp-cache-candidates nil))
 
-(defun mah--java-setup-lsp ()
-  "Setup lsp backend."
-  (if (configuration-layer/layer-used-p 'lsp)
-      (progn
-        (require 'lsp-java)
-        (setq lsp-java-format-enabled nil
-              lsp-java-save-action-organize-imports nil)
-        (lsp-java-enable))
-    (message "`lsp' layer is not installed, please add `lsp' layer to your dofile.")))
-
 (use-package lsp-java
     :defer t
     :init (progn
-            (add-hook 'java-mode-hook #'mah--java-lsetup-lsp)
+            (add-hook 'java-mode-hook
+		      (lambda ()
+			(if (configuration-layer/layer-used-p 'lsp)
+			    (progn
+			      (setq lsp-java-format-enabled nil
+				    lsp-java-save-action-organize-imports nil)
+			      (lsp-java-enable))
+			  (message "`lsp' layer is not installed, please add `lsp' layer to your dofile."))))
             (require 'lsp-imenu)
             (add-hook 'lsp-after-open-hook 'lsp-enable-imenu)
 
@@ -111,7 +108,6 @@
             ;; (add-to-list 'spacemacs-jump-handlers-java-mode 'xref-find-definitions)
             ;; (defadvice xref-find-definitions (before add-evil-jump activate) (evil-set-jump))
             )
-    :commands lsp-java-enable
     )
 
 (use-package google-java-format
