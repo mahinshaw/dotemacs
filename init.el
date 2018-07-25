@@ -73,7 +73,7 @@
 (use-package no-littering
   :demand t)
 
-(use-package server
+(use-feature server
   :demand t
   :config (or (server-running-p) (server-mode)))
 
@@ -160,6 +160,7 @@
 
 ;;; Evil mode and related
 (use-package evil
+  :demand t
   :init
   (setq evil-want-C-u-scroll t
         evil-want-integration nil
@@ -171,21 +172,18 @@
         evil-motion-state-cursor '("plum3" box)
         )
   :config
-  (evil-mode))
+  (evil-mode 1))
 
 (use-package evil-collection
-  :after evil
   :custom (evil-collection-setup-minibuffer nil) ;; TODO this messes with helm bindings.
   :init
   (evil-collection-init))
 
 (use-package evil-commentary
-  :after evil
   :config
   (evil-commentary-mode))
 
 (use-package evil-multiedit
-  :after evil
   :init
   (setq evil-multiedit-store-in-search-history t)
   (general-vmap
@@ -269,6 +267,7 @@
   (setq magit-display-buffer-function #'magit-display-buffer-fullframe-status-v1))
 
 (use-package evil-magit
+  :demand t
   :after magit)
 
 ;;; General tooling
@@ -290,8 +289,7 @@
       [remap query-replace-regexp] 'anzu-query-replace-regexp
       )))
 
-(use-package evil-anzu
-  :after evil)
+(use-package evil-anzu)
 
 (use-package avy
   :config
