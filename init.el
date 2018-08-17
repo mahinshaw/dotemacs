@@ -260,11 +260,17 @@
   (mah-leader
     "gs" 'magit-status)
   :config
-  (magit-add-section-hook 'magit-status-sections-hook
-                          'magit-insert-modules
-                          'magit-insert-stashes
-                          'append)
-  (setq magit-display-buffer-function #'magit-display-buffer-fullframe-status-v1))
+  (progn
+    (magit-add-section-hook 'magit-status-sections-hook
+                            'magit-insert-modules
+                            'magit-insert-stashes
+                            'append)
+    (setq magit-display-buffer-function #'magit-display-buffer-fullframe-status-v1)
+    (mah-local-leader
+      :keymaps 'with-editor-mode-map
+      "c" 'with-editor-finish
+      "k" 'with-editor-cancel
+      )))
 
 (use-package evil-magit
   :demand t
