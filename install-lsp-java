@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+set -e
+
+mkdir -p $(pwd)/eclipse.jdt.ls/plugins/ && \
+mvn dependency:get -DrepoUrl=https://mvnrepository.com/repos/central -DgroupId=com.microsoft.java -DartifactId=com.microsoft.java.debug.plugin -Dversion=0.10.0 && \
+cp -v ~/.m2/repository/com/microsoft/java/com.microsoft.java.debug.plugin/0.10.0/com.microsoft.java.debug.plugin-0.10.0.jar $(pwd)/eclipse.jdt.ls/plugins/com.microsoft.java.debug.plugin-0.10.0.jar
+# Download test runner
+mkdir -p $(pwd)/eclipse.jdt.ls/runner/ && \
+mvn dependency:get -DrepoUrl=https://mvnrepository.com/repos/central -DgroupId=org.junit.platform -DartifactId=junit-platform-console-standalone -Dversion=1.3.0-M1 && \
+cp -v ~/.m2/repository/org/junit/platform/junit-platform-console-standalone/1.3.0-M1/junit-platform-console-standalone-1.3.0-M1.jar $(pwd)/eclipse.jdt.ls/runner/junit-platform-console-standalone.jar
+# Download Che JDT LS.
+rm -rf $(pwd)/eclipse.jdt.ls/server/ && \
+mkdir -p $(pwd)/eclipse.jdt.ls/server/ && \
+wget http://download.eclipse.org/che/che-ls-jdt/snapshots/che-jdt-language-server-latest.tar.gz -O /tmp/jdt-latest.tar && \
+tar xf /tmp/jdt-latest.tar -C $(pwd)/eclipse.jdt.ls/server/
