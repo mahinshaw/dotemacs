@@ -62,6 +62,9 @@
 ;; (when (file-exists-p custom-file)
 ;;   (load custom-file))
 
+(use-package diminish
+  :demand t)
+
 (use-package general
   :demand t
   :config
@@ -83,6 +86,13 @@
                                       before-user-init-time))))
 
 ;;; Long tail
+(use-package exec-path-from-shell
+  :demand t
+  :init
+  (setq exec-path-from-shell-arguments '())
+  (when (memq window-system '(mac ns x))
+    (exec-path-from-shell-initialize)
+    (exec-path-from-shell-copy-env "JAVA_HOME")))
 
 ;;; Bindings without a prefix for normal and motion
 (general-create-definer mah-no-pref
@@ -126,19 +136,28 @@
 (general-def :keymaps 'override "M-RET" 'toggle-frame-fullscreen)
 
 (mah-leader
+  ;; Buffers
   "bn" 'next-buffer
   "bp" 'previous-buffer
   "bd" 'kill-this-buffer
+
+  ;; Files
   "fs" 'save-buffer
   "fed" 'mah-find-init-file
 
+  ;; help
   "hdc" 'describe-char
   "hdf" 'describe-function
   "hdF" 'describe-face
   "hdk" 'describe-key
   "hdm" 'describe-mode
   "hdv" 'describe-variable
-  "u" 'universal-argument)
+
+  "u" 'universal-argument
+
+  ;; windows
+  "w+" 'balance-windows
+  )
 
 (general-def
   :states 'normal
@@ -180,6 +199,8 @@
   (evil-collection-init))
 
 (use-package evil-commentary
+  :demand t
+  :diminish t
   :config
   (evil-commentary-mode))
 
@@ -215,7 +236,6 @@
         company-require-match nil
         company-tooltip-align-annotations t
         company-tooltip-minimum-width 60)
-  :config
   (general-def company-active-map
    "C-j" 'company-select-next-or-abort
    "C-k" 'company-select-previous-or-abort
@@ -251,6 +271,10 @@
       "C-h" 'ivy-backward-delete-char))
   :config
   (ivy-mode 1))
+
+(use-package amx
+  :config
+  (amx-mode t))
 
 ;;; Magit et al.
 (use-package magit
@@ -331,13 +355,41 @@
   :when (version< "25" emacs-version)
   :config (global-eldoc-mode))
 
+(use-package eyebrowse
+  :demand t
+  :config
+  (setq eyebrowse-new-workspace t)
+  (mah-leader
+    "lc" 'eyebrowse-create-window-config
+    "ln" 'eyebrowse-next-window-config
+    "lo" 'eyebrowse-last-window-config
+    "lp" 'eyebrowse-prev-window-config
+    "lx" 'eyebrowse-close-window-config
+    "lR" 'eyebrowse-rename-window-config
+
+    "ll" 'eyebrowse-switch-to-window-config
+    "l0" 'eyebrowse-switch-to-window-config-0
+    "l1" 'eyebrowse-switch-to-window-config-1
+    "l2" 'eyebrowse-switch-to-window-config-2
+    "l3" 'eyebrowse-switch-to-window-config-3
+    "l4" 'eyebrowse-switch-to-window-config-4
+    "l5" 'eyebrowse-switch-to-window-config-5
+    "l6" 'eyebrowse-switch-to-window-config-6
+    "l7" 'eyebrowse-switch-to-window-config-7
+    "l8" 'eyebrowse-switch-to-window-config-8
+    "l9" 'eyebrowse-switch-to-window-config-9
+    )
+  (eyebrowse-mode t))
+
 (use-feature files
   :config
   (setq backup-by-copying t
         delete-old-versions t
         kept-new-versions 10
         kept-old-versions 0))
-(use-package flycheck :diminish (flycheck-mode ."f")
+
+(use-package flycheck
+  :diminish (flycheck-mode ." FlyC")
   :init
   (setq flycheck-emacs-lisp-load-path 'inherit)
   (mah-leader
@@ -391,6 +443,9 @@
 
 (use-package man
   :config (setq Man-width 80))
+
+(use-feature outline-mode
+  :diminish t)
 
 (use-package paren
   :config (show-paren-mode))
@@ -469,7 +524,6 @@
 ;;; language specific
 
 (use-feature elisp-mode
-  :diminish '(emacs-lisp-mode . "Elisp")
   :init
   (progn
     (mah-company emacs-lisp-mode company-capf)
@@ -538,6 +592,141 @@
   (progn
     (mah-local-leader 'cider-mode-mode)))
 
+(use-package lsp-mode
+  :demand t
+  :init
+  (setq lsp-inhibit-message t
+        lsp-eldoc-render-all nil
+        lsp-highlight-symbol-at-point nil)
+  )
+
+(use-package lsp-ui
+  :demand t
+  :init
+  (add-hook 'lsp-mode-hook #'lsp-ui-mode)
+  :config
+  (setq lsp-ui-sideline-enable t
+        lsp-ui-sideline-show-symbol t
+        lsp-ui-sideline-show-hover t
+        lsp-ui-sideline-show-code-actions t
+        lsp-ui-sideline-update-mode 'point))
+
+(use-package company-lsp
+  :after company
+  :demand t
+  :init
+  (add-hook 'java-mode-hook (lambda () (push 'company-lsp company-backends)))
+  (setq company-lsp-enable-snippet t
+        company-lsp-cache-candidates t ;; nil
+        company-transformers nil
+        company-lsp-async t
+        ))
+
+(use-package lsp-java
+  :demand t
+  :requires (lsp-ui-flycheck lsp-ui-sideline)
+  :init (progn
+
+	  (mah-local-leader 'java-mode-map
+	    "="  'google-java-format-buffer
+	    "as" 'lsp-ui-sideline-apply-code-actions
+	    "aa" 'lsp-execute-code-action
+	    "an" 'lsp-java-actionable-notifications
+
+	    "bp" 'lsp-java-build-project
+	    "bu" 'lsp-java-update-project-configuration
+	    "bU" 'lsp-java-update-user-settings
+
+	    "db" 'dap-toggle-breakpoint
+	    "dda" 'dap-java-attach
+	    "ddj" 'dap-java-debug
+	    "ddr" 'dap-java-run
+	    "ddl" 'dap-debug-last-configuration
+	    "dl" 'dap-ui-list-sessions
+	    "dq" 'dap-disconnect
+	    "dn" 'dap-next
+	    "di" 'dap-step-in
+	    "dc" 'dap-continue
+	    "db" 'dap-toggle-breakpoint
+	    "do" 'dap-step-out
+	    "dss" 'dap-switch-session
+	    "dst" 'dap-switch-thread
+	    "dsf" 'dap-switch-stack-frame
+
+	    "ee" 'dap-eval
+	    "er" 'dap-eval-region
+	    "es" 'dap-eval-dwim
+
+	    "gg" '(xref-find-definitions :async true)
+	    "gG" 'xref-find-definitions-other-window
+	    "gi" 'helm-imenu
+	    "gr" 'xref-find-references
+
+	    "ha" 'xref-find-apropos
+	    "hh" 'lsp-describe-thing-at-point
+
+	    "rec" 'lsp-java-extract-to-constant
+	    "rel" 'lsp-java-extract-to-local-variable
+	    "rem" 'lsp-java-extract-method
+
+	    "rf" 'lsp-java-create-field
+	    "rl" 'lsp-java-create-local
+	    "ri" 'lsp-java-add-import
+	    "rI" 'lsp-java-organize-imports
+	    "rn" 'lsp-rename
+	    "rp" 'lsp-java-create-parameter
+
+	    "sr" 'lsp-restart-workspace
+
+	    "ug" 'lsp-ui-peek-find-definitions
+	    "ui" 'lsp-ui-peek-find-implementation
+	    "ui" 'lsp-ui-imenu
+	    "ur" 'lsp-ui-peek-find-references
+	    )
+
+          (general-nmap 'java-mode-map
+            "gd" '(xref-find-definitions :async true)
+	    "K" 'lsp-describe-thing-at-point
+           )
+          :config
+          (add-hook 'java-mode-hook
+		    (lambda ()
+		      (progn
+			(setq lsp-java-format-enabled nil
+			      lsp-java-save-action-organize-imports nil)
+			(lsp-java-enable))))
+          (add-hook 'java-mode-hook  'flycheck-mode)
+          (add-hook 'java-mode-hook  (lambda () (lsp-ui-flycheck-enable t)))
+          (add-hook 'java-mode-hook  'lsp-ui-sideline-mode)
+	  (require 'lsp-imenu)
+	  (add-hook 'lsp-after-open-hook 'lsp-enable-imenu)
+	  (defadvice xref-find-definitions (before add-evil-jump activate) (evil-set-jump))
+          (setq lsp-java--workspace-folders (list "/Users/mhinshaw/workspace/kollective/kollective_connect/"
+                                                  "/Users/mhinshaw/workspace/kollective/merge-db-streams/"
+                                                  "/Users/mhinshaw/workspace/kollective/db-source-merge/"
+                                                  "/Users/mhinshaw/workspace/kollective/delivery-state/"
+                                                  "/Users/mhinshaw/workspace/kollective/delivery-ktable/"
+                                                  "/Users/mhinshaw/workspace/kollective/prod3-history-fix/"
+                                                  "/Users/mhinshaw/workspace/java/streams/"
+                                                  "/Users/mhinshaw/workspace/java/kafka-connect-storage-cloud/"
+                                                  "/Users/mhinshaw/workspace/java/kafka-connect-jdbc/"
+                                                  ))))
+
+(use-package dap-mode
+  :straight (dap-mode :type git
+                      :host github
+                      :repo "yyoncho/dap-mode")
+  :config
+  (add-hook 'java-mode-hook (lambda ()
+                              (progn
+                                (dap-mode t)
+                                (dap-ui-mode t)))))
+
+(require 'google-java-format)
+(setq google-java-format-executable "/usr/local/bin/google-java-format")
+(add-hook 'java-mode-hook
+	  (lambda ()
+	    (add-hook 'before-save-hook #'google-java-format-buffer nil 'local)))
 
 (use-package terraform-mode
   :config (add-hook 'terraform-mode-hook #'terraform-format-on-save-mode))
