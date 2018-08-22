@@ -21,7 +21,7 @@
   ;; (package-initialize)
   (setq inhibit-startup-buffer-menu t
         inhibit-startup-screen t
-        inhibit-startup-echo-area-message "locutus"
+        inhibit-startup-echo-area-message "mhinshaw"
         initial-buffer-choice t
         initial-scratch-message ""
         load-prefer-newer t)
@@ -755,6 +755,7 @@
 
 (when (file-exists-p custom-file)
   (load custom-file))
+
 ;; Local Variables:
 ;; indent-tabs-mode: nil
 ;; End:
