@@ -470,7 +470,7 @@
 (use-package counsel-projectile
   :init
   (mah-leader
-    "pb" 'counsel-projectile-switch-buffer
+    "pb" 'counsel-projectile-switch-to-buffer
     "pl" 'counsel-projectile-switch-project
     "pf" 'counsel-projectile-find-file
     "sp" 'counsel-projectile-ag
@@ -701,7 +701,10 @@
 	  (require 'lsp-imenu)
 	  (add-hook 'lsp-after-open-hook 'lsp-enable-imenu)
 	  (defadvice xref-find-definitions (before add-evil-jump activate) (evil-set-jump))
-          (setq lsp-java--workspace-folders (list "/Users/mhinshaw/workspace/kollective/kollective_connect/"
+          (setq lsp-java-workspace-dir (no-littering-expand-var-file-name "lsp-java/workspace/")
+                lsp-java-workspace-cache-dir (no-littering-expand-var-file-name "lsp-java/workspace/.cache/")
+                lsp-java-server-install-dir (no-littering-expand-var-file-name "lsp-java/server")
+                lsp-java--workspace-folders (list "/Users/mhinshaw/workspace/kollective/kollective_connect/"
                                                   "/Users/mhinshaw/workspace/kollective/merge-db-streams/"
                                                   "/Users/mhinshaw/workspace/kollective/db-source-merge/"
                                                   "/Users/mhinshaw/workspace/kollective/delivery-state/"
@@ -727,6 +730,19 @@
 (add-hook 'java-mode-hook
 	  (lambda ()
 	    (add-hook 'before-save-hook #'google-java-format-buffer nil 'local)))
+
+(use-package groovy-mode)
+
+(use-package gradle-mode
+  :init
+  (add-hook 'java-mode-hook 'gradle-mode)
+  (mah-local-leader '(java-mode-map groovy-mode-map)
+    "bgb" 'gradle-build
+    "bgB" 'gradle-build--daemon
+    "bge" 'gradle-execute
+    "bgE" 'gradle-execute--daemon
+    "bgt" 'gradle-test
+    "bgT" 'gradle-test--daemon))
 
 (use-package terraform-mode
   :config (add-hook 'terraform-mode-hook #'terraform-format-on-save-mode))
