@@ -116,13 +116,12 @@
 
 (use-package doom-themes
   :demand t
-  :config
+  :init
   (progn
     (setq doom-themes-enable-bold t
           doom-themes-enable-italic t)
-    (load-theme 'doom-spacegrey t))
-  )
-
+    (load-theme 'doom-spacegrey t)
+    (doom-themes-org-config)))
 
 (set-face-attribute 'default nil :font "Source Code Pro Semibold" :height 140)
 
@@ -351,6 +350,13 @@
       "-" 'dired-up-directory)
     (setq dired-listing-switches "-alh")))
 
+(use-feature ediff
+  :demand t
+  :init
+  (setq-default
+   ediff-window-setup-function 'ediff-setup-windows-plain
+   ediff-split-window-function 'split-window-horizontally))
+
 (use-feature eldoc
   :when (version< "25" emacs-version)
   :config (global-eldoc-mode))
@@ -445,7 +451,10 @@
   :config (setq Man-width 80))
 
 (use-feature outline-mode
-  :diminish t)
+  :diminish t
+  :config
+   ;; show org ediffs unfolded (from 'outline).
+  (add-hook 'ediff-prepare-buffer-hook #'show-all))
 
 (use-package paren
   :config (show-paren-mode))
@@ -518,8 +527,25 @@
     (concat mah-leader " s") "search"
     (concat mah-leader " t") "toggle"))
 
+(use-feature winner-mode
+  :init
+  (winner-mode t)
+  ;; restore window layout when done.
+  (add-hook 'ediff-quit-hook #'winner-undo))
+
 (use-package with-editor
   :diminish with-editor-mode)
+
+;;; mode line
+(use-package minions
+  :demand t
+  :config (minions-mode 1))
+
+;; (use-package moody
+;;   :demand t
+;;   :config
+;;   (moody-replace-mode-line-buffer-identification)
+;;   (moody-replace-vc-mode))
 
 ;;; language specific
 
@@ -744,11 +770,48 @@
     "bgt" 'gradle-test
     "bgT" 'gradle-test--daemon))
 
+(use-package json-reformat)
+(use-package json-snatcher)
+(use-package json-navigator)
+
+(defun mah/json-reformat-dwim (arg &optional start end)
+    "Reformat the whole buffer of the active region.
+If ARG is non-nil (universal prefix argument) then try to decode the strings.
+If ARG is a numerical prefix argument then specify the indentation level."
+    (interactive "P\nr")
+    (let ((json-reformat:indent-width js-indent-level)
+          (json-reformat:pretty-string? nil))
+      (cond
+       ((numberp arg) (setq json-reformat:indent-width arg))
+       (arg (setq json-reformat:pretty-string? t)))
+      (if (equal start end)
+          (save-excursion (json-reformat-region (point-min) (point-max)))
+        (json-reformat-region start end))))
+
+(defun mah/json-reformat-buffer ()
+  "Format from `point-min' to `point-max'."
+  (interactive)
+  (save-excursion (json-reformat-region (point-min) (point-max))))
+
+(use-package json-mode
+  :init
+  (setq json-reformat:pretty-string? t)
+  (mah-local-leader 'json-mode-map
+    ",=" 'mah/json-reformat-buffer
+    "p" 'jsons-print-path
+    "jq" 'jsons-print-path-jq)
+  (general-vmap 'json-mode-map
+    ",=" 'json-reformat-region))
+
 (use-package terraform-mode
   :config (add-hook 'terraform-mode-hook #'terraform-format-on-save-mode))
 
 (use-package company-terraform
   :config (add-hook 'terraform-mode-hook #'company-terraform-init))
+
+(use-package yaml-mode)
+
+(require 'mah-org)
 
 ;;; End packages
 (progn                                  ;     startup
