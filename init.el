@@ -271,6 +271,8 @@
   :config
   (ivy-mode 1))
 
+(use-package ivy-hydra)
+
 (use-package amx
   :config
   (amx-mode t))
@@ -364,7 +366,9 @@
 (use-package eyebrowse
   :demand t
   :config
-  (setq eyebrowse-new-workspace t)
+  (setq eyebrowse-mode-line-separator " | "
+        eyebrowse-new-workspace t
+        eyebrowse-wrap-around t)
   (mah-leader
     "lc" 'eyebrowse-create-window-config
     "ln" 'eyebrowse-next-window-config
