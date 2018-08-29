@@ -156,6 +156,10 @@
 
   ;; windows
   "w+" 'balance-windows
+  "wh" 'evil-window-left
+  "wj" 'evil-window-down
+  "wk" 'evil-window-up
+  "wl" 'evil-window-right
   )
 
 (general-def
@@ -276,6 +280,9 @@
 (use-package amx
   :config
   (amx-mode t))
+
+(use-package ivy-xref
+  :init (setq xref-show-xrefs-function #'ivy-xref-show-xrefs))
 
 ;;; Magit et al.
 (use-package magit
@@ -416,6 +423,13 @@
 
 (use-feature help
   :config (temp-buffer-resize-mode))
+
+(use-feature Info-mode
+  :init
+  (general-nmap 'Info-mode-map
+    "C-n" 'Info-next
+    "C-p" 'Info-prev
+    ))
 
 (progn ;    `isearch'
   (setq isearch-allow-scroll t))
@@ -564,8 +578,9 @@
     :keymaps 'emacs-lisp-mode-map
     "es" 'eval-last-sexp
     "ef" 'eval-defun
-    "eb" 'eval-buffer)
-  )
+    "eb" 'eval-buffer
+
+    "hi" 'counsel-imenu))
 
 (use-package elisp-slime-nav
   :diminish 'elisp-slime-nav-mode
@@ -628,6 +643,9 @@
   (setq lsp-inhibit-message t
         lsp-eldoc-render-all nil
         lsp-highlight-symbol-at-point nil)
+  (add-hook 'lsp-after-open-hook 'lsp-enable-imenu)
+  (require 'lsp-imenu)
+  (defadvice xref-find-definitions (before add-evil-jump activate) (evil-set-jump))
   )
 
 (use-package lsp-ui
@@ -652,6 +670,7 @@
         company-lsp-async t
         ))
 
+;;; java
 (use-package lsp-java
   :demand t
   :requires (lsp-ui-flycheck lsp-ui-sideline)
@@ -689,11 +708,13 @@
 
 	    "gg" '(xref-find-definitions :async true)
 	    "gG" 'xref-find-definitions-other-window
-	    "gi" 'helm-imenu
+            "gi" 'lsp-goto-implementation
 	    "gr" 'xref-find-references
+            "gt" 'lsp-goto-type-definition
 
 	    "ha" 'xref-find-apropos
 	    "hh" 'lsp-describe-thing-at-point
+	    "hi" 'counsel-imenu
 
 	    "rec" 'lsp-java-extract-to-constant
 	    "rel" 'lsp-java-extract-to-local-variable
@@ -728,9 +749,6 @@
           (add-hook 'java-mode-hook  'flycheck-mode)
           (add-hook 'java-mode-hook  (lambda () (lsp-ui-flycheck-enable t)))
           (add-hook 'java-mode-hook  'lsp-ui-sideline-mode)
-	  (require 'lsp-imenu)
-	  (add-hook 'lsp-after-open-hook 'lsp-enable-imenu)
-	  (defadvice xref-find-definitions (before add-evil-jump activate) (evil-set-jump))
           (setq lsp-java-workspace-dir (no-littering-expand-var-file-name "lsp-java/workspace/")
                 lsp-java-workspace-cache-dir (no-littering-expand-var-file-name "lsp-java/workspace/.cache/")
                 lsp-java-server-install-dir (no-littering-expand-var-file-name "lsp-java/server")
@@ -774,23 +792,95 @@
     "bgt" 'gradle-test
     "bgT" 'gradle-test--daemon))
 
+;; C/C++
+(defun cquery//enable ()
+  "Enable cquery or throw an error."
+  (condition-case nil
+      (lsp-cquery-enable)
+    (user-error nil)))
+
+(use-package cquery
+  :commands lsp-cquery-enable
+  :init
+  (setq cquery-executable (executable-find "cquery")
+        cquery-extra-init-params '(:index (:comments 2) :cacheFormat "msgpack" :completion (:detailedLabel t))
+        ;; alternatively, (setq cquery-sem-highlight-method 'overlay)
+        cquery-sem-highlight-method 'font-lock)
+
+  (mah-local-leader
+    :keymaps '(c++-mode-map c-mode-map)
+    ;; "="  'google-java-format-buffer
+    "as" 'lsp-ui-sideline-apply-code-actions
+    "aa" 'lsp-execute-code-action
+    ;; "an" 'lsp-java-actionable-notifications
+
+    ;; "bp" 'lsp-java-build-project
+    ;; "bu" 'lsp-java-update-project-configuration
+    ;; "bU" 'lsp-java-update-user-settings
+
+    "gb" '(cquery-xref-find-custom "$cquery/base")
+    "gc" '(cquery-xref-find-custom "$cquery/callers")
+    "gg" '(xref-find-definitions :async true)
+    "gG" 'xref-find-definitions-other-window
+    "gi" 'lsp-goto-implementation
+    "gr" 'xref-find-references
+    "gt" 'lsp-goto-type-definition
+    "gv" '(cquery-xref-find-custom "$cquery/vars")
+
+    "ha" 'xref-find-apropos
+    "hh" 'lsp-describe-thing-at-point
+    "hH" 'cquery-member-hierarchy
+    "hi" 'counsel-imenu
+
+    ;; Alternatively, use lsp-ui-peek interface
+    ;; "rec" 'lsp-java-extract-to-constant
+    ;; "rel" 'lsp-java-extract-to-local-variable
+    ;; "rem" 'lsp-java-extract-method
+
+    ;; "rf" 'lsp-java-create-field
+    ;; "rl" 'lsp-java-create-local
+    ;; "ri" 'lsp-java-add-import
+    ;; "rI" 'lsp-java-organize-imports
+    "rn" 'lsp-rename
+    ;; "rp" 'lsp-java-create-parameter
+
+    "sr" 'lsp-restart-workspace
+    "sR" 'cquery-freshen-index
+
+    "ub" '(lsp-ui-peek-find-custom 'base "$cquery/base")
+    "uc" '(lsp-ui-peek-find-custom 'callers "$cquery/callers")
+    "ug" 'lsp-ui-peek-find-definitions
+    "ui" 'lsp-ui-peek-find-implementation
+    "ui" 'lsp-ui-imenu
+    "ur" 'lsp-ui-peek-find-references
+    "uv" '(lsp-ui-peek-find-custom 'random "$cquery/random") ;; jump to a random declaration
+    )
+  (general-nmap
+    :keymaps '(c++-mode-map c-mode-map)
+    "gd" '(xref-find-definitions :async true)
+    "K" 'lsp-describe-thing-at-point)
+
+  (with-eval-after-load 'projectile
+    (setq projectile-project-root-files-top-down-recurring
+          (append '("compile_commands.json"
+                    ".cquery")
+                  projectile-project-root-files-top-down-recurring)))
+
+  (defun mah/cquery-hook ()
+    (progn
+      (cquery//enable)
+      (flycheck-mode t)
+      (lsp-ui-flycheck-enable t)
+      (lsp-sideline-mode t)))
+  (add-hook 'c-mode-hook #'mah/cquery-hook)
+  (add-hook 'c++-mode-hook #'mah/cquery-hook)
+  :config
+  ;; For rainbow semantic highlighting
+  (cquery-use-default-rainbow-sem-highlight))
+
 (use-package json-reformat)
 (use-package json-snatcher)
 (use-package json-navigator)
-
-(defun mah/json-reformat-dwim (arg &optional start end)
-    "Reformat the whole buffer of the active region.
-If ARG is non-nil (universal prefix argument) then try to decode the strings.
-If ARG is a numerical prefix argument then specify the indentation level."
-    (interactive "P\nr")
-    (let ((json-reformat:indent-width js-indent-level)
-          (json-reformat:pretty-string? nil))
-      (cond
-       ((numberp arg) (setq json-reformat:indent-width arg))
-       (arg (setq json-reformat:pretty-string? t)))
-      (if (equal start end)
-          (save-excursion (json-reformat-region (point-min) (point-max)))
-        (json-reformat-region start end))))
 
 (defun mah/json-reformat-buffer ()
   "Format from `point-min' to `point-max'."
