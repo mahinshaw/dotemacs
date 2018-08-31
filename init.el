@@ -529,6 +529,8 @@
   (add-to-list 'tramp-default-proxies-alist
                (list (regexp-quote (system-name)) nil nil)))
 
+(use-package wgrep)
+
 (use-package which-key
   :demand t
   :diminish 'which-key-mode
@@ -674,94 +676,101 @@
 (use-package lsp-java
   :demand t
   :requires (lsp-ui-flycheck lsp-ui-sideline)
-  :init (progn
+  :init
+  (progn
+    (add-hook 'java-mode-hook (lambda () (setq c-basic-offset 2)))
 
-	  (mah-local-leader 'java-mode-map
-	    "="  'google-java-format-buffer
-	    "as" 'lsp-ui-sideline-apply-code-actions
-	    "aa" 'lsp-execute-code-action
-	    "an" 'lsp-java-actionable-notifications
+    (mah-local-leader 'java-mode-map
+      "="  'google-java-format-buffer
+      "as" 'lsp-ui-sideline-apply-code-actions
+      "aa" 'lsp-execute-code-action
+      "an" 'lsp-java-actionable-notifications
 
-	    "bp" 'lsp-java-build-project
-	    "bu" 'lsp-java-update-project-configuration
-	    "bU" 'lsp-java-update-user-settings
+      "bp" 'lsp-java-build-project
+      "bu" 'lsp-java-update-project-configuration
+      "bU" 'lsp-java-update-user-settings
 
-	    "db" 'dap-toggle-breakpoint
-	    "dda" 'dap-java-attach
-	    "ddj" 'dap-java-debug
-	    "ddr" 'dap-java-run
-	    "ddl" 'dap-debug-last-configuration
-	    "dl" 'dap-ui-list-sessions
-	    "dq" 'dap-disconnect
-	    "dn" 'dap-next
-	    "di" 'dap-step-in
-	    "dc" 'dap-continue
-	    "db" 'dap-toggle-breakpoint
-	    "do" 'dap-step-out
-	    "dss" 'dap-switch-session
-	    "dst" 'dap-switch-thread
-	    "dsf" 'dap-switch-stack-frame
+      "db" 'dap-toggle-breakpoint
+      "dda" 'dap-java-attach
+      "ddj" 'dap-java-debug
+      "ddr" 'dap-java-run
+      "ddl" 'dap-debug-last-configuration
+      "dl" 'dap-ui-list-sessions
+      "dq" 'dap-disconnect
+      "dn" 'dap-next
+      "di" 'dap-step-in
+      "dc" 'dap-continue
+      "db" 'dap-toggle-breakpoint
+      "do" 'dap-step-out
+      "dss" 'dap-switch-session
+      "dst" 'dap-switch-thread
+      "dsf" 'dap-switch-stack-frame
 
-	    "ee" 'dap-eval
-	    "er" 'dap-eval-region
-	    "es" 'dap-eval-dwim
+      "ee" 'dap-eval
+      "er" 'dap-eval-region
+      "es" 'dap-eval-dwim
 
-	    "gg" '(xref-find-definitions :async true)
-	    "gG" 'xref-find-definitions-other-window
-            "gi" 'lsp-goto-implementation
-	    "gr" 'xref-find-references
-            "gt" 'lsp-goto-type-definition
+      "gg" '(xref-find-definitions :async true)
+      "gG" 'xref-find-definitions-other-window
+      "gi" 'lsp-goto-implementation
+      "gr" 'xref-find-references
+      "gt" 'lsp-goto-type-definition
 
-	    "ha" 'xref-find-apropos
-	    "hh" 'lsp-describe-thing-at-point
-	    "hi" 'counsel-imenu
+      "ha" 'xref-find-apropos
+      "hh" 'lsp-describe-thing-at-point
+      "hi" 'counsel-imenu
 
-	    "rec" 'lsp-java-extract-to-constant
-	    "rel" 'lsp-java-extract-to-local-variable
-	    "rem" 'lsp-java-extract-method
+      "rec" 'lsp-java-extract-to-constant
+      "rel" 'lsp-java-extract-to-local-variable
+      "rem" 'lsp-java-extract-method
 
-	    "rf" 'lsp-java-create-field
-	    "rl" 'lsp-java-create-local
-	    "ri" 'lsp-java-add-import
-	    "rI" 'lsp-java-organize-imports
-	    "rn" 'lsp-rename
-	    "rp" 'lsp-java-create-parameter
+      "rf" 'lsp-java-create-field
+      "rl" 'lsp-java-create-local
+      "ri" 'lsp-java-add-import
+      "rI" 'lsp-java-organize-imports
+      "rn" 'lsp-rename
+      "rp" 'lsp-java-create-parameter
 
-	    "sr" 'lsp-restart-workspace
+      "sr" 'lsp-restart-workspace
 
-	    "ug" 'lsp-ui-peek-find-definitions
-	    "ui" 'lsp-ui-peek-find-implementation
-	    "ui" 'lsp-ui-imenu
-	    "ur" 'lsp-ui-peek-find-references
-	    )
+      "ug" 'lsp-ui-peek-find-definitions
+      "ui" 'lsp-ui-peek-find-implementation
+      "ui" 'lsp-ui-imenu
+      "ur" 'lsp-ui-peek-find-references
+      )
 
-          (general-nmap 'java-mode-map
-            "gd" '(xref-find-definitions :async true)
-	    "K" 'lsp-describe-thing-at-point
-           )
-          :config
-          (add-hook 'java-mode-hook
-		    (lambda ()
-		      (progn
-			(setq lsp-java-format-enabled nil
-			      lsp-java-save-action-organize-imports nil)
-			(lsp-java-enable))))
-          (add-hook 'java-mode-hook  'flycheck-mode)
-          (add-hook 'java-mode-hook  (lambda () (lsp-ui-flycheck-enable t)))
-          (add-hook 'java-mode-hook  'lsp-ui-sideline-mode)
-          (setq lsp-java-workspace-dir (no-littering-expand-var-file-name "lsp-java/workspace/")
-                lsp-java-workspace-cache-dir (no-littering-expand-var-file-name "lsp-java/workspace/.cache/")
-                lsp-java-server-install-dir (no-littering-expand-var-file-name "lsp-java/server")
-                lsp-java--workspace-folders (list "/Users/mhinshaw/workspace/kollective/kollective_connect/"
-                                                  "/Users/mhinshaw/workspace/kollective/merge-db-streams/"
-                                                  "/Users/mhinshaw/workspace/kollective/db-source-merge/"
-                                                  "/Users/mhinshaw/workspace/kollective/delivery-state/"
-                                                  "/Users/mhinshaw/workspace/kollective/delivery-ktable/"
-                                                  "/Users/mhinshaw/workspace/kollective/prod3-history-fix/"
-                                                  "/Users/mhinshaw/workspace/java/streams/"
-                                                  "/Users/mhinshaw/workspace/java/kafka-connect-storage-cloud/"
-                                                  "/Users/mhinshaw/workspace/java/kafka-connect-jdbc/"
-                                                  ))))
+    (general-nmap 'java-mode-map
+      "gd" '(xref-find-definitions :async true)
+      "K" 'lsp-describe-thing-at-point
+      )
+    :config
+    (add-hook 'java-mode-hook
+              (lambda ()
+                (progn
+                  (setq lsp-java-format-enabled nil
+                        lsp-java-save-action-organize-imports nil)
+                  (lsp-java-enable))))
+    
+    (add-hook 'java-mode-hook  '(lambda ()
+                                  (progn
+                                    (flycheck-mode t)
+                                    (lsp-ui-flycheck-enable t)
+                                    (lsp-ui-sideline-mode t)
+                                    (lsp-ui-doc-enable nil))))
+    (setq lsp-java-workspace-dir (no-littering-expand-var-file-name "lsp-java/workspace/")
+          lsp-java-workspace-cache-dir (no-littering-expand-var-file-name "lsp-java/workspace/.cache/")
+          lsp-java-server-install-dir (no-littering-expand-var-file-name "lsp-java/server")
+          lsp-java--workspace-folders (list "/Users/mhinshaw/workspace/kollective/kollective_connect/"
+                                            "/Users/mhinshaw/workspace/kollective/merge-db-streams/"
+                                            "/Users/mhinshaw/workspace/kollective/db-source-merge/"
+                                            "/Users/mhinshaw/workspace/kollective/delivery-state/"
+                                            "/Users/mhinshaw/workspace/kollective/delivery-ktable/"
+                                            "/Users/mhinshaw/workspace/kollective/prod3-history-fix/"
+                                            "/Users/mhinshaw/workspace/kollective/kafka-dash/"
+                                            "/Users/mhinshaw/workspace/java/streams/"
+                                            "/Users/mhinshaw/workspace/java/kafka-connect-storage-cloud/"
+                                            "/Users/mhinshaw/workspace/java/kafka-connect-jdbc/"
+                                            ))))
 
 (use-package dap-mode
   :straight (dap-mode :type git
