@@ -912,7 +912,23 @@
 (use-package company-terraform
   :config (add-hook 'terraform-mode-hook #'company-terraform-init))
 
-(use-package yaml-mode)
+(use-package jinja2-mode
+  ;; :mode ("\\.j2\\'" .jinja2-mode)
+  :init )
+
+(use-package yaml-mode
+  ;; (add-to-list 'auto-mode-alist '("\\(group_vars/.+\\|host_vars/.+\\)" . yaml-mode))
+  )
+
+(use-package ansible)
+
+(use-package ansible-doc
+  :init
+  (add-hook 'ansible-mode-hook #'ansible-doc-mode))
+
+(use-package company-ansible
+  :init
+  (add-to-list 'company-backends 'company-ansible))
 
 (require 'mah-org)
 
