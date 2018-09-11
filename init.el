@@ -203,7 +203,7 @@
 
 (use-package evil-commentary
   :demand t
-  :diminish t
+  :diminish 'evil-commentary-mode
   :config
   (evil-commentary-mode))
 
@@ -309,6 +309,9 @@
   :after magit)
 
 ;;; General tooling
+(use-feature abbrev
+  :diminish 'abbrev-mode)
+
 (use-package ace-window
   :config
   (progn
@@ -328,6 +331,9 @@
       )))
 
 (use-package evil-anzu)
+
+(use-feature autorevert
+  :diminish 'auto-revert-mode)
 
 (use-package avy
   :config
@@ -468,8 +474,8 @@
 (use-package man
   :config (setq Man-width 80))
 
-(use-feature outline-mode
-  :diminish t
+(use-feature outline
+  :diminish 'outline-minor-mode
   :config
    ;; show org ediffs unfolded (from 'outline).
   (add-hook 'ediff-prepare-buffer-hook #'show-all))
@@ -509,6 +515,9 @@
   :demand t
   :config (add-to-list 'recentf-exclude "^/\\(?:ssh\\|su\\|sudo\\)?:"))
 
+(use-feature reveal
+  :diminish 'reveal-mode)
+
 (use-package savehist
   :config (savehist-mode))
 
@@ -528,6 +537,9 @@
   (add-to-list 'tramp-default-proxies-alist '("localhost" nil nil))
   (add-to-list 'tramp-default-proxies-alist
                (list (regexp-quote (system-name)) nil nil)))
+
+(use-package undo-tree
+  :diminish 'undo-tree-mode)
 
 (use-package wgrep)
 
@@ -557,17 +569,62 @@
   :diminish with-editor-mode)
 
 ;;; mode line
-(use-package minions
-  :demand t
-  :config (minions-mode 1))
+;; (use-package minions
+;;   :demand t
+;;   :config (minions-mode 1))
 
+(display-time-mode 1)
+(setq display-time-string-forms '(dayname " " 12-hours ":" minutes " " am-pm))
+
+(setq mode-line-format
+      ;; ("%e"
+      ;;  mode-line-front-space
+      ;;  mode-line-mule-info
+      ;;  mode-line-client
+      ;;  mode-line-modified
+      ;;  mode-line-remote
+      ;;  mode-line-frame-identification
+      ;;  mode-line-buffer-identification
+      ;;  "   "
+      ;;  mode-line-position
+      ;;  evil-mode-line-tag
+      ;;  (vc-mode vc-mode)
+      ;;  "  "
+      ;;  mode-line-modes
+      ;;  mode-line-misc-info
+      ;;  mode-line-end-spaces)
+      (list
+       "%e"
+       mode-line-front-space
+       mode-line-mule-info
+       mode-line-client
+       mode-line-modified
+       mode-line-remote
+       mode-line-frame-identification
+       mode-line-buffer-identification
+       "   "
+       mode-line-position
+       evil-mode-line-tag
+       (vc-mode vc-mode)
+       "  "
+       mode-line-modes
+       mode-line-misc-info
+       mode-line-end-spaces
+       ))
 ;; (use-package moody
 ;;   :demand t
 ;;   :config
 ;;   (moody-replace-mode-line-buffer-identification)
 ;;   (moody-replace-vc-mode))
 
+(use-package yasnippet
+  :demand t
+  :config
+  (yas-global-mode 1))
+
 ;;; language specific
+(use-package docker)
+(use-package dockerfile-mode)
 
 (use-feature elisp-mode
   :init
@@ -668,7 +725,7 @@
   (add-hook 'java-mode-hook (lambda () (push 'company-lsp company-backends)))
   (setq company-lsp-enable-snippet t
         company-lsp-cache-candidates t ;; nil
-        company-transformers nil
+        ;; company-transformers nil
         company-lsp-async t
         ))
 
@@ -791,6 +848,7 @@
 (use-package groovy-mode)
 
 (use-package gradle-mode
+  :diminish 'gradle-mode
   :init
   (add-hook 'java-mode-hook 'gradle-mode)
   (mah-local-leader '(java-mode-map groovy-mode-map)
@@ -800,6 +858,34 @@
     "bgE" 'gradle-execute--daemon
     "bgt" 'gradle-test
     "bgT" 'gradle-test--daemon))
+
+;; Python
+(use-package lsp-python
+  :init
+  (mah-local-leader '(python-mode-map)
+    "as" 'lsp-ui-sideline-apply-code-actions
+    "aa" 'lsp-execute-code-action
+
+    "gg" '(xref-find-definitions :async true)
+    "gG" 'xref-find-definitions-other-window
+    "gi" 'lsp-goto-implementation
+    "gr" 'xref-find-references
+    "gt" 'lsp-goto-type-definition
+
+    "ha" 'xref-find-apropos
+    "hh" 'lsp-describe-thing-at-point
+
+    "rn" 'lsp-rename
+
+    "sr" 'lsp-restart-workspace
+    "sR" 'cquery-freshen-index
+
+    "ug" 'lsp-ui-peek-find-definitions
+    "ui" 'lsp-ui-peek-find-implementation
+    "ui" 'lsp-ui-imenu
+    "ur" 'lsp-ui-peek-find-references)
+  :config
+  (add-hook 'python-mode-hook #'lsp-python-enable))
 
 ;; C/C++
 (defun cquery//enable ()
@@ -818,14 +904,8 @@
 
   (mah-local-leader
     :keymaps '(c++-mode-map c-mode-map)
-    ;; "="  'google-java-format-buffer
     "as" 'lsp-ui-sideline-apply-code-actions
     "aa" 'lsp-execute-code-action
-    ;; "an" 'lsp-java-actionable-notifications
-
-    ;; "bp" 'lsp-java-build-project
-    ;; "bu" 'lsp-java-update-project-configuration
-    ;; "bU" 'lsp-java-update-user-settings
 
     "gb" '(cquery-xref-find-custom "$cquery/base")
     "gc" '(cquery-xref-find-custom "$cquery/callers")
@@ -841,17 +921,7 @@
     "hH" 'cquery-member-hierarchy
     "hi" 'counsel-imenu
 
-    ;; Alternatively, use lsp-ui-peek interface
-    ;; "rec" 'lsp-java-extract-to-constant
-    ;; "rel" 'lsp-java-extract-to-local-variable
-    ;; "rem" 'lsp-java-extract-method
-
-    ;; "rf" 'lsp-java-create-field
-    ;; "rl" 'lsp-java-create-local
-    ;; "ri" 'lsp-java-add-import
-    ;; "rI" 'lsp-java-organize-imports
     "rn" 'lsp-rename
-    ;; "rp" 'lsp-java-create-parameter
 
     "sr" 'lsp-restart-workspace
     "sR" 'cquery-freshen-index
