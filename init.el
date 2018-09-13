@@ -185,7 +185,7 @@
   :demand t
   :init
   (setq evil-want-C-u-scroll t
-        evil-want-integration nil
+        evil-want-keybinding nil
         evil-normal-state-cursor '("DarkGoldenrod2" box)
         evil-insert-state-cursor '("chartreuse3" (bar . 2))
         evil-emacs-state-cursor '("SkyBlue3" box)
@@ -206,6 +206,11 @@
   :diminish 'evil-commentary-mode
   :config
   (evil-commentary-mode))
+
+(use-package evil-surround
+  :demand t
+  :config
+  (global-evil-surround-mode 1))
 
 (use-package evil-multiedit
   :init
@@ -861,6 +866,7 @@
 
 ;; Python
 (use-package lsp-python
+  :demand t
   :init
   (mah-local-leader '(python-mode-map)
     "as" 'lsp-ui-sideline-apply-code-actions
