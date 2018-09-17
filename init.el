@@ -132,6 +132,22 @@
         mac-command-modifier 'meta
         ns-use-native-fullscreen nil))
 
+;; Emacs variable defaults
+
+;; auto save every 500 words typed
+(setq auto-save-interval 500
+      ;; don't recenter the point
+      scroll-conservatively 10000
+      ;; scroll one line at a time
+      scroll-step 1
+      ;; scroll 8 lines from top and bottom
+      scroll-margin 8
+      ;; scroll horizontally 1 column at a time.
+      hscroll-step 1
+      ;; scroll horizontally 4 lines left and right
+      hscroll-margin 4)
+(setq-default truncate-lines t)
+
 (general-def :keymaps 'override "M-RET" 'toggle-frame-fullscreen)
 
 (mah-leader
@@ -178,6 +194,13 @@
                     :timeout 0.2
                     "s" 'split-window-vertically))
 
+(use-feature display-line-numbers
+  :demand t
+  :init (setq display-line-numbers-type 'relative)
+  :config
+  (when (version<= "26.0.50" emacs-version )
+    ;; (global-display-line-numbers-mode)
+    (add-hook 'prog-mode-hook #'display-line-numbers-mode)))
 
 
 ;;; Evil mode and related
@@ -501,6 +524,7 @@
   (mah-leader
     "pl" 'projectile-switch-project
     "pI" 'projectile-invalidate-cache
+    "p'" 'projectile-run-eshell
     )
   (projectile-mode 1)
   )
