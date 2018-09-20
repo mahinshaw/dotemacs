@@ -652,7 +652,25 @@
   (yas-global-mode 1))
 
 ;;; language specific
+(use-package csv-mode
+  :init
+  (mah-local-leader 'csv-mode-map
+     "ti" 'csv-toggle-invisibility
+     "tt" 'csv-transpose
+     "tcs" 'csv-set-comment-start
+     "u" 'csv-unalign-fields
+     "a" 'csv-align-fields
+     "yt" 'csv-yank-as-new-table
+     "yf" 'csv-yank-fields
+     "kf" 'csv-kill-fields
+     "td" 'csv-toggle-descending
+     ;; "" 'csv-reverse-region
+     "tsn" 'csv-sort-numeric-fields
+     "tss" 'csv-sort-fields
+    ))
+
 (use-package docker)
+
 (use-package dockerfile-mode)
 
 (use-feature elisp-mode
@@ -664,9 +682,10 @@
   :config
   (mah-local-leader
     :keymaps 'emacs-lisp-mode-map
-    "es" 'eval-last-sexp
-    "ef" 'eval-defun
     "eb" 'eval-buffer
+    "ef" 'eval-defun
+    "er" 'eval-region
+    "es" 'eval-last-sexp
 
     "hi" 'counsel-imenu))
 
@@ -1006,12 +1025,28 @@
   (general-vmap 'json-mode-map
     ",=" 'json-reformat-region))
 
+;; SQL (Postgres)
+(require 'pg-formatter)
+(use-feature sql
+  :init
+  (mah-local-leader 'sql-mode-map
+    "=" 'pg-format))
+
+;; Ruby
+(use-package chruby
+  :demand t
+  :config
+  ;; run chruby at startup for tooling.
+  (progn (chruby-use-corresponding)))
+
+;; Terraform
 (use-package terraform-mode
   :config (add-hook 'terraform-mode-hook #'terraform-format-on-save-mode))
 
 (use-package company-terraform
   :config (add-hook 'terraform-mode-hook #'company-terraform-init))
 
+;; Ansible
 (use-package jinja2-mode
   ;; :mode ("\\.j2\\'" .jinja2-mode)
   :init )
