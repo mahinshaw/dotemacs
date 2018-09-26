@@ -13,5 +13,17 @@
   (interactive)
   (find-file user-init-file))
 
+(defun mah-insert-lambda-arrow-for-major-mode ()
+  "Insert arrow for major mode.
+eg -> or =>"
+  (interactive)
+  (let ((arrow (pcase major-mode
+		 ('csharp-mode "=> ")
+		 ('ruby-mode "=> ")
+		 (_ "-> ")
+		 )))
+    (insert arrow)
+    ))
+
 (provide 'mah-defs)
 ;;; mah-defs.el ends here

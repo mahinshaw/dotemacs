@@ -92,7 +92,9 @@
   (setq exec-path-from-shell-arguments '())
   (when (memq window-system '(mac ns x))
     (exec-path-from-shell-initialize)
-    (exec-path-from-shell-copy-env "JAVA_HOME")))
+    (exec-path-from-shell-copy-env "JAVA_HOME")
+    (exec-path-from-shell-copy-env "GOROOT")
+    (exec-path-from-shell-copy-env "GOPATH")))
 
 ;;; Bindings without a prefix for normal and motion
 (general-create-definer mah-no-pref
@@ -146,7 +148,9 @@
       hscroll-step 1
       ;; scroll horizontally 4 lines left and right
       hscroll-margin 4)
-(setq-default truncate-lines t)
+(setq-default truncate-lines t
+              ;; tabs should be 4 spaces
+              tab-width 4)
 
 (general-def :keymaps 'override "M-RET" 'toggle-frame-fullscreen)
 
@@ -178,6 +182,13 @@
   "wl" 'evil-window-right
   )
 
+;; insert mode helpers
+(general-def
+  :states 'insert
+  :keymaps 'override
+  "C-l" 'mah-insert-lambda-arrow-for-major-mode)
+
+;; window movements
 (general-def
   :states 'normal
   :keymaps 'override
@@ -518,9 +529,12 @@
   (add-hook 'prog-mode-hook #'indicate-buffer-boundaries-left))
 
 (use-package projectile
+  :init
   :config
   (setq projectile-enable-caching t
         projectile-completion-system 'ivy)
+  (add-to-list 'projectile-globally-ignored-directories "~/Dropbox/Books")
+  (add-to-list 'projectile-globally-ignored-directories "~/.emacs.d/var/lsp-java/workspace")
   (mah-leader
     "pl" 'projectile-switch-project
     "pI" 'projectile-invalidate-cache
@@ -912,6 +926,7 @@
   :demand t
   :init
   (mah-local-leader '(python-mode-map)
+    "=" 'lsp-format-buffer
     "as" 'lsp-ui-sideline-apply-code-actions
     "aa" 'lsp-execute-code-action
 
@@ -936,6 +951,37 @@
   :config
   (add-hook 'python-mode-hook #'lsp-python-enable))
 
+;; golang
+(use-package go-mode)
+(use-package lsp-go
+  :demand t
+  :init
+  (mah-local-leader '(go-mode-map)
+    "=" 'lsp-format-buffer
+    "as" 'lsp-ui-sideline-apply-code-actions
+    "aa" 'lsp-execute-code-action
+
+    "gg" '(xref-find-definitions :async true)
+    "gG" 'xref-find-definitions-other-window
+    "gi" 'lsp-goto-implementation
+    "gr" 'xref-find-references
+    "gt" 'lsp-goto-type-definition
+
+    "ha" 'xref-find-apropos
+    "hh" 'lsp-describe-thing-at-point
+
+    "rn" 'lsp-rename
+
+    "sr" 'lsp-restart-workspace
+    "sR" 'cquery-freshen-index
+
+    "ug" 'lsp-ui-peek-find-definitions
+    "ui" 'lsp-ui-peek-find-implementation
+    "ui" 'lsp-ui-imenu
+    "ur" 'lsp-ui-peek-find-references)
+  :config
+  (add-hook 'go-mode-hook #'lsp-go-enable))
+
 ;; C/C++
 (defun cquery//enable ()
   "Enable cquery or throw an error."
@@ -953,6 +999,7 @@
 
   (mah-local-leader
     :keymaps '(c++-mode-map c-mode-map)
+    "=" 'lsp-format-buffer
     "as" 'lsp-ui-sideline-apply-code-actions
     "aa" 'lsp-execute-code-action
 
@@ -1066,6 +1113,35 @@
   (add-to-list 'company-backends 'company-ansible))
 
 (require 'mah-org)
+
+;; epub
+(use-package nov
+  :init
+  (add-to-list 'auto-mode-alist '("\\.epub\\'" . nov-mode))
+  ;; (add-hook 'nov-mode-hook (lambda () (evil-set-initial-state 'nov-mode 'emacs)))
+  (general-nmap 'nov-mode-map
+    ;; "" 'nov-render-document
+    "v" 'nov-view-source
+    "V" 'nov-view-content-source
+    "m" 'nov-display-metadata
+    "J" 'nov-next-document
+    "]" 'nov-next-document
+    "K" 'nov-previous-document
+    "[" 'nov-previous-document
+    "t" 'nov-goto-toc
+    "RET" 'nov-browse-url
+    ;; "<follow-link>" 'mouse-face
+    ;; "<mouse-2>" 'nov-browse-url
+    "TAB" 'shr-next-link
+    "M-TAB" 'shr-previous-link
+    "<backtab>" 'shr-previous-link
+    "SPC" 'nov-scroll-up
+    "S-SPC" 'nov-scroll-down
+    "DEL" 'nov-scroll-down
+    ;; "<home>" 'beginning-of-buffer ;; implemented with `gg'
+    ;; "<end>" 'end-of-buffer ;; implemented with `G'
+    )
+  )
 
 ;;; End packages
 (progn                                  ;     startup
