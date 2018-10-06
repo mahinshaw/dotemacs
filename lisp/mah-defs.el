@@ -25,5 +25,15 @@ eg -> or =>"
     (insert arrow)
     ))
 
+(defun mah-refresh-buffer-optional-auto ()
+  "Refresh buffer, optionally from autosave."
+  (interactive)
+  (revert-buffer nil :noconfirm))
+
+(defun mah-refresh-buffer ()
+  "Revert buffer to to state on disk."
+  (interactive)
+  (revert-buffer :ignore-auto :noconfirm))
+
 (provide 'mah-defs)
 ;;; mah-defs.el ends here

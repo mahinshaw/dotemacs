@@ -74,7 +74,10 @@
     (general-override-mode)))
 
 (use-package no-littering
-  :demand t)
+  :demand t
+  :config
+  (setq auto-save-file-name-transforms
+        `((".*" ,(no-littering-expand-var-file-name "auto-save/") t))))
 
 (use-feature server
   :demand t
@@ -150,7 +153,9 @@
       hscroll-margin 4)
 (setq-default truncate-lines t
               ;; tabs should be 4 spaces
-              tab-width 4)
+              tab-width 4
+              ;; don't want no stinking tabs
+              indent-tabs-mode nil)
 
 (general-def :keymaps 'override "M-RET" 'toggle-frame-fullscreen)
 
@@ -159,6 +164,7 @@
   "bn" 'next-buffer
   "bp" 'previous-buffer
   "bd" 'kill-this-buffer
+  "bR" 'mah-refresh-buffer
 
   ;; Files
   "fs" 'save-buffer
@@ -175,7 +181,7 @@
   "u" 'universal-argument
 
   ;; windows
-  "w+" 'balance-windows
+  "w=" 'balance-windows
   "wh" 'evil-window-left
   "wj" 'evil-window-down
   "wk" 'evil-window-up
@@ -229,6 +235,23 @@
         )
   :config
   (evil-mode 1))
+
+(evil-define-motion evil-first-non-blank-or-digit-argument ()
+  "Move the cursor to the first non-blank row of the current line.
+This function passes its command to `digit-argument' (usually a 0)
+if it is not the first event."
+  :type exclusive
+  (cond
+   (current-prefix-arg
+    (setq this-command #'digit-argument)
+    (call-interactively #'digit-argument))
+   (t
+    (setq this-command #'evil-first-non-blank)
+    (call-interactively #'evil-first-non-blank))))
+
+(general-mmap
+  "0" 'evil-first-non-blank-or-digit-argument
+  "^" 'evil-beginning-of-line)
 
 (use-package evil-collection
   :custom (evil-collection-setup-minibuffer nil) ;; TODO this messes with helm bindings.
@@ -389,9 +412,11 @@
 
 (use-package diff-hl
   :config
-  (setq diff-hl-draw-borders nil)
+  ;; (setq diff-hl-draw-borders nil)
   (global-diff-hl-mode)
-  (add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh t)
+  (diff-hl-dired-mode)
+  (diff-hl-margin-mode)
+  (add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh)
   (add-hook 'dired-mode-hook 'diff-hl-dired-mode-unless-remote))
 
 (use-feature dired
@@ -778,7 +803,9 @@
         lsp-ui-sideline-show-symbol t
         lsp-ui-sideline-show-hover t
         lsp-ui-sideline-show-code-actions t
-        lsp-ui-sideline-update-mode 'point))
+        lsp-ui-sideline-update-mode 'point)
+  (lsp-ui-doc-enable nil)
+  )
 
 (use-package company-lsp
   :after company
@@ -797,8 +824,6 @@
   :requires (lsp-ui-flycheck lsp-ui-sideline)
   :init
   (progn
-    (add-hook 'java-mode-hook (lambda () (setq c-basic-offset 2)))
-
     (mah-local-leader 'java-mode-map
       "="  'google-java-format-buffer
       "as" 'lsp-ui-sideline-apply-code-actions
@@ -854,7 +879,7 @@
 
       "ug" 'lsp-ui-peek-find-definitions
       "ui" 'lsp-ui-peek-find-implementation
-      "ui" 'lsp-ui-imenu
+      "uI" 'lsp-ui-imenu
       "ur" 'lsp-ui-peek-find-references
       )
 
@@ -866,16 +891,15 @@
     (add-hook 'java-mode-hook
               (lambda ()
                 (progn
-                  (setq lsp-java-format-enabled nil
+                  (setq c-basic-offset 2
+                        lsp-java-format-enabled nil
                         lsp-java-save-action-organize-imports nil)
+
+                  (flycheck-mode t)
+                  (lsp-ui-flycheck-enable t)
+                  (lsp-ui-sideline-mode t)
+                  (lsp-ui-doc-enable nil)
                   (lsp-java-enable))))
-    
-    (add-hook 'java-mode-hook  '(lambda ()
-                                  (progn
-                                    (flycheck-mode t)
-                                    (lsp-ui-flycheck-enable t)
-                                    (lsp-ui-sideline-mode t)
-                                    (lsp-ui-doc-enable nil))))
     (setq lsp-java-workspace-dir (no-littering-expand-var-file-name "lsp-java/workspace/")
           lsp-java-workspace-cache-dir (no-littering-expand-var-file-name "lsp-java/workspace/.cache/")
           lsp-java-server-install-dir (no-littering-expand-var-file-name "lsp-java/server")
@@ -886,6 +910,7 @@
                                             "/Users/mhinshaw/workspace/kollective/delivery-ktable/"
                                             "/Users/mhinshaw/workspace/kollective/prod3-history-fix/"
                                             "/Users/mhinshaw/workspace/kollective/kafka-dash/"
+                                            "/Users/mhinshaw/workspace/kollective/redshift-loader/"
                                             "/Users/mhinshaw/workspace/java/streams/"
                                             "/Users/mhinshaw/workspace/java/kafka-connect-storage-cloud/"
                                             "/Users/mhinshaw/workspace/java/kafka-connect-jdbc/"
@@ -946,15 +971,43 @@
 
     "ug" 'lsp-ui-peek-find-definitions
     "ui" 'lsp-ui-peek-find-implementation
-    "ui" 'lsp-ui-imenu
+    "uI" 'lsp-ui-imenu
     "ur" 'lsp-ui-peek-find-references)
   :config
   (add-hook 'python-mode-hook #'lsp-python-enable))
 
 ;; golang
-(use-package go-mode)
+(use-package go-mode
+  :init
+  (setq gofmt-command "goimports")
+  (mah-local-leader '(go-mode-map)
+    "ga" 'go-goto-arguments
+    "gD" 'go-goto-docstring
+    "gf" 'go-goto-function
+    "gg" 'godef-jump
+    "gG" 'godef-jump-other-window
+    "gn" 'go-goto-function-name
+    "gr" 'go-goto-return-values
+    "gm" 'go-goto-method-receiver
+
+    "hh" 'godef-describe)
+  (general-nmap '(go-mode-map)
+    "gd" 'godef-jump
+    "K" 'godef-describe)
+  (add-to-list 'yas-snippet-dirs (expand-file-name "snippets/yasnippet-go"
+                                                   user-emacs-directory)))
+
+;; (use-package company-go
+;;   :init
+;;   (add-to-list 'company-backends 'company-go))
+
+;; (use-package go-eldoc
+;;   :init
+;;  (add-hook 'go-mode-hook 'go-eldoc-setup))
+
 (use-package lsp-go
   :demand t
+  :requires (lsp-ui-flycheck lsp-ui-sideline)
   :init
   (mah-local-leader '(go-mode-map)
     "=" 'lsp-format-buffer
@@ -977,10 +1030,16 @@
 
     "ug" 'lsp-ui-peek-find-definitions
     "ui" 'lsp-ui-peek-find-implementation
-    "ui" 'lsp-ui-imenu
+    "uI" 'lsp-ui-imenu
     "ur" 'lsp-ui-peek-find-references)
   :config
-  (add-hook 'go-mode-hook #'lsp-go-enable))
+  (add-hook 'go-mode-hook (lambda ()
+                            (progn
+                              (lsp-go-enable)
+                              (flycheck-mode t)
+                              (lsp-ui-flycheck-enable t)
+                              (lsp-sideline-mode t)))
+            ))
 
 ;; C/C++
 (defun cquery//enable ()
@@ -1026,7 +1085,7 @@
     "uc" '(lsp-ui-peek-find-custom 'callers "$cquery/callers")
     "ug" 'lsp-ui-peek-find-definitions
     "ui" 'lsp-ui-peek-find-implementation
-    "ui" 'lsp-ui-imenu
+    "uI" 'lsp-ui-imenu
     "ur" 'lsp-ui-peek-find-references
     "uv" '(lsp-ui-peek-find-custom 'random "$cquery/random") ;; jump to a random declaration
     )
@@ -1064,9 +1123,10 @@
 
 (use-package json-mode
   :init
+  (add-to-list 'auto-mode-alist '("\\.avsc$" . json-mode))
   (setq json-reformat:pretty-string? t)
   (mah-local-leader 'json-mode-map
-    ",=" 'mah/json-reformat-buffer
+    "=" 'mah/json-reformat-buffer
     "p" 'jsons-print-path
     "jq" 'jsons-print-path-jq)
   (general-vmap 'json-mode-map
