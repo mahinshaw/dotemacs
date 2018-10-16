@@ -157,7 +157,7 @@
               ;; don't want no stinking tabs
               indent-tabs-mode nil)
 
-(general-def :keymaps 'override "M-RET" 'toggle-frame-fullscreen)
+;; (general-def :keymaps 'override "M-RET" 'toggle-frame-fullscreen)
 
 (mah-leader
   ;; Buffers
@@ -186,6 +186,8 @@
   "wj" 'evil-window-down
   "wk" 'evil-window-up
   "wl" 'evil-window-right
+
+  "TF" 'toggle-frame-fullscreen
   )
 
 ;; insert mode helpers
@@ -773,7 +775,24 @@ if it is not the first event."
       "hn" 'cider-browse-ns
       "hN" 'cider-browse-ns-all
 
+      "sq" 'cider-quit
+      "ss" 'cider-switch-to-repl-buffer
+
+      "tn" 'cider-test-run-ns-tests
+      "tt" 'cider-test-run-test
+      "tR" 'cider-test-show-report
+
+      "Te" 'cider-enlighten-mode
+      "Tt" 'cider-auto-test-mode
       )
+
+    (mah-local-leader 'cider-repl-mode-map
+      "sc" 'cider-repl-clear-buffer
+      "sc" 'cider-repl-clear-output
+      "sq" 'cider-quit
+      "ss" 'cider-switch-to-last-clojure-buffer
+      )
+
     (general-nmap 'clojure-mode-map
       "gd" 'cider-find-var
       "K" 'cider-doc)))
