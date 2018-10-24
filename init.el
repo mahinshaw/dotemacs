@@ -550,7 +550,8 @@ if it is not the first event."
   :config (show-paren-mode))
 
 (use-feature prog-mode
-  :config (global-prettify-symbols-mode)
+  :config
+  ;; (global-prettify-symbols-mode)
   (defun indicate-buffer-boundaries-left ()
     (setq indicate-buffer-boundaries 'left))
   (add-hook 'prog-mode-hook #'indicate-buffer-boundaries-left))
@@ -830,7 +831,6 @@ if it is not the first event."
   :after company
   :demand t
   :init
-  (add-hook 'java-mode-hook (lambda () (push 'company-lsp company-backends)))
   (setq company-lsp-enable-snippet t
         company-lsp-cache-candidates t ;; nil
         ;; company-transformers nil
@@ -880,6 +880,7 @@ if it is not the first event."
       "gt" 'lsp-goto-type-definition
 
       "ha" 'xref-find-apropos
+      "hc" 'lsp-java-classpath-browse
       "hh" 'lsp-describe-thing-at-point
       "hi" 'counsel-imenu
 
@@ -895,6 +896,8 @@ if it is not the first event."
       "rp" 'lsp-java-create-parameter
 
       "sr" 'lsp-restart-workspace
+      "sfa" 'lsp-workspace-folders-add
+      "sfd" 'lsp-workspace-folders-remove
 
       "ug" 'lsp-ui-peek-find-definitions
       "ui" 'lsp-ui-peek-find-implementation
@@ -907,11 +910,11 @@ if it is not the first event."
       "K" 'lsp-describe-thing-at-point
       )
     :config
+    (add-hook 'java-mode-hook (lambda () (push 'company-lsp company-backends)))
     (add-hook 'java-mode-hook
               (lambda ()
                 (progn
                   (setq c-basic-offset 2
-                        lsp-java-format-enabled nil
                         lsp-java-save-action-organize-imports nil)
 
                   (flycheck-mode t)
@@ -1131,6 +1134,55 @@ if it is not the first event."
   ;; For rainbow semantic highlighting
   (cquery-use-default-rainbow-sem-highlight))
 
+;; Javascript
+(use-package rjsx-mode
+  :init
+  (add-to-list 'auto-mode-alist '("\\.js\\'" . rjsx-mode))
+  (setq-default js-indent-level 2))
+
+ (defun my-company-transformer (candidates)
+  (let ((completion-ignore-case t))
+    (all-completions (company-grab-symbol) candidates)))
+
+(defun my-js-hook nil
+  (make-local-variable 'company-transformers)
+  (push 'my-company-transformer company-transformers))
+
+(use-package lsp-javascript-typescript
+  :demand
+  :init
+  (mah-local-leader '(go-mode-map)
+    "=" 'lsp-format-buffer
+    "as" 'lsp-ui-sideline-apply-code-actions
+    "aa" 'lsp-execute-code-action
+
+    "gg" '(xref-find-definitions :async true)
+    "gG" 'xref-find-definitions-other-window
+    "gi" 'lsp-goto-implementation
+    "gr" 'xref-find-references
+    "gt" 'lsp-goto-type-definition
+
+    "ha" 'xref-find-apropos
+    "hh" 'lsp-describe-thing-at-point
+
+    "rn" 'lsp-rename
+
+    "sr" 'lsp-restart-workspace
+    "sR" 'cquery-freshen-index
+
+    "ug" 'lsp-ui-peek-find-definitions
+    "ui" 'lsp-ui-peek-find-implementation
+    "uI" 'lsp-ui-imenu
+    "ur" 'lsp-ui-peek-find-references)
+  (add-hook 'rjsx-mode-hook #'lsp-javascript-typescript-enable)
+  (add-hook 'rjsx-mode-hook 'my-js-hook))
+
+(use-package prettier-js
+  :init
+  (setq prettier-js-args '("--single-quote"))
+  (add-hook 'rjsx-mode-hook 'prettier-js-mode))
+
+;; json
 (use-package json-reformat)
 (use-package json-snatcher)
 (use-package json-navigator)
