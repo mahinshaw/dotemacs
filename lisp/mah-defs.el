@@ -20,7 +20,7 @@ eg -> or =>"
   (let ((arrow (pcase major-mode
                  ('csharp-mode "=> ")
                  ('ruby-mode "=> ")
-                 ((or 'js-mode js2-mode rjsx-mode) "=> ")
+                 ((or 'js-mode 'js2-mode 'rjsx-mode) "=> ")
 		         (_ "-> ")
 		         )))
     (insert arrow)
