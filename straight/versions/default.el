@@ -72,7 +72,7 @@
  ("lsp-mode" . "aa20075751412d1e639b55bd836166462abf56e9")
  ("lsp-python" . "9cdf8e30fc8c68ed3f0502f9bc4ef663cb23a3be")
  ("lsp-ui" . "05d17b31e7fe11ebeb0f14ee25d55c6d4d05186e")
- ("magit" . "2279960bfdfbf1b0bd6674a41ae51559eadb894c")
+ ("magit" . "3ae75c86520ab90df21a98536fe523357830aa4f")
  ("magit-popup" . "8436447e3166b797edc596cf220f3bf9b41ff4d0")
  ("markdown-mode" . "30ae22215da05c4e02fcc3bfee0317cfec9c8fe5")
  ("melpa" . "55462ed7e9bf353f26c5315015436b2a1b37f9bc")

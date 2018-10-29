@@ -865,6 +865,8 @@ if it is not the first event."
       "dc" 'dap-continue
       "db" 'dap-toggle-breakpoint
       "do" 'dap-step-out
+      "dtc" 'dap-java-debug-test-class
+      "dtm" 'dap-java-debug-test-method
       "dss" 'dap-switch-session
       "dst" 'dap-switch-thread
       "dsf" 'dap-switch-stack-frame
@@ -899,6 +901,9 @@ if it is not the first event."
       "sfa" 'lsp-workspace-folders-add
       "sfd" 'lsp-workspace-folders-remove
 
+      "tc" 'dap-java-run-test-class
+      "tm" 'dap-java-run-test-method
+
       "ug" 'lsp-ui-peek-find-definitions
       "ui" 'lsp-ui-peek-find-implementation
       "uI" 'lsp-ui-imenu
@@ -925,28 +930,21 @@ if it is not the first event."
     (setq lsp-java-workspace-dir (no-littering-expand-var-file-name "lsp-java/workspace/")
           lsp-java-workspace-cache-dir (no-littering-expand-var-file-name "lsp-java/workspace/.cache/")
           lsp-java-server-install-dir (no-littering-expand-var-file-name "lsp-java/server")
-          lsp-java--workspace-folders (list "/Users/mhinshaw/workspace/kollective/kollective_connect/"
-                                            "/Users/mhinshaw/workspace/kollective/merge-db-streams/"
-                                            "/Users/mhinshaw/workspace/kollective/db-source-merge/"
-                                            "/Users/mhinshaw/workspace/kollective/delivery-state/"
-                                            "/Users/mhinshaw/workspace/kollective/delivery-ktable/"
-                                            "/Users/mhinshaw/workspace/kollective/prod3-history-fix/"
-                                            "/Users/mhinshaw/workspace/kollective/kafka-dash/"
-                                            "/Users/mhinshaw/workspace/kollective/redshift-loader/"
-                                            "/Users/mhinshaw/workspace/java/streams/"
-                                            "/Users/mhinshaw/workspace/java/kafka-connect-storage-cloud/"
-                                            "/Users/mhinshaw/workspace/java/kafka-connect-jdbc/"
-                                            ))))
+          )))
 
 (use-package dap-mode
   :straight (dap-mode :type git
                       :host github
                       :repo "yyoncho/dap-mode")
   :config
-  (add-hook 'java-mode-hook (lambda ()
-                              (progn
-                                (dap-mode t)
-                                (dap-ui-mode t)))))
+  (progn
+    (setq dap-java-test-runner (no-littering-expand-var-file-name "lsp-java/test-runner/junit-platform-console-standalone.jar"))
+    (defun mah-dap-java-hook ()
+      (progn
+        (dap-mode t)
+        (dap-ui-mode t)
+        (require 'dap-java)))
+    (add-hook 'java-mode-hook #'mah-dap-java-hook)))
 
 (require 'google-java-format)
 (setq google-java-format-executable "/usr/local/bin/google-java-format")
@@ -1140,18 +1138,18 @@ if it is not the first event."
   (add-to-list 'auto-mode-alist '("\\.js\\'" . rjsx-mode))
   (setq-default js-indent-level 2))
 
- (defun my-company-transformer (candidates)
-  (let ((completion-ignore-case t))
-    (all-completions (company-grab-symbol) candidates)))
+;;  (defun my-company-transformer (candidates)
+;;   (let ((completion-ignore-case t))
+;;     (all-completions (company-grab-symbol) candidates)))
 
-(defun my-js-hook nil
-  (make-local-variable 'company-transformers)
-  (push 'my-company-transformer company-transformers))
+;; (defun my-js-hook nil
+;;   (make-local-variable 'company-transformers)
+;;   (push 'my-company-transformer company-transformers))
 
 (use-package lsp-javascript-typescript
   :demand
   :init
-  (mah-local-leader '(go-mode-map)
+  (mah-local-leader '(rjsx-mode-map)
     "=" 'lsp-format-buffer
     "as" 'lsp-ui-sideline-apply-code-actions
     "aa" 'lsp-execute-code-action
@@ -1175,7 +1173,8 @@ if it is not the first event."
     "uI" 'lsp-ui-imenu
     "ur" 'lsp-ui-peek-find-references)
   (add-hook 'rjsx-mode-hook #'lsp-javascript-typescript-enable)
-  (add-hook 'rjsx-mode-hook 'my-js-hook))
+  ;; (add-hook 'rjsx-mode-hook 'my-js-hook)
+  )
 
 (use-package prettier-js
   :init
