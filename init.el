@@ -215,8 +215,8 @@
 
 (use-feature display-line-numbers
   :demand t
-  :init (setq display-line-numbers-type 'relative)
-  :config
+  :init
+  (setq display-line-numbers-type 'relative)
   (when (version<= "26.0.50" emacs-version )
     ;; (global-display-line-numbers-mode)
     (add-hook 'prog-mode-hook #'display-line-numbers-mode)))
@@ -370,7 +370,10 @@ if it is not the first event."
 
 (use-package evil-magit
   :demand t
-  :after magit)
+  :after magit
+  :config (general-nmap '(magit-mode-map)
+            "q" 'magit-mode-bury-buffer)
+  )
 
 ;;; General tooling
 (use-feature abbrev
@@ -413,13 +416,14 @@ if it is not the first event."
   :config (dash-enable-font-lock))
 
 (use-package diff-hl
+  :init
+  (add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh)
+  (add-hook 'dired-mode-hook 'diff-hl-dired-mode-unless-remote)
   :config
   ;; (setq diff-hl-draw-borders nil)
   (global-diff-hl-mode)
   (diff-hl-dired-mode)
-  (diff-hl-margin-mode)
-  (add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh)
-  (add-hook 'dired-mode-hook 'diff-hl-dired-mode-unless-remote))
+  (diff-hl-margin-mode))
 
 (use-feature dired
   :demand t
@@ -487,9 +491,7 @@ if it is not the first event."
     "ec" 'flycheck-clear
     "el" 'flycheck-list-errors
     "en" 'flycheck-next-error
-    "ep" 'flycheck-previous-error
-    )
-  :config
+    "ep" 'flycheck-previous-error)
   (add-hook 'after-init-hook #'global-flycheck-mode))
 
 
@@ -508,7 +510,7 @@ if it is not the first event."
 
 (use-feature lisp-mode
   :diminish (lisp-mode . " l")
-  :config
+  :init
   ;; TODO investigate these modes.
   (add-hook 'emacs-lisp-mode-hook 'outline-minor-mode)
   (add-hook 'emacs-lisp-mode-hook 'reveal-mode)
@@ -853,17 +855,20 @@ if it is not the first event."
       "bu" 'lsp-java-update-project-configuration
       "bU" 'lsp-java-update-user-settings
 
-      "db" 'dap-toggle-breakpoint
-      "dda" 'dap-java-attach
-      "ddj" 'dap-java-debug
-      "ddr" 'dap-java-run
-      "ddl" 'dap-debug-last-configuration
+      "dbb" 'dap-breakpoint-toggle
+      "dba" 'dap-breakpoint-add
+      "dbr" 'dap-breakpoint-delete
+      "dbR" 'dap-breakpoint-delete-all
+      "dda" 'dap-debug
+      "ddl" 'dap-debug-last
+      "ddr" 'dap-debug-recent
+      "ddo" 'dap-go-to-output-buffer
+      "dh" 'dap-hydra
       "dl" 'dap-ui-list-sessions
       "dq" 'dap-disconnect
       "dn" 'dap-next
       "di" 'dap-step-in
       "dc" 'dap-continue
-      "db" 'dap-toggle-breakpoint
       "do" 'dap-step-out
       "dtc" 'dap-java-debug-test-class
       "dtm" 'dap-java-debug-test-method
@@ -914,11 +919,10 @@ if it is not the first event."
       "gd" '(xref-find-definitions :async true)
       "K" 'lsp-describe-thing-at-point
       )
-    :config
-    (add-hook 'java-mode-hook (lambda () (push 'company-lsp company-backends)))
     (add-hook 'java-mode-hook
               (lambda ()
                 (progn
+                  (push 'company-lsp company-backends)
                   (setq c-basic-offset 2
                         lsp-java-save-action-organize-imports nil)
 
@@ -927,6 +931,7 @@ if it is not the first event."
                   (lsp-ui-sideline-mode t)
                   (lsp-ui-doc-enable nil)
                   (lsp-java-enable))))
+    :config
     (setq lsp-java-workspace-dir (no-littering-expand-var-file-name "lsp-java/workspace/")
           lsp-java-workspace-cache-dir (no-littering-expand-var-file-name "lsp-java/workspace/.cache/")
           lsp-java-server-install-dir (no-littering-expand-var-file-name "lsp-java/server")
@@ -936,15 +941,15 @@ if it is not the first event."
   :straight (dap-mode :type git
                       :host github
                       :repo "yyoncho/dap-mode")
+  :init
+  (defun mah-dap-java-hook ()
+    (progn
+      (dap-mode t)
+      (dap-ui-mode t)
+      (require 'dap-java)))
+  (add-hook 'java-mode-hook #'mah-dap-java-hook)
   :config
-  (progn
-    (setq dap-java-test-runner (no-littering-expand-var-file-name "lsp-java/test-runner/junit-platform-console-standalone.jar"))
-    (defun mah-dap-java-hook ()
-      (progn
-        (dap-mode t)
-        (dap-ui-mode t)
-        (require 'dap-java)))
-    (add-hook 'java-mode-hook #'mah-dap-java-hook)))
+  (setq dap-java-test-runner (no-littering-expand-var-file-name "lsp-java/test-runner/junit-platform-console-standalone.jar")))
 
 (require 'google-java-format)
 (setq google-java-format-executable "/usr/local/bin/google-java-format")
@@ -993,7 +998,6 @@ if it is not the first event."
     "ui" 'lsp-ui-peek-find-implementation
     "uI" 'lsp-ui-imenu
     "ur" 'lsp-ui-peek-find-references)
-  :config
   (add-hook 'python-mode-hook #'lsp-python-enable))
 
 ;; golang
@@ -1052,14 +1056,13 @@ if it is not the first event."
     "ui" 'lsp-ui-peek-find-implementation
     "uI" 'lsp-ui-imenu
     "ur" 'lsp-ui-peek-find-references)
-  :config
-  (add-hook 'go-mode-hook (lambda ()
-                            (progn
-                              (lsp-go-enable)
-                              (flycheck-mode t)
-                              (lsp-ui-flycheck-enable t)
-                              (lsp-sideline-mode t)))
-            ))
+  (add-hook 'go-mode-hook
+            (lambda ()
+              (progn
+                (lsp-go-enable)
+                (flycheck-mode t)
+                (lsp-ui-flycheck-enable t)
+                (lsp-sideline-mode t)))))
 
 ;; C/C++
 (defun cquery//enable ()
@@ -1138,6 +1141,11 @@ if it is not the first event."
   (add-to-list 'auto-mode-alist '("\\.js\\'" . rjsx-mode))
   (setq-default js-indent-level 2))
 
+(use-package js-doc
+  :init
+  (setq js-doc-mail-address "mahinshaw@gmail.com"
+        js-doc-author (format "Mark Hinshaw <%s>" js-doc-mail-address)))
+
 ;;  (defun my-company-transformer (candidates)
 ;;   (let ((completion-ignore-case t))
 ;;     (all-completions (company-grab-symbol) candidates)))
@@ -1162,6 +1170,10 @@ if it is not the first event."
 
     "ha" 'xref-find-apropos
     "hh" 'lsp-describe-thing-at-point
+
+    "icc" 'js-doc-insert-function-doc
+    "icf" 'js-doc-insert-file-doc
+    "ict" 'js-doc-insert-tag
 
     "rn" 'lsp-rename
 
