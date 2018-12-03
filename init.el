@@ -188,6 +188,7 @@
   "wl" 'evil-window-right
 
   "TF" 'toggle-frame-fullscreen
+  "Tl" 'display-line-numbers-mode
   )
 
 ;; insert mode helpers
