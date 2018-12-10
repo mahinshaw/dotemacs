@@ -1229,7 +1229,36 @@ if it is not the first event."
 (use-package protobuf-mode)
 
 ;; Rust
-(use-package rust-mode)
+(use-package rust-mode
+  :init
+  (mah-local-leader '(rust-mode-map)
+    "=" 'lsp-format-buffer
+    "as" 'lsp-ui-sideline-apply-code-actions
+    "aa" 'lsp-execute-code-action
+
+    "gg" '(xref-find-definitions :async true)
+    "gG" 'xref-find-definitions-other-window
+    "gi" 'lsp-goto-implementation
+    "gr" 'xref-find-references
+    "gt" 'lsp-goto-type-definition
+
+    "ha" 'xref-find-apropos
+    "hh" 'lsp-describe-thing-at-point
+
+    "icc" 'js-doc-insert-function-doc
+    "icf" 'js-doc-insert-file-doc
+    "ict" 'js-doc-insert-tag
+
+    "rn" 'lsp-rename
+
+    "sr" 'lsp-restart-workspace
+    "sR" 'cquery-freshen-index
+
+    "ug" 'lsp-ui-peek-find-definitions
+    "ui" 'lsp-ui-peek-find-implementation
+    "uI" 'lsp-ui-imenu
+    "ur" 'lsp-ui-peek-find-references)
+  (add-hook 'rust-mode-hook 'lsp))
 
 ;; Ruby
 (use-package chruby
