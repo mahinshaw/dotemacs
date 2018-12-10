@@ -810,10 +810,9 @@ if it is not the first event."
   :demand t
   :init
   (setq lsp-inhibit-message t
-        lsp-eldoc-render-all nil
-        lsp-highlight-symbol-at-point nil)
+        lsp-eldoc-render-all nil)
   (add-hook 'lsp-after-open-hook 'lsp-enable-imenu)
-  (require 'lsp-imenu)
+  (require 'lsp-clients)
   (defadvice xref-find-definitions (before add-evil-jump activate) (evil-set-jump))
   )
 
@@ -973,7 +972,7 @@ if it is not the first event."
     "bgT" 'gradle-test--daemon))
 
 ;; Python
-(use-package lsp-python
+(use-feature python
   :demand t
   :init
   (mah-local-leader '(python-mode-map)
@@ -999,7 +998,7 @@ if it is not the first event."
     "ui" 'lsp-ui-peek-find-implementation
     "uI" 'lsp-ui-imenu
     "ur" 'lsp-ui-peek-find-references)
-  (add-hook 'python-mode-hook #'lsp-python-enable))
+  (add-hook 'python-mode-hook #'lsp))
 
 ;; golang
 (use-package go-mode
@@ -1020,20 +1019,7 @@ if it is not the first event."
     "gd" 'godef-jump
     "K" 'godef-describe)
   (add-to-list 'yas-snippet-dirs (expand-file-name "snippets/yasnippet-go"
-                                                   user-emacs-directory)))
-
-;; (use-package company-go
-;;   :init
-;;   (add-to-list 'company-backends 'company-go))
-
-;; (use-package go-eldoc
-;;   :init
-;;  (add-hook 'go-mode-hook 'go-eldoc-setup))
-
-(use-package lsp-go
-  :demand t
-  :requires (lsp-ui-flycheck lsp-ui-sideline)
-  :init
+                                                   user-emacs-directory))
   (mah-local-leader '(go-mode-map)
     "=" 'lsp-format-buffer
     "as" 'lsp-ui-sideline-apply-code-actions
@@ -1057,13 +1043,8 @@ if it is not the first event."
     "ui" 'lsp-ui-peek-find-implementation
     "uI" 'lsp-ui-imenu
     "ur" 'lsp-ui-peek-find-references)
-  (add-hook 'go-mode-hook
-            (lambda ()
-              (progn
-                (lsp-go-enable)
-                (flycheck-mode t)
-                (lsp-ui-flycheck-enable t)
-                (lsp-sideline-mode t)))))
+  (add-hook 'go-mode-hook 'lsp)
+  )
 
 ;; C/C++
 (defun cquery//enable ()
@@ -1136,28 +1117,11 @@ if it is not the first event."
   ;; For rainbow semantic highlighting
   (cquery-use-default-rainbow-sem-highlight))
 
-;; Javascript
+;; Javascript|Typescript
 (use-package rjsx-mode
   :init
   (add-to-list 'auto-mode-alist '("\\.js\\'" . rjsx-mode))
-  (setq-default js-indent-level 2))
-
-(use-package js-doc
-  :init
-  (setq js-doc-mail-address "mahinshaw@gmail.com"
-        js-doc-author (format "Mark Hinshaw <%s>" js-doc-mail-address)))
-
-;;  (defun my-company-transformer (candidates)
-;;   (let ((completion-ignore-case t))
-;;     (all-completions (company-grab-symbol) candidates)))
-
-;; (defun my-js-hook nil
-;;   (make-local-variable 'company-transformers)
-;;   (push 'my-company-transformer company-transformers))
-
-(use-package lsp-javascript-typescript
-  :demand
-  :init
+  (setq-default js-indent-level 2)
   (mah-local-leader '(rjsx-mode-map)
     "=" 'lsp-format-buffer
     "as" 'lsp-ui-sideline-apply-code-actions
@@ -1185,14 +1149,50 @@ if it is not the first event."
     "ui" 'lsp-ui-peek-find-implementation
     "uI" 'lsp-ui-imenu
     "ur" 'lsp-ui-peek-find-references)
-  (add-hook 'rjsx-mode-hook #'lsp-javascript-typescript-enable)
-  ;; (add-hook 'rjsx-mode-hook 'my-js-hook)
-  )
+  (add-hook 'rjsx-mode-hook 'lsp))
+
+(use-package typescript-mode
+  :init
+  (setq-default typescript-indent-level 2)
+  (mah-local-leader '(rjsx-mode-map)
+    "=" 'lsp-format-buffer
+    "as" 'lsp-ui-sideline-apply-code-actions
+    "aa" 'lsp-execute-code-action
+
+    "gg" '(xref-find-definitions :async true)
+    "gG" 'xref-find-definitions-other-window
+    "gi" 'lsp-goto-implementation
+    "gr" 'xref-find-references
+    "gt" 'lsp-goto-type-definition
+
+    "ha" 'xref-find-apropos
+    "hh" 'lsp-describe-thing-at-point
+
+    "icc" 'js-doc-insert-function-doc
+    "icf" 'js-doc-insert-file-doc
+    "ict" 'js-doc-insert-tag
+
+    "rn" 'lsp-rename
+
+    "sr" 'lsp-restart-workspace
+    "sR" 'cquery-freshen-index
+
+    "ug" 'lsp-ui-peek-find-definitions
+    "ui" 'lsp-ui-peek-find-implementation
+    "uI" 'lsp-ui-imenu
+    "ur" 'lsp-ui-peek-find-references)
+  (add-hook 'typescript-mode-hook 'lsp))
+
+(use-package js-doc
+  :init
+  (setq js-doc-mail-address "mahinshaw@gmail.com"
+        js-doc-author (format "Mark Hinshaw <%s>" js-doc-mail-address)))
 
 (use-package prettier-js
   :init
   (setq prettier-js-args '("--single-quote"))
-  (add-hook 'rjsx-mode-hook 'prettier-js-mode))
+  (add-hook 'rjsx-mode-hook 'prettier-js-mode)
+  (add-hook 'typescript-mode-hook 'prettier-js-mode))
 
 ;; json
 (use-package json-reformat)
@@ -1221,6 +1221,15 @@ if it is not the first event."
   :init
   (mah-local-leader 'sql-mode-map
     "=" 'pg-format))
+
+;; ocaml
+;; (use-package tuareg)
+
+;; protobuf
+(use-package protobuf-mode)
+
+;; Rust
+(use-package rust-mode)
 
 ;; Ruby
 (use-package chruby
