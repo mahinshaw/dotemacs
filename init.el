@@ -418,8 +418,8 @@ if it is not the first event."
 
 (use-package diff-hl
   :init
-  (add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh)
-  (add-hook 'dired-mode-hook 'diff-hl-dired-mode-unless-remote)
+  (add-hook 'magit-post-refresh-hook #'diff-hl-magit-post-refresh)
+  (add-hook 'dired-mode-hook #'diff-hl-dired-mode-unless-remote)
   :config
   ;; (setq diff-hl-draw-borders nil)
   (global-diff-hl-mode)
@@ -842,100 +842,96 @@ if it is not the first event."
 ;;; java
 (use-package lsp-java
   :demand t
-  :requires (lsp-ui-flycheck lsp-ui-sideline)
   :init
-  (progn
-    (mah-local-leader 'java-mode-map
-      "="  'google-java-format-buffer
-      "as" 'lsp-ui-sideline-apply-code-actions
-      "aa" 'lsp-execute-code-action
-      "an" 'lsp-java-actionable-notifications
+  (mah-local-leader 'java-mode-map
+    "="  'google-java-format-buffer
+    "as" 'lsp-ui-sideline-apply-code-actions
+    "aa" 'lsp-execute-code-action
+    "an" 'lsp-java-actionable-notifications
 
-      "bp" 'lsp-java-build-project
-      "bu" 'lsp-java-update-project-configuration
-      "bU" 'lsp-java-update-user-settings
+    "bp" 'lsp-java-build-project
+    "bu" 'lsp-java-update-project-configuration
+    "bU" 'lsp-java-update-user-settings
 
-      "dbb" 'dap-breakpoint-toggle
-      "dba" 'dap-breakpoint-add
-      "dbr" 'dap-breakpoint-delete
-      "dbR" 'dap-breakpoint-delete-all
-      "dda" 'dap-debug
-      "ddl" 'dap-debug-last
-      "ddr" 'dap-debug-recent
-      "ddo" 'dap-go-to-output-buffer
-      "dh" 'dap-hydra
-      "dl" 'dap-ui-list-sessions
-      "dq" 'dap-disconnect
-      "dn" 'dap-next
-      "di" 'dap-step-in
-      "dc" 'dap-continue
-      "do" 'dap-step-out
-      "dtc" 'dap-java-debug-test-class
-      "dtm" 'dap-java-debug-test-method
-      "dss" 'dap-switch-session
-      "dst" 'dap-switch-thread
-      "dsf" 'dap-switch-stack-frame
+    "dbb" 'dap-breakpoint-toggle
+    "dba" 'dap-breakpoint-add
+    "dbr" 'dap-breakpoint-delete
+    "dbR" 'dap-breakpoint-delete-all
+    "dda" 'dap-debug
+    "ddl" 'dap-debug-last
+    "ddr" 'dap-debug-recent
+    "ddo" 'dap-go-to-output-buffer
+    "dh" 'dap-hydra
+    "dl" 'dap-ui-list-sessions
+    "dq" 'dap-disconnect
+    "dn" 'dap-next
+    "di" 'dap-step-in
+    "dc" 'dap-continue
+    "do" 'dap-step-out
+    "dtc" 'dap-java-debug-test-class
+    "dtm" 'dap-java-debug-test-method
+    "dss" 'dap-switch-session
+    "dst" 'dap-switch-thread
+    "dsf" 'dap-switch-stack-frame
 
-      "ee" 'dap-eval
-      "er" 'dap-eval-region
-      "es" 'dap-eval-dwim
+    "ee" 'dap-eval
+    "er" 'dap-eval-region
+    "es" 'dap-eval-dwim
 
-      "gg" '(xref-find-definitions :async true)
-      "gG" 'xref-find-definitions-other-window
-      "gi" 'lsp-goto-implementation
-      "gr" 'xref-find-references
-      "gt" 'lsp-goto-type-definition
+    "gg" '(xref-find-definitions :async true)
+    "gG" 'xref-find-definitions-other-window
+    "gi" 'lsp-goto-implementation
+    "gr" 'xref-find-references
+    "gt" 'lsp-goto-type-definition
 
-      "ha" 'xref-find-apropos
-      "hc" 'lsp-java-classpath-browse
-      "hh" 'lsp-describe-thing-at-point
-      "hi" 'counsel-imenu
+    "ha" 'xref-find-apropos
+    "hc" 'lsp-java-classpath-browse
+    "hh" 'lsp-describe-thing-at-point
+    "hi" 'counsel-imenu
 
-      "rec" 'lsp-java-extract-to-constant
-      "rel" 'lsp-java-extract-to-local-variable
-      "rem" 'lsp-java-extract-method
+    "rec" 'lsp-java-extract-to-constant
+    "rel" 'lsp-java-extract-to-local-variable
+    "rem" 'lsp-java-extract-method
 
-      "rf" 'lsp-java-create-field
-      "rl" 'lsp-java-create-local
-      "ri" 'lsp-java-add-import
-      "rI" 'lsp-java-organize-imports
-      "rn" 'lsp-rename
-      "rp" 'lsp-java-create-parameter
+    "rf" 'lsp-java-create-field
+    "rl" 'lsp-java-create-local
+    "ri" 'lsp-java-add-import
+    "rI" 'lsp-java-organize-imports
+    "rn" 'lsp-rename
+    "rp" 'lsp-java-create-parameter
 
-      "sr" 'lsp-restart-workspace
-      "sfa" 'lsp-workspace-folders-add
-      "sfd" 'lsp-workspace-folders-remove
+    "sr" 'lsp-restart-workspace
+    "sfa" 'lsp-workspace-folders-add
+    "sfd" 'lsp-workspace-folders-remove
 
-      "tc" 'dap-java-run-test-class
-      "tm" 'dap-java-run-test-method
+    "tc" 'dap-java-run-test-class
+    "tm" 'dap-java-run-test-method
 
-      "ug" 'lsp-ui-peek-find-definitions
-      "ui" 'lsp-ui-peek-find-implementation
-      "uI" 'lsp-ui-imenu
-      "ur" 'lsp-ui-peek-find-references
-      )
+    "ug" 'lsp-ui-peek-find-definitions
+    "ui" 'lsp-ui-peek-find-implementation
+    "uI" 'lsp-ui-imenu
+    "ur" 'lsp-ui-peek-find-references
+    )
 
-    (general-nmap 'java-mode-map
-      "gd" '(xref-find-definitions :async true)
-      "K" 'lsp-describe-thing-at-point
-      )
-    (add-hook 'java-mode-hook
-              (lambda ()
-                (progn
-                  (push 'company-lsp company-backends)
-                  (setq c-basic-offset 2
-                        lsp-java-save-action-organize-imports nil)
+  (general-nmap 'java-mode-map
+    "gd" '(xref-find-definitions :async true)
+    "K" 'lsp-describe-thing-at-point)
+  :config
+  (setq lsp-java-workspace-dir (no-littering-expand-var-file-name "lsp-java/workspace/")
+        lsp-java-workspace-cache-dir (no-littering-expand-var-file-name "lsp-java/workspace/.cache/")
+        lsp-java-server-install-dir (no-littering-expand-var-file-name "lsp-java/server"))
+  (add-hook 'java-mode-hook
+            (lambda ()
+              (progn
+                (push 'company-lsp company-backends)
+                (setq c-basic-offset 2
+                      lsp-java-save-action-organize-imports nil)
 
-                  (flycheck-mode t)
-                  (lsp-ui-flycheck-enable t)
-                  (lsp-ui-sideline-mode t)
-                  (lsp-ui-doc-enable nil)
-                  (lsp-java-enable))))
-    :config
-    (setq lsp-java-workspace-dir (no-littering-expand-var-file-name "lsp-java/workspace/")
-          lsp-java-workspace-cache-dir (no-littering-expand-var-file-name "lsp-java/workspace/.cache/")
-          lsp-java-server-install-dir (no-littering-expand-var-file-name "lsp-java/server")
-          )))
+                ;; (flycheck-mode t)
+                ;; (lsp-ui-flycheck-enable t)
+                (lsp-ui-sideline-mode t)
+                (lsp-ui-doc-enable nil)
+                (lsp)))))
 
 (use-package dap-mode
   :straight (dap-mode :type git
@@ -1154,7 +1150,7 @@ if it is not the first event."
 (use-package typescript-mode
   :init
   (setq-default typescript-indent-level 2)
-  (mah-local-leader '(rjsx-mode-map)
+  (mah-local-leader '(typescript-mode-map)
     "=" 'lsp-format-buffer
     "as" 'lsp-ui-sideline-apply-code-actions
     "aa" 'lsp-execute-code-action
