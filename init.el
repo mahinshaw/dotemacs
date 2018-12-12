@@ -839,14 +839,52 @@ if it is not the first event."
         company-lsp-async t
         ))
 
+(defmacro mah:lsp-default-keys (mode-map)
+  "Given a MODE-MAP, assign the default keys for lsp based major modes to local leader."
+  `(progn
+     (mah-local-leader ,mode-map
+       "=" 'lsp-format-buffer
+       "as" 'lsp-ui-sideline-apply-code-actions
+       "aa" 'lsp-execute-code-action
+
+       "gg" '(xref-find-definitions :async true)
+       "gG" 'xref-find-definitions-other-window
+       "gi" 'lsp-goto-implementation
+       "gr" 'xref-find-references
+       "gt" 'lsp-goto-type-definition
+
+       "Ed" 'flymake-goto-diagnostic
+       "En" 'flymake-goto-next-error
+       "Ep" 'flymake-goto-prev-error
+
+       "ha" 'xref-find-apropos
+       "hh" 'lsp-describe-thing-at-point
+       "hi" 'counsel-imenu
+
+       "rn" 'lsp-rename
+
+       "sr" 'lsp-restart-workspace
+       "sfa" 'lsp-workspace-folders-add
+       "sfd" 'lsp-workspace-folders-remove
+
+       "ug" 'lsp-ui-peek-find-definitions
+       "ui" 'lsp-ui-peek-find-implementation
+       "uI" 'lsp-ui-imenu
+       "ur" 'lsp-ui-peek-find-references)
+
+     (general-nmap
+       :keymaps ,mode-map
+       "gd" '(xref-find-definitions :async true)
+       "K" 'lsp-describe-thing-at-point))
+  )
+
 ;;; java
 (use-package lsp-java
   :demand t
   :init
+  (mah:lsp-default-keys 'java-mode-map)
   (mah-local-leader 'java-mode-map
     "="  'google-java-format-buffer
-    "as" 'lsp-ui-sideline-apply-code-actions
-    "aa" 'lsp-execute-code-action
     "an" 'lsp-java-actionable-notifications
 
     "bp" 'lsp-java-build-project
@@ -878,16 +916,7 @@ if it is not the first event."
     "er" 'dap-eval-region
     "es" 'dap-eval-dwim
 
-    "gg" '(xref-find-definitions :async true)
-    "gG" 'xref-find-definitions-other-window
-    "gi" 'lsp-goto-implementation
-    "gr" 'xref-find-references
-    "gt" 'lsp-goto-type-definition
-
-    "ha" 'xref-find-apropos
     "hc" 'lsp-java-classpath-browse
-    "hh" 'lsp-describe-thing-at-point
-    "hi" 'counsel-imenu
 
     "rec" 'lsp-java-extract-to-constant
     "rel" 'lsp-java-extract-to-local-variable
@@ -897,25 +926,10 @@ if it is not the first event."
     "rl" 'lsp-java-create-local
     "ri" 'lsp-java-add-import
     "rI" 'lsp-java-organize-imports
-    "rn" 'lsp-rename
     "rp" 'lsp-java-create-parameter
 
-    "sr" 'lsp-restart-workspace
-    "sfa" 'lsp-workspace-folders-add
-    "sfd" 'lsp-workspace-folders-remove
-
     "tc" 'dap-java-run-test-class
-    "tm" 'dap-java-run-test-method
-
-    "ug" 'lsp-ui-peek-find-definitions
-    "ui" 'lsp-ui-peek-find-implementation
-    "uI" 'lsp-ui-imenu
-    "ur" 'lsp-ui-peek-find-references
-    )
-
-  (general-nmap 'java-mode-map
-    "gd" '(xref-find-definitions :async true)
-    "K" 'lsp-describe-thing-at-point)
+    "tm" 'dap-java-run-test-method)
   :config
   (setq lsp-java-workspace-dir (no-littering-expand-var-file-name "lsp-java/workspace/")
         lsp-java-workspace-cache-dir (no-littering-expand-var-file-name "lsp-java/workspace/.cache/")
@@ -971,74 +985,30 @@ if it is not the first event."
 (use-feature python
   :demand t
   :init
-  (mah-local-leader '(python-mode-map)
-    "=" 'lsp-format-buffer
-    "as" 'lsp-ui-sideline-apply-code-actions
-    "aa" 'lsp-execute-code-action
-
-    "gg" '(xref-find-definitions :async true)
-    "gG" 'xref-find-definitions-other-window
-    "gi" 'lsp-goto-implementation
-    "gr" 'xref-find-references
-    "gt" 'lsp-goto-type-definition
-
-    "ha" 'xref-find-apropos
-    "hh" 'lsp-describe-thing-at-point
-
-    "rn" 'lsp-rename
-
-    "sr" 'lsp-restart-workspace
-    "sR" 'cquery-freshen-index
-
-    "ug" 'lsp-ui-peek-find-definitions
-    "ui" 'lsp-ui-peek-find-implementation
-    "uI" 'lsp-ui-imenu
-    "ur" 'lsp-ui-peek-find-references)
+  (mah:lsp-default-keys 'python-mode-map)
   (add-hook 'python-mode-hook #'lsp))
 
 ;; golang
 (use-package go-mode
   :init
   (setq gofmt-command "goimports")
-  (mah-local-leader '(go-mode-map)
-    "ga" 'go-goto-arguments
-    "gD" 'go-goto-docstring
-    "gf" 'go-goto-function
-    "gg" 'godef-jump
-    "gG" 'godef-jump-other-window
-    "gn" 'go-goto-function-name
-    "gr" 'go-goto-return-values
-    "gm" 'go-goto-method-receiver
+  ;; (mah-local-leader '(go-mode-map)
+  ;;   "ga" 'go-goto-arguments
+  ;;   "gD" 'go-goto-docstring
+  ;;   "gf" 'go-goto-function
+  ;;   "gg" 'godef-jump
+  ;;   "gG" 'godef-jump-other-window
+  ;;   "gn" 'go-goto-function-name
+  ;;   "gr" 'go-goto-return-values
+  ;;   "gm" 'go-goto-method-receiver
 
-    "hh" 'godef-describe)
-  (general-nmap '(go-mode-map)
-    "gd" 'godef-jump
-    "K" 'godef-describe)
+  ;;   "hh" 'godef-describe)
+  ;; (general-nmap '(go-mode-map)
+  ;;   "gd" 'godef-jump
+  ;;   "K" 'godef-describe)
   (add-to-list 'yas-snippet-dirs (expand-file-name "snippets/yasnippet-go"
                                                    user-emacs-directory))
-  (mah-local-leader '(go-mode-map)
-    "=" 'lsp-format-buffer
-    "as" 'lsp-ui-sideline-apply-code-actions
-    "aa" 'lsp-execute-code-action
-
-    "gg" '(xref-find-definitions :async true)
-    "gG" 'xref-find-definitions-other-window
-    "gi" 'lsp-goto-implementation
-    "gr" 'xref-find-references
-    "gt" 'lsp-goto-type-definition
-
-    "ha" 'xref-find-apropos
-    "hh" 'lsp-describe-thing-at-point
-
-    "rn" 'lsp-rename
-
-    "sr" 'lsp-restart-workspace
-    "sR" 'cquery-freshen-index
-
-    "ug" 'lsp-ui-peek-find-definitions
-    "ui" 'lsp-ui-peek-find-implementation
-    "uI" 'lsp-ui-imenu
-    "ur" 'lsp-ui-peek-find-references)
+  (mah:lsp-default-keys 'go-mode-map)
   (add-hook 'go-mode-hook 'lsp)
   )
 
@@ -1057,43 +1027,21 @@ if it is not the first event."
         ;; alternatively, (setq cquery-sem-highlight-method 'overlay)
         cquery-sem-highlight-method 'font-lock)
 
+  (mah:lsp-default-keys '(c++-mode-map c-mode-map))
   (mah-local-leader
     :keymaps '(c++-mode-map c-mode-map)
-    "=" 'lsp-format-buffer
-    "as" 'lsp-ui-sideline-apply-code-actions
-    "aa" 'lsp-execute-code-action
-
     "gb" '(cquery-xref-find-custom "$cquery/base")
     "gc" '(cquery-xref-find-custom "$cquery/callers")
-    "gg" '(xref-find-definitions :async true)
-    "gG" 'xref-find-definitions-other-window
-    "gi" 'lsp-goto-implementation
-    "gr" 'xref-find-references
-    "gt" 'lsp-goto-type-definition
     "gv" '(cquery-xref-find-custom "$cquery/vars")
 
-    "ha" 'xref-find-apropos
-    "hh" 'lsp-describe-thing-at-point
     "hH" 'cquery-member-hierarchy
-    "hi" 'counsel-imenu
 
-    "rn" 'lsp-rename
-
-    "sr" 'lsp-restart-workspace
     "sR" 'cquery-freshen-index
 
     "ub" '(lsp-ui-peek-find-custom 'base "$cquery/base")
     "uc" '(lsp-ui-peek-find-custom 'callers "$cquery/callers")
-    "ug" 'lsp-ui-peek-find-definitions
-    "ui" 'lsp-ui-peek-find-implementation
-    "uI" 'lsp-ui-imenu
-    "ur" 'lsp-ui-peek-find-references
     "uv" '(lsp-ui-peek-find-custom 'random "$cquery/random") ;; jump to a random declaration
     )
-  (general-nmap
-    :keymaps '(c++-mode-map c-mode-map)
-    "gd" '(xref-find-definitions :async true)
-    "K" 'lsp-describe-thing-at-point)
 
   (with-eval-after-load 'projectile
     (setq projectile-project-root-files-top-down-recurring
@@ -1118,65 +1066,21 @@ if it is not the first event."
   :init
   (add-to-list 'auto-mode-alist '("\\.js\\'" . rjsx-mode))
   (setq-default js-indent-level 2)
-  (mah-local-leader '(rjsx-mode-map)
-    "=" 'lsp-format-buffer
-    "as" 'lsp-ui-sideline-apply-code-actions
-    "aa" 'lsp-execute-code-action
-
-    "gg" '(xref-find-definitions :async true)
-    "gG" 'xref-find-definitions-other-window
-    "gi" 'lsp-goto-implementation
-    "gr" 'xref-find-references
-    "gt" 'lsp-goto-type-definition
-
-    "ha" 'xref-find-apropos
-    "hh" 'lsp-describe-thing-at-point
-
+  (mah:lsp-default-keys 'rjsx-mode-map)
+  (mah-local-leader 'rjsx-mode-map
     "icc" 'js-doc-insert-function-doc
     "icf" 'js-doc-insert-file-doc
-    "ict" 'js-doc-insert-tag
-
-    "rn" 'lsp-rename
-
-    "sr" 'lsp-restart-workspace
-    "sR" 'cquery-freshen-index
-
-    "ug" 'lsp-ui-peek-find-definitions
-    "ui" 'lsp-ui-peek-find-implementation
-    "uI" 'lsp-ui-imenu
-    "ur" 'lsp-ui-peek-find-references)
+    "ict" 'js-doc-insert-tag)
   (add-hook 'rjsx-mode-hook 'lsp))
 
 (use-package typescript-mode
   :init
   (setq-default typescript-indent-level 2)
-  (mah-local-leader '(typescript-mode-map)
-    "=" 'lsp-format-buffer
-    "as" 'lsp-ui-sideline-apply-code-actions
-    "aa" 'lsp-execute-code-action
-
-    "gg" '(xref-find-definitions :async true)
-    "gG" 'xref-find-definitions-other-window
-    "gi" 'lsp-goto-implementation
-    "gr" 'xref-find-references
-    "gt" 'lsp-goto-type-definition
-
-    "ha" 'xref-find-apropos
-    "hh" 'lsp-describe-thing-at-point
-
+  (mah:lsp-default-keys 'typescript-mode-map)
+  (mah-local-leader 'typescript-mode-map
     "icc" 'js-doc-insert-function-doc
     "icf" 'js-doc-insert-file-doc
-    "ict" 'js-doc-insert-tag
-
-    "rn" 'lsp-rename
-
-    "sr" 'lsp-restart-workspace
-    "sR" 'cquery-freshen-index
-
-    "ug" 'lsp-ui-peek-find-definitions
-    "ui" 'lsp-ui-peek-find-implementation
-    "uI" 'lsp-ui-imenu
-    "ur" 'lsp-ui-peek-find-references)
+    "ict" 'js-doc-insert-tag)
   (add-hook 'typescript-mode-hook 'lsp))
 
 (use-package js-doc
@@ -1227,33 +1131,7 @@ if it is not the first event."
 ;; Rust
 (use-package rust-mode
   :init
-  (mah-local-leader '(rust-mode-map)
-    "=" 'lsp-format-buffer
-    "as" 'lsp-ui-sideline-apply-code-actions
-    "aa" 'lsp-execute-code-action
-
-    "gg" '(xref-find-definitions :async true)
-    "gG" 'xref-find-definitions-other-window
-    "gi" 'lsp-goto-implementation
-    "gr" 'xref-find-references
-    "gt" 'lsp-goto-type-definition
-
-    "ha" 'xref-find-apropos
-    "hh" 'lsp-describe-thing-at-point
-
-    "icc" 'js-doc-insert-function-doc
-    "icf" 'js-doc-insert-file-doc
-    "ict" 'js-doc-insert-tag
-
-    "rn" 'lsp-rename
-
-    "sr" 'lsp-restart-workspace
-    "sR" 'cquery-freshen-index
-
-    "ug" 'lsp-ui-peek-find-definitions
-    "ui" 'lsp-ui-peek-find-implementation
-    "uI" 'lsp-ui-imenu
-    "ur" 'lsp-ui-peek-find-references)
+  (mah:lsp-default-keys 'rust-mode-map)
   (add-hook 'rust-mode-hook 'lsp))
 
 ;; Ruby
