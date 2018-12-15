@@ -691,6 +691,8 @@ if it is not the first event."
 ;;   (moody-replace-mode-line-buffer-identification)
 ;;   (moody-replace-vc-mode))
 
+(use-package rainbow-mode)
+
 (use-package yasnippet
   :demand t
   :config
@@ -864,6 +866,7 @@ if it is not the first event."
        "rn" 'lsp-rename
 
        "sr" 'lsp-restart-workspace
+       "sq" 'lsp-shutdown-workspace
        "sfa" 'lsp-workspace-folders-add
        "sfd" 'lsp-workspace-folders-remove
 
