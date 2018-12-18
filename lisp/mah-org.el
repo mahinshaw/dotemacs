@@ -41,6 +41,15 @@ Inserted by installing `org-mode' or when a release is made."
 
 (use-package org ; or org-plus-contrib if desired
   :init
+  (setq org-todo-keywords '((sequence "TODO" "DOING" "BLOCKED" "REVIEW" "|" "DONE" "CANCELLED")))
+  ;; TODO - test out 'note some time. It may be useful
+  (setq org-log-done 'time)
+  (mah-local-leader 'org-mode-map
+    "tt" 'org-todo
+    "ih" 'org-insert-heading-after-current
+    "iH" 'org-insert-heading
+    )
+
   (with-eval-after-load 'org-capture
 
     (general-define-key
