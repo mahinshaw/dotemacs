@@ -698,6 +698,20 @@ if it is not the first event."
   :config
   (yas-global-mode 1))
 
+;;; Dev tooling
+(use-package restclient
+  :mode ("\\.http\\'" . restclient-mode)
+  :init
+  (mah-local-leader 'restclient-mode-map
+    "ee" 'restclient-http-send-current
+    "eE" 'restclient-http-send-current-raw
+    "ew" 'restclient-http-send-current-stay-in-window
+    "y" 'restclient-copy-curl-command))
+
+(use-package company-restclient
+  :config
+  (add-to-list 'company-backends 'company-restclient) )
+
 ;;; language specific
 (use-package csv-mode
   :init
