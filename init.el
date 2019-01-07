@@ -417,6 +417,7 @@ if it is not the first event."
   :config (dash-enable-font-lock))
 
 (use-package diff-hl
+  :demand t
   :init
   (add-hook 'magit-post-refresh-hook #'diff-hl-magit-post-refresh)
   (add-hook 'dired-mode-hook #'diff-hl-dired-mode-unless-remote)
@@ -494,7 +495,6 @@ if it is not the first event."
     "en" 'flycheck-next-error
     "ep" 'flycheck-previous-error)
   (add-hook 'after-init-hook #'global-flycheck-mode))
-
 
 (use-feature help
   :config (temp-buffer-resize-mode))
@@ -826,7 +826,8 @@ if it is not the first event."
   :demand t
   :init
   (setq lsp-inhibit-message t
-        lsp-eldoc-render-all nil)
+        lsp-eldoc-render-all nil
+        lsp-prefer-flymake nil)
   (add-hook 'lsp-after-open-hook 'lsp-enable-imenu)
   (require 'lsp-clients)
   (defadvice xref-find-definitions (before add-evil-jump activate) (evil-set-jump))
@@ -958,7 +959,7 @@ if it is not the first event."
                 (setq c-basic-offset 2
                       lsp-java-save-action-organize-imports nil)
 
-                ;; (flycheck-mode t)
+                (flycheck-mode t)
                 ;; (lsp-ui-flycheck-enable t)
                 (lsp-ui-sideline-mode t)
                 (lsp-ui-doc-enable nil)
@@ -1070,7 +1071,6 @@ if it is not the first event."
     (progn
       (cquery//enable)
       (flycheck-mode t)
-      (lsp-ui-flycheck-enable t)
       (lsp-sideline-mode t)))
   (add-hook 'c-mode-hook #'mah/cquery-hook)
   (add-hook 'c++-mode-hook #'mah/cquery-hook)
