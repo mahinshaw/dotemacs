@@ -25,6 +25,8 @@
         initial-buffer-choice t
         initial-scratch-message ""
         load-prefer-newer t)
+  ;; bells and flash no more
+  (setq ring-bell-function 'ignore)
   (scroll-bar-mode 0)
   (tool-bar-mode 0)
   (menu-bar-mode 0))
@@ -733,6 +735,18 @@ if it is not the first event."
 (use-package docker)
 
 (use-package dockerfile-mode)
+
+(use-package markdown-mode
+  :mode (("README\\.md\\'" . gfm-mode)
+         ("\\.md\\'" . markdown-mode)
+         ("\\.markdown\\'" . markdown-mode))
+  :init
+  (setq markdown-command "multimarkdown")
+  :config
+  (mah-local-leader '(markdown-mode gfm-mode)
+    "il" 'markdown-insert-link
+    "ih" 'markdown-insert-header)
+  )
 
 (use-feature elisp-mode
   :init
