@@ -521,10 +521,18 @@ if it is not the first event."
     (setq indent-tabs-mode nil))
   (add-hook 'lisp-interaction-mode-hook #'indent-spaces-mode))
 
+(use-package sly
+  :init
+  (setq inferior-lisp-program (executable-find "sbcl"))
+  (mah-local-leader 'lisp-mode-map
+    "'" 'sly)
+  :config
+  (add-hook 'lisp-mode-hook #'lispy-mode))
+
 (use-package lispy
   :diminish lispy-mode
   :config
-  (lispy-set-key-theme '(lispy paredit c-digits)))
+  (lispy-set-key-theme '(lispy c-digits)))
 
 (use-package lispyville
   :diminish '(lispyville-mode . " ()");; (lispyville-mode-line-string " 🍰" " 🍰"))
@@ -618,6 +626,20 @@ if it is not the first event."
   :diminish 'undo-tree-mode)
 
 (use-package wgrep)
+
+(use-package wgrep-ag)
+
+(use-package ag
+  :init
+  (mah-leader
+    "swa" #'ag)
+  (autoload 'wgrep-ag-setup "wgrep-ag")
+  (add-hook 'ag-mode-hook 'wgrep-ag-setup))
+
+(use-package deadgrep
+  :init
+  (mah-leader
+    "swd" #'deadgrep))
 
 (use-package which-key
   :demand t
@@ -753,7 +775,7 @@ if it is not the first event."
   (progn
     (mah-company emacs-lisp-mode company-capf)
     (add-hook 'emacs-lisp-mode-hook #'flycheck-mode)
-    (add-hook 'emacs-lisp-mode-hook #'lispyville-mode))
+    (add-hook 'emacs-lisp-mode-hook #'lispy-mode))
   :config
   (mah-local-leader
     :keymaps 'emacs-lisp-mode-map
@@ -811,30 +833,33 @@ if it is not the first event."
 
       "sq" 'cider-quit
       "ss" 'cider-switch-to-repl-buffer
+      "sn" 'cider-repl-set-ns
 
+      "tf" 'cider-test-rerun-failed-tests
       "tn" 'cider-test-run-ns-tests
       "tt" 'cider-test-run-test
+      "tr" 'cider-test-rerun-test
       "tR" 'cider-test-show-report
 
       "Te" 'cider-enlighten-mode
       "Tt" 'cider-auto-test-mode
       )
 
-    (mah-local-leader 'cider-repl-mode-map
-      "sc" 'cider-repl-clear-buffer
-      "sc" 'cider-repl-clear-output
-      "sq" 'cider-quit
-      "ss" 'cider-switch-to-last-clojure-buffer
-      )
-
     (general-nmap 'clojure-mode-map
       "gd" 'cider-find-var
-      "K" 'cider-doc)))
+      "K" 'cider-doc)
+
+    (add-hook 'clojure-mode-hook #'lispy-mode)))
 
 (use-package cider
   :config
-  (progn
-    (mah-local-leader 'cider-mode-mode)))
+  (mah-local-leader 'cider-repl-mode-map
+    "sC" 'cider-repl-clear-buffer
+    "sc" 'cider-repl-clear-output
+    "sq" 'cider-quit
+    "ss" 'cider-switch-to-last-clojure-buffer
+    )
+  (add-hook 'cider-repl-mode-hook #'lispy-mode))
 
 (use-package lsp-mode
   :demand t
