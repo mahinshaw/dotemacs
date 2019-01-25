@@ -129,6 +129,10 @@
           doom-themes-enable-italic t)
     (load-theme 'doom-spacegrey t)
     (doom-themes-org-config)))
+;; (use-package poet-theme
+;;   :init
+;;   (add-hook 'text-mode-hook (lambda () (variable-pitch-mode 1)))
+;;   (load-theme 'poet t))
 
 (set-face-attribute 'default nil :font "Source Code Pro Semibold" :height 140)
 
@@ -500,6 +504,16 @@ if it is not the first event."
 
 (use-feature help
   :config (temp-buffer-resize-mode))
+
+(use-package helpful
+  :init
+  (mah-leader
+    "hdc" #'helpful-command
+    "hdf" #'helpful-callable
+    "hdF" #'helpful-function
+    "hdv" #'helpful-variable
+    "hdk" #'helpful-key
+    "hdp" #'helpful-at-point))
 
 (use-feature Info-mode
   :init
