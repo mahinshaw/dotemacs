@@ -819,6 +819,8 @@ if it is not the first event."
       "\"" 'cider-jack-in-cljs
       "="  'cider-format-buffer
 
+      "db" 'cider-debug-defun-at-point
+
       "e;" 'cider-eval-defun-to-comment
       "eb" 'cider-eval-buffer
       "ee" 'cider-eval-last-sexp
