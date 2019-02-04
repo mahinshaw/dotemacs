@@ -394,6 +394,14 @@ if it is not the first event."
       "ws" 'ace-swap-window
       "ww" 'ace-window)))
 
+(use-feature ansi-color
+  :init
+  (defun colorize-compilation-buffer ()
+    (toggle-read-only)
+    (ansi-color-apply-on-region compilation-filter-start (point))
+    (toggle-read-only))
+  (add-hook 'compilation-filter-hook 'colorize-compilation-buffer))
+
 (use-package anzu
   :config
   (progn
