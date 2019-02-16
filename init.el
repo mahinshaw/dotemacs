@@ -361,6 +361,7 @@ if it is not the first event."
          ("C-x M-g" . magit-dispatch-popup))
   :init
   (mah-leader
+    "gb" 'magit-blame
     "gs" 'magit-status)
   :config
   (progn
@@ -624,6 +625,8 @@ if it is not the first event."
 (use-feature reveal
   :diminish 'reveal-mode)
 
+(use-package rmsbolt)
+
 (use-package savehist
   :config (savehist-mode))
 
@@ -820,6 +823,8 @@ if it is not the first event."
     "K" 'elisp-slime-nav-describe-elisp-thing-at-point))
 
 (use-package clojure-mode
+  :init
+  (add-hook 'clojure-mode-hook #'lispy-mode)
   :config
   (progn
     (mah-local-leader 'clojure-mode-map
@@ -868,14 +873,13 @@ if it is not the first event."
       "Te" 'cider-enlighten-mode
       "Tt" 'cider-auto-test-mode
       )
-
     (general-nmap 'clojure-mode-map
       "gd" 'cider-find-var
-      "K" 'cider-doc)
-
-    (add-hook 'clojure-mode-hook #'lispy-mode)))
+      "K" 'cider-doc)))
 
 (use-package cider
+  :init
+  (add-hook 'cider-repl-mode-hook #'lispy-mode)
   :config
   (mah-local-leader 'cider-repl-mode-map
     "sC" 'cider-repl-clear-buffer
@@ -883,7 +887,7 @@ if it is not the first event."
     "sq" 'cider-quit
     "ss" 'cider-switch-to-last-clojure-buffer
     )
-  (add-hook 'cider-repl-mode-hook #'lispy-mode))
+  )
 
 (use-package lsp-mode
   :demand t
@@ -893,8 +897,7 @@ if it is not the first event."
         lsp-prefer-flymake nil)
   (add-hook 'lsp-after-open-hook 'lsp-enable-imenu)
   (require 'lsp-clients)
-  (defadvice xref-find-definitions (before add-evil-jump activate) (evil-set-jump))
-  )
+  (defadvice xref-find-definitions (before add-evil-jump activate) (evil-set-jump)))
 
 (use-package lsp-ui
   :demand t
@@ -927,10 +930,11 @@ if it is not the first event."
        "as" 'lsp-ui-sideline-apply-code-actions
        "aa" 'lsp-execute-code-action
 
-       "gg" '(xref-find-definitions :async true)
+       "gD" 'lsp-find-declaration
+       "gg" 'lsp-find-definition ;; (xref-find-definitions :async true)
        "gG" 'xref-find-definitions-other-window
        "gi" 'lsp-goto-implementation
-       "gr" 'xref-find-references
+       "gr" 'lsp-find-references
        "gt" 'lsp-goto-type-definition
 
        "Ed" 'flymake-goto-diagnostic
@@ -943,10 +947,13 @@ if it is not the first event."
 
        "rn" 'lsp-rename
 
+       "ssd" 'lsp-describe-session
        "sr" 'lsp-restart-workspace
        "sq" 'lsp-shutdown-workspace
        "sfa" 'lsp-workspace-folders-add
        "sfd" 'lsp-workspace-folders-remove
+
+       "Tl" 'lsp-lens-mode
 
        "ug" 'lsp-ui-peek-find-definitions
        "ui" 'lsp-ui-peek-find-implementation
@@ -955,15 +962,49 @@ if it is not the first event."
 
      (general-nmap
        :keymaps ,mode-map
-       "gd" '(xref-find-definitions :async true)
+       "gd" 'lsp-goto-type-definition ;; (xref-find-definitions :async true)
        "K" 'lsp-describe-thing-at-point))
   )
 
+(defmacro mah:dap-default-keys (mode-map)
+  "Given a MODE-MAP, assign the default keys for dap based major modes to local leader."
+  `(progn
+     (mah-local-leader ,mode-map
+       "dbb" 'dap-breakpoint-toggle
+       "dba" 'dap-breakpoint-add
+       "dbr" 'dap-breakpoint-delete
+       "dbR" 'dap-breakpoint-delete-all
+       "ddd" 'dap-debug
+       "ddl" 'dap-debug-last
+       "ddr" 'dap-debug-recent
+       "ddo" 'dap-go-to-output-buffer
+       "ddt" 'dap-debug-edit-template
+       "dh" 'dap-hydra
+       "dl" 'dap-ui-list-sessions
+       "dq" 'dap-disconnect
+       "dn" 'dap-next
+       "di" 'dap-step-in
+       "dc" 'dap-continue
+       "do" 'dap-step-out
+       "dtc" 'dap-java-debug-test-class
+       "dtm" 'dap-java-debug-test-method
+       "dss" 'dap-switch-session
+       "dst" 'dap-switch-thread
+       "dsf" 'dap-switch-stack-frame
+       "dub" 'dap-ui-breakpoints
+       "dui" 'dap-ui-inspect
+       "dul" 'dap-ui-locals
+       "dur" 'dap-uid-repl
+       "dus" 'dap-ui-sessions
+       "duu" 'dap-ui-inspect-thing-at-point)))
+
 ;;; java
+(use-package keystore-mode)
+
 (use-package lsp-java
-  :demand t
   :init
   (mah:lsp-default-keys 'java-mode-map)
+  (mah:dap-default-keys 'java-mode-map)
   (mah-local-leader 'java-mode-map
     "="  'google-java-format-buffer
     "an" 'lsp-java-actionable-notifications
@@ -971,27 +1012,6 @@ if it is not the first event."
     "bp" 'lsp-java-build-project
     "bu" 'lsp-java-update-project-configuration
     "bU" 'lsp-java-update-user-settings
-
-    "dbb" 'dap-breakpoint-toggle
-    "dba" 'dap-breakpoint-add
-    "dbr" 'dap-breakpoint-delete
-    "dbR" 'dap-breakpoint-delete-all
-    "dda" 'dap-debug
-    "ddl" 'dap-debug-last
-    "ddr" 'dap-debug-recent
-    "ddo" 'dap-go-to-output-buffer
-    "dh" 'dap-hydra
-    "dl" 'dap-ui-list-sessions
-    "dq" 'dap-disconnect
-    "dn" 'dap-next
-    "di" 'dap-step-in
-    "dc" 'dap-continue
-    "do" 'dap-step-out
-    "dtc" 'dap-java-debug-test-class
-    "dtm" 'dap-java-debug-test-method
-    "dss" 'dap-switch-session
-    "dst" 'dap-switch-thread
-    "dsf" 'dap-switch-stack-frame
 
     "ee" 'dap-eval
     "er" 'dap-eval-region
@@ -1206,7 +1226,10 @@ if it is not the first event."
 ;; (use-package tuareg)
 
 ;; protobuf
-(use-package protobuf-mode)
+(use-package protobuf-mode
+  :straight (protobuf-mode :type git
+                           :host github
+                           :repo "emacsmirror/protobuf-mode"))
 
 ;; Rust
 (use-package rust-mode
