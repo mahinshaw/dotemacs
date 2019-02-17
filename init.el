@@ -122,7 +122,6 @@
 ;;; themes
 
 (use-package doom-themes
-  :demand t
   :init
   (progn
     (setq doom-themes-enable-bold t
@@ -221,9 +220,8 @@
                     "s" 'split-window-vertically))
 
 (use-feature display-line-numbers
-  :demand t
   :init
-  (setq display-line-numbers-type 'relative)
+  ;; (setq display-line-numbers-type 'relative)
   (when (version<= "26.0.50" emacs-version )
     ;; (global-display-line-numbers-mode)
     (add-hook 'prog-mode-hook #'display-line-numbers-mode)))
@@ -443,7 +441,6 @@ if it is not the first event."
   (diff-hl-margin-mode))
 
 (use-feature dired
-  :demand t
   :config
   (progn
     (general-nmap
@@ -453,7 +450,6 @@ if it is not the first event."
     (setq dired-listing-switches "-alh")))
 
 (use-feature ediff
-  :demand t
   :init
   (setq-default
    ediff-window-setup-function 'ediff-setup-windows-plain
@@ -909,12 +905,10 @@ if it is not the first event."
         lsp-ui-sideline-show-hover t
         lsp-ui-sideline-show-code-actions t
         lsp-ui-sideline-update-mode 'point)
-  (lsp-ui-doc-enable nil)
-  )
+  (lsp-ui-doc-enable nil))
 
 (use-package company-lsp
   :after company
-  :demand t
   :init
   (setq company-lsp-enable-snippet t
         company-lsp-cache-candidates t ;; nil
@@ -1031,7 +1025,6 @@ if it is not the first event."
 
     "tc" 'dap-java-run-test-class
     "tm" 'dap-java-run-test-method)
-  :config
   (setq lsp-java-workspace-dir (no-littering-expand-var-file-name "lsp-java/workspace/")
         lsp-java-workspace-cache-dir (no-littering-expand-var-file-name "lsp-java/workspace/.cache/")
         lsp-java-server-install-dir (no-littering-expand-var-file-name "lsp-java/server"))
@@ -1064,9 +1057,10 @@ if it is not the first event."
 
 (require 'google-java-format)
 (setq google-java-format-executable "/usr/local/bin/google-java-format")
-(add-hook 'java-mode-hook
-	  (lambda ()
-	    (add-hook 'before-save-hook #'google-java-format-buffer nil 'local)))
+(defun google-java-hook ()
+  "Add a hook to to before-save which run google-java-format."
+  (add-hook 'before-save-hook #'google-java-format-buffer nil 'local))
+(add-hook 'java-mode-hook #'google-java-hook)
 
 (use-package groovy-mode)
 
@@ -1084,7 +1078,6 @@ if it is not the first event."
 
 ;; Python
 (use-feature python
-  :demand t
   :init
   (mah:lsp-default-keys 'python-mode-map)
   (add-hook 'python-mode-hook #'lsp))
@@ -1110,8 +1103,7 @@ if it is not the first event."
   (add-to-list 'yas-snippet-dirs (expand-file-name "snippets/yasnippet-go"
                                                    user-emacs-directory))
   (mah:lsp-default-keys 'go-mode-map)
-  (add-hook 'go-mode-hook 'lsp)
-  )
+  (add-hook 'go-mode-hook 'lsp))
 
 ;; C/C++
 (defun cquery//enable ()
@@ -1239,7 +1231,6 @@ if it is not the first event."
 
 ;; Ruby
 (use-package chruby
-  :demand t
   :config
   ;; run chruby at startup for tooling.
   (progn (chruby-use-corresponding)))
