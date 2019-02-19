@@ -980,8 +980,6 @@ if it is not the first event."
        "di" 'dap-step-in
        "dc" 'dap-continue
        "do" 'dap-step-out
-       "dtc" 'dap-java-debug-test-class
-       "dtm" 'dap-java-debug-test-method
        "dss" 'dap-switch-session
        "dst" 'dap-switch-thread
        "dsf" 'dap-switch-stack-frame
@@ -1006,6 +1004,9 @@ if it is not the first event."
     "bp" 'lsp-java-build-project
     "bu" 'lsp-java-update-project-configuration
     "bU" 'lsp-java-update-user-settings
+
+    "dtc" 'dap-java-debug-test-class
+    "dtm" 'dap-java-debug-test-method
 
     "ee" 'dap-eval
     "er" 'dap-eval-region
