@@ -1101,8 +1101,6 @@ if it is not the first event."
   ;; (general-nmap '(go-mode-map)
   ;;   "gd" 'godef-jump
   ;;   "K" 'godef-describe)
-  (add-to-list 'yas-snippet-dirs (expand-file-name "snippets/yasnippet-go"
-                                                   user-emacs-directory))
   (mah:lsp-default-keys 'go-mode-map)
   (add-hook 'go-mode-hook 'lsp))
 
