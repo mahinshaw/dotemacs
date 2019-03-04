@@ -1045,7 +1045,7 @@ if it is not the first event."
 (use-package dap-mode
   :straight (dap-mode :type git
                       :host github
-                      :repo "yyoncho/dap-mode")
+                      :repo "emacs-lsp/dap-mode")
   :init
   (defun mah-dap-java-hook ()
     (progn
