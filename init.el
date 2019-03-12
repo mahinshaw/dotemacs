@@ -695,46 +695,38 @@ if it is not the first event."
 (display-time-mode 1)
 (setq display-time-string-forms '(dayname " " 12-hours ":" minutes " " am-pm))
 
-(setq mode-line-format
-      ;; ("%e"
-      ;;  mode-line-front-space
-      ;;  mode-line-mule-info
-      ;;  mode-line-client
-      ;;  mode-line-modified
-      ;;  mode-line-remote
-      ;;  mode-line-frame-identification
-      ;;  mode-line-buffer-identification
-      ;;  "   "
-      ;;  mode-line-position
-      ;;  evil-mode-line-tag
-      ;;  (vc-mode vc-mode)
-      ;;  "  "
-      ;;  mode-line-modes
-      ;;  mode-line-misc-info
-      ;;  mode-line-end-spaces)
-      (list
-       "%e"
-       mode-line-front-space
-       mode-line-mule-info
-       mode-line-client
-       mode-line-modified
-       mode-line-remote
-       mode-line-frame-identification
-       mode-line-buffer-identification
-       "   "
-       mode-line-position
-       evil-mode-line-tag
-       (vc-mode vc-mode)
-       "  "
-       mode-line-modes
-       mode-line-misc-info
-       mode-line-end-spaces
-       ))
+;; (setq mode-line-format
+;;       (list
+;;        "%e"
+;;        mode-line-front-space
+;;        mode-line-mule-info
+;;        mode-line-client
+;;        mode-line-modified
+;;        mode-line-remote
+;;        mode-line-frame-identification
+;;        mode-line-buffer-identification
+;;        "   "
+;;        mode-line-position
+;;        evil-mode-line-tag
+;;        (vc-mode vc-mode)
+;;        "  "
+;;        mode-line-modes
+;;        mode-line-misc-info
+;;        mode-line-end-spaces
+;;        ))
 ;; (use-package moody
 ;;   :demand t
 ;;   :config
 ;;   (moody-replace-mode-line-buffer-identification)
 ;;   (moody-replace-vc-mode))
+
+(use-package doom-modeline
+  :hook (after-init . doom-modeline-mode)
+  :init
+  (setq doom-modeline-height 18
+        doom-modeline-bar-width 3
+        doom-modeline-buffer-file-name-style 'truncate-upto-project ;; file-name
+        doom-modeline-lsp t))
 
 (use-package rainbow-mode)
 
