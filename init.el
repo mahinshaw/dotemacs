@@ -772,16 +772,17 @@ if it is not the first event."
 (use-package dockerfile-mode)
 
 (use-package markdown-mode
+  :commands (markdown-mode gfm-mode)
   :mode (("README\\.md\\'" . gfm-mode)
          ("\\.md\\'" . markdown-mode)
          ("\\.markdown\\'" . markdown-mode))
   :init
   (setq markdown-command "multimarkdown")
-  :config
-  (mah-local-leader '(markdown-mode gfm-mode)
+  (mah-local-leader '(markdown-mode-map gfm-mode-map)
     "il" 'markdown-insert-link
-    "ih" 'markdown-insert-header)
-  )
+    "iL" 'markdown-insert-reference-link-dwim
+    "ih" 'markdown-insert-header
+    ))
 
 (use-feature elisp-mode
   :init
