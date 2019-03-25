@@ -128,10 +128,11 @@
           doom-themes-enable-italic t)
     (load-theme 'doom-spacegrey t)
     (doom-themes-org-config)))
-;; (use-package poet-theme
-;;   :init
-;;   (add-hook 'text-mode-hook (lambda () (variable-pitch-mode 1)))
-;;   (load-theme 'poet t))
+(use-package poet-theme
+  ;; :init
+  ;; (add-hook 'text-mode-hook (lambda () (variable-pitch-mode 1)))
+  ;; (load-theme 'poet t)
+  )
 
 (set-face-attribute 'default nil :font "Source Code Pro Semibold" :height 140)
 
