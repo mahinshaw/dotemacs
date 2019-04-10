@@ -334,7 +334,7 @@ if it is not the first event."
       "rl" 'ivy-resume
       "ry" 'counsel-yank-pop
       "sa" 'counsel-ag
-      "ss" 'swiper)
+      "ss" 'swiper-isearch)
     (general-def ivy-minibuffer-map
       "C-f" 'ivy-scroll-down-command
       "C-b" 'ivy-scroll-up-command
