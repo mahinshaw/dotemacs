@@ -35,7 +35,6 @@
 
 ;;; mah-straight.el - get the package manager going.
 (defvar bootstrap-version)
-(message "user-emacs-dir is %s" user-emacs-directory)
 (let ((bootstrap-file
        (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
       (bootstrap-version 5))
@@ -46,7 +45,7 @@
          'silent 'inhibit-cookies)
       (goto-char (point-max))
       (eval-print-last-sexp)))
-  (load bootstrap-file nil nil))
+  (load bootstrap-file nil 'nomessage))
 
 (require 'straight)
 (setq straight-use-package-by-default t)
@@ -96,10 +95,8 @@
   :init
   (setq exec-path-from-shell-arguments '())
   (when (memq window-system '(mac ns x))
-    (exec-path-from-shell-initialize)
-    (exec-path-from-shell-copy-env "JAVA_HOME")
-    (exec-path-from-shell-copy-env "GOROOT")
-    (exec-path-from-shell-copy-env "GOPATH")))
+    (setq exec-path-from-shell-variables '("PATH" "MANPATH" "GOPATH" "GOROOT" "JAVA_HOME"))
+    (exec-path-from-shell-initialize)))
 
 ;;; Bindings without a prefix for normal and motion
 (general-create-definer mah-no-pref
@@ -438,7 +435,6 @@ if it is not the first event."
   :config
   ;; (setq diff-hl-draw-borders nil)
   (global-diff-hl-mode)
-  (diff-hl-dired-mode)
   (diff-hl-margin-mode))
 
 (use-feature dired
@@ -880,7 +876,6 @@ if it is not the first event."
   )
 
 (use-package lsp-mode
-  :demand t
   :init
   (setq lsp-inhibit-message t
         lsp-eldoc-render-all nil
@@ -890,7 +885,6 @@ if it is not the first event."
   (defadvice xref-find-definitions (before add-evil-jump activate) (evil-set-jump)))
 
 (use-package lsp-ui
-  :demand t
   :init
   (add-hook 'lsp-mode-hook #'lsp-ui-mode)
   :config
@@ -907,8 +901,8 @@ if it is not the first event."
   (setq company-lsp-enable-snippet t
         company-lsp-cache-candidates t ;; nil
         ;; company-transformers nil
-        company-lsp-async t
-        ))
+        company-lsp-async t)
+  :config (push 'company-lsp company-backends))
 
 (defmacro mah:lsp-default-keys (mode-map)
   "Given a MODE-MAP, assign the default keys for lsp based major modes to local leader."
@@ -1020,21 +1014,12 @@ if it is not the first event."
 
     "tc" 'dap-java-run-test-class
     "tm" 'dap-java-run-test-method)
-  (setq lsp-java-workspace-dir (no-littering-expand-var-file-name "lsp-java/workspace/")
+  (setq c-basic-offset 2
+        lsp-java-save-action-organize-imports nil
+        lsp-java-workspace-dir (no-littering-expand-var-file-name "lsp-java/workspace/")
         lsp-java-workspace-cache-dir (no-littering-expand-var-file-name "lsp-java/workspace/.cache/")
         lsp-java-server-install-dir (no-littering-expand-var-file-name "lsp-java/server"))
-  (add-hook 'java-mode-hook
-            (lambda ()
-              (progn
-                (push 'company-lsp company-backends)
-                (setq c-basic-offset 2
-                      lsp-java-save-action-organize-imports nil)
-
-                (flycheck-mode t)
-                ;; (lsp-ui-flycheck-enable t)
-                (lsp-ui-sideline-mode t)
-                (lsp-ui-doc-enable nil)
-                (lsp)))))
+  (add-hook 'java-mode-hook #'lsp))
 
 (use-package dap-mode
   :straight (dap-mode :type git
