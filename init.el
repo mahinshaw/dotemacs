@@ -93,9 +93,9 @@
 (use-package exec-path-from-shell
   :demand t
   :init
-  (setq exec-path-from-shell-arguments '())
+  (setq exec-path-from-shell-arguments '()
+        exec-path-from-shell-variables '("PATH" "MANPATH" "GOPATH" "GOROOT" "JAVA_HOME"))
   (when (memq window-system '(mac ns x))
-    (setq exec-path-from-shell-variables '("PATH" "MANPATH" "GOPATH" "GOROOT" "JAVA_HOME"))
     (exec-path-from-shell-initialize)))
 
 ;;; Bindings without a prefix for normal and motion
@@ -327,6 +327,8 @@ if it is not the first event."
       "bb" 'ivy-switch-buffer
       "ff" 'counsel-find-file
       "fr" 'counsel-recentf
+      "FF" 'make-frame
+      "Fo" 'other-frame
       "ha" 'counsel-apropos
       "rl" 'ivy-resume
       "ry" 'counsel-yank-pop
@@ -668,6 +670,7 @@ if it is not the first event."
     (concat mah-leader " b") "buffers"
     (concat mah-leader " e") "flycheck"
     (concat mah-leader " f") "files"
+    (concat mah-leader " F") "frames"
     (concat mah-leader " g") "git"
     (concat mah-leader " h") "help"
     (concat mah-leader " p") "projects"
