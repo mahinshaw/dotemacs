@@ -1060,10 +1060,16 @@ if it is not the first event."
     "bgT" 'gradle-test--daemon))
 
 ;; Python
+;; (use-package pyenv-mode-auto
+;;   :demand t)
+
 (use-feature python
+  :hook (python-mode . lsp)
   :init
-  (mah:lsp-default-keys 'python-mode-map)
-  (add-hook 'python-mode-hook #'lsp))
+  (mah:lsp-default-keys 'python-mode-map))
+
+(use-package lsp-python-ms
+  :hook (python-mode . lsp))
 
 ;; golang
 (use-package go-mode
