@@ -98,6 +98,12 @@
   (when (memq window-system '(mac ns x))
     (exec-path-from-shell-initialize)))
 
+;;; Direnv is my friend
+(use-package direnv
+  :demand t
+  :config
+  (direnv-mode))
+
 ;;; Bindings without a prefix for normal and motion
 (general-create-definer mah-no-pref
   :states '(normal motion)
@@ -1068,8 +1074,18 @@ if it is not the first event."
   :init
   (mah:lsp-default-keys 'python-mode-map))
 
+;; (use-package pipenv
+;;   :init
+;;   (setq pipenv-projectile-after-switch-function #'pipenv-projectile-after-switch-extended))
+
+(defun python-hook ()
+  "Hook for python mode."
+  (progn
+    (require 'lsp-python-ms)
+    (lsp)))
+
 (use-package lsp-python-ms
-  :hook (python-mode . lsp))
+  :hook (python-mode . python-hook))
 
 ;; golang
 (use-package go-mode
