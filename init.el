@@ -265,8 +265,9 @@ if it is not the first event."
   "^" 'evil-beginning-of-line)
 
 (use-package evil-collection
-  :custom (evil-collection-setup-minibuffer nil) ;; TODO this messes with helm bindings.
-  :init
+  :demand t
+  :config
+  (setq evil-collection-setup-minibuffer nil) ;; TODO this messes with helm bindings.
   (evil-collection-init))
 
 (use-package evil-commentary
