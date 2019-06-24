@@ -1158,6 +1158,10 @@ if it is not the first event."
   (cquery-use-default-rainbow-sem-highlight))
 
 ;; Javascript|Typescript
+(use-feature js-mode
+  :init
+  (setq-default js-indent-level 2))
+
 (use-package rjsx-mode
   :init
   (add-to-list 'auto-mode-alist '("\\.js\\'" . rjsx-mode))
