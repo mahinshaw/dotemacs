@@ -131,6 +131,7 @@
           doom-themes-enable-italic t)
     (load-theme 'doom-spacegrey t)
     (doom-themes-org-config)))
+
 (use-package poet-theme
   ;; :init
   ;; (add-hook 'text-mode-hook (lambda () (variable-pitch-mode 1)))
@@ -1207,7 +1208,8 @@ if it is not the first event."
 (use-package json-mode
   :init
   (add-to-list 'auto-mode-alist '("\\.avsc$" . json-mode))
-  (setq json-reformat:pretty-string? t)
+  (setq js-indent-level 2
+        json-reformat:pretty-string? t)
   (mah-local-leader 'json-mode-map
     "=" 'mah/json-reformat-buffer
     "p" 'jsons-print-path
