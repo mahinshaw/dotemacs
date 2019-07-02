@@ -1072,7 +1072,6 @@ if it is not the first event."
 ;;   :demand t)
 
 (use-feature python
-  :hook (python-mode . lsp)
   :init
   (mah:lsp-default-keys 'python-mode-map))
 
