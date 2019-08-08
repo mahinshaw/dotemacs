@@ -1026,6 +1026,8 @@ if it is not the first event."
     "tc" 'dap-java-run-test-class
     "tm" 'dap-java-run-test-method)
   (setq c-basic-offset 2
+        lsp-java-format-enabled nil
+        lsp-java-format-on-type-enabled nil
         lsp-java-save-actions-organize-imports nil
         lsp-java-workspace-dir (no-littering-expand-var-file-name "lsp-java/workspace/")
         lsp-java-workspace-cache-dir (no-littering-expand-var-file-name "lsp-java/workspace/.cache/")
