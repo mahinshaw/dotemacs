@@ -903,8 +903,15 @@ if it is not the first event."
         lsp-ui-sideline-show-symbol t
         lsp-ui-sideline-show-hover t
         lsp-ui-sideline-show-code-actions t
-        lsp-ui-sideline-update-mode 'point)
+        ;; lsp-ui-sideline-update-mode 'point
+        )
   (lsp-ui-doc-enable nil))
+
+(use-package treemacs)
+
+(use-package treemacs-projectile)
+
+(use-package lsp-treemacs :commands lsp-treemacs-errors-list)
 
 (use-package company-lsp
   :after company
@@ -922,6 +929,7 @@ if it is not the first event."
        "=" 'lsp-format-buffer
        "as" 'lsp-ui-sideline-apply-code-actions
        "aa" 'lsp-execute-code-action
+       "at" 'lsp-treemacs-quick-fix
 
        "gD" 'lsp-find-declaration
        "gg" 'lsp-find-definition ;; (xref-find-definitions :async true)
@@ -929,10 +937,6 @@ if it is not the first event."
        "gi" 'lsp-goto-implementation
        "gr" 'lsp-find-references
        "gt" 'lsp-goto-type-definition
-
-       "Ed" 'flymake-goto-diagnostic
-       "En" 'flymake-goto-next-error
-       "Ep" 'flymake-goto-prev-error
 
        "ha" 'xref-find-apropos
        "hh" 'lsp-describe-thing-at-point
@@ -946,7 +950,10 @@ if it is not the first event."
        "sfa" 'lsp-workspace-folders-add
        "sfd" 'lsp-workspace-folders-remove
 
+       "Te" 'lsp-treemacs-errors-list
        "Tl" 'lsp-lens-mode
+       "Tt" 'treemacs-project
+       "Ts" 'lsp-treemacs-symbols
 
        "ug" 'lsp-ui-peek-find-definitions
        "ui" 'lsp-ui-peek-find-implementation
