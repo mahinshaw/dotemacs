@@ -898,6 +898,8 @@ if it is not the first event."
 (use-package lsp-ui
   :init
   (add-hook 'lsp-mode-hook #'lsp-ui-mode)
+  (add-to-list 'lsp-file-watch-ignored "[/\\\\]bin$")
+  (add-to-list 'lsp-file-watch-ignored "[/\\\\]build$")
   :config
   (setq lsp-ui-sideline-enable t
         lsp-ui-sideline-show-symbol t
