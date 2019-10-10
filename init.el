@@ -1031,6 +1031,7 @@ if it is not the first event."
     "ri" 'lsp-java-add-import
     "rI" 'lsp-java-organize-imports
     "rp" 'lsp-java-create-parameter
+    "rcs" 'lsp-java-convert-to-static-import
 
     "tc" 'dap-java-run-test-class
     "tm" 'dap-java-run-test-method)
@@ -1121,52 +1122,59 @@ if it is not the first event."
   (add-hook 'go-mode-hook 'lsp))
 
 ;; C/C++
-(defun cquery//enable ()
-  "Enable cquery or throw an error."
-  (condition-case nil
-      (lsp-cquery-enable)
-    (user-error nil)))
-
-(use-package cquery
-  :commands lsp-cquery-enable
+(use-package ccls
+  :hook ((c-mode c++-mode objc-mode cuda-mode) .
+         (lambda () (require 'ccls) (lsp)))
   :init
-  (setq cquery-executable (executable-find "cquery")
-        cquery-extra-init-params '(:index (:comments 2) :cacheFormat "msgpack" :completion (:detailedLabel t))
-        ;; alternatively, (setq cquery-sem-highlight-method 'overlay)
-        cquery-sem-highlight-method 'font-lock)
+  (dolist (m '(c-mode-map c++-mode-map objc-mode-map cuda-mode-map))
+    (mah:lsp-default-keys m)))
 
-  (mah:lsp-default-keys '(c++-mode-map c-mode-map))
-  (mah-local-leader
-    :keymaps '(c++-mode-map c-mode-map)
-    "gb" '(cquery-xref-find-custom "$cquery/base")
-    "gc" '(cquery-xref-find-custom "$cquery/callers")
-    "gv" '(cquery-xref-find-custom "$cquery/vars")
+;; (defun cquery//enable ()
+;;   "Enable cquery or throw an error."
+;;   (condition-case nil
+;;       (lsp-cquery-enable)
+;;     (user-error nil)))
 
-    "hH" 'cquery-member-hierarchy
+;; (use-package cquery
+;;   :commands lsp-cquery-enable
+;;   :init
+;;   (setq cquery-executable (executable-find "cquery")
+;;         cquery-extra-init-params '(:index (:comments 2) :cacheFormat "msgpack" :completion (:detailedLabel t))
+;;         ;; alternatively, (setq cquery-sem-highlight-method 'overlay)
+;;         cquery-sem-highlight-method 'font-lock)
 
-    "sR" 'cquery-freshen-index
+;;   (mah:lsp-default-keys '(c++-mode-map c-mode-map))
+;;   (mah-local-leader
+;;     :keymaps '(c++-mode-map c-mode-map)
+;;     "gb" '(cquery-xref-find-custom "$cquery/base")
+;;     "gc" '(cquery-xref-find-custom "$cquery/callers")
+;;     "gv" '(cquery-xref-find-custom "$cquery/vars")
 
-    "ub" '(lsp-ui-peek-find-custom 'base "$cquery/base")
-    "uc" '(lsp-ui-peek-find-custom 'callers "$cquery/callers")
-    "uv" '(lsp-ui-peek-find-custom 'random "$cquery/random") ;; jump to a random declaration
-    )
+;;     "hH" 'cquery-member-hierarchy
 
-  (with-eval-after-load 'projectile
-    (setq projectile-project-root-files-top-down-recurring
-          (append '("compile_commands.json"
-                    ".cquery")
-                  projectile-project-root-files-top-down-recurring)))
+;;     "sR" 'cquery-freshen-index
 
-  (defun mah/cquery-hook ()
-    (progn
-      (cquery//enable)
-      (flycheck-mode t)
-      (lsp-sideline-mode t)))
-  (add-hook 'c-mode-hook #'mah/cquery-hook)
-  (add-hook 'c++-mode-hook #'mah/cquery-hook)
-  :config
-  ;; For rainbow semantic highlighting
-  (cquery-use-default-rainbow-sem-highlight))
+;;     "ub" '(lsp-ui-peek-find-custom 'base "$cquery/base")
+;;     "uc" '(lsp-ui-peek-find-custom 'callers "$cquery/callers")
+;;     "uv" '(lsp-ui-peek-find-custom 'random "$cquery/random") ;; jump to a random declaration
+;;     )
+
+;;   (with-eval-after-load 'projectile
+;;     (setq projectile-project-root-files-top-down-recurring
+;;           (append '("compile_commands.json"
+;;                     ".cquery")
+;;                   projectile-project-root-files-top-down-recurring)))
+
+;;   (defun mah/cquery-hook ()
+;;     (progn
+;;       (cquery//enable)
+;;       (flycheck-mode t)
+;;       (lsp-sideline-mode t)))
+;;   (add-hook 'c-mode-hook #'mah/cquery-hook)
+;;   (add-hook 'c++-mode-hook #'mah/cquery-hook)
+;;   :config
+;;   ;; For rainbow semantic highlighting
+;;   (cquery-use-default-rainbow-sem-highlight))
 
 ;; Javascript|Typescript
 (use-feature js-mode
