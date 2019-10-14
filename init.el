@@ -1291,6 +1291,15 @@ if it is not the first event."
 
 (require 'mah-org)
 
+;; Kubernetes
+(use-package kubernetes
+  :demand t
+  :commands (kubernetes-overview))
+
+(use-package kubernetes-evil
+  :demand t
+  :after kubernetes)
+
 ;; epub
 (use-package nov
   :init
