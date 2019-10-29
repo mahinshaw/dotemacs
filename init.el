@@ -895,6 +895,11 @@ if it is not the first event."
   (require 'lsp-clients)
   (defadvice xref-find-definitions (before add-evil-jump activate) (evil-set-jump)))
 
+(use-package lsp-ivy
+  :straight (lsp-ivy :type git
+                     :host github
+                     :repo "emacs-lsp/lsp-ivy"))
+
 (use-package lsp-ui
   :init
   (add-hook 'lsp-mode-hook #'lsp-ui-mode)
