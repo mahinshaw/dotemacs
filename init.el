@@ -350,6 +350,8 @@ if it is not the first event."
       "C-l" 'ivy-alt-done
       "C-h" 'ivy-backward-delete-char))
   :config
+  (setf (alist-get 'counsel-ag ivy-re-builders-alist)
+        #'ivy--regex)
   (ivy-mode 1))
 
 (use-package ivy-hydra)
@@ -1048,6 +1050,23 @@ if it is not the first event."
         lsp-java-workspace-cache-dir (no-littering-expand-var-file-name "lsp-java/workspace/.cache/")
         lsp-java-server-install-dir (no-littering-expand-var-file-name "lsp-java/server"))
   (add-hook 'java-mode-hook #'lsp))
+
+(use-package scala-mode
+  :mode "\\.s\\(cala\\|bt\\)$"
+  :init
+  (mah:lsp-default-keys 'scala-mode-map)
+  (mah:dap-default-keys 'scala-mode-map)
+  (add-hook 'scala-mode-hook 'lsp)
+  (mah-local-leader 'java-mode-map
+
+    "bc" 'lsp-metals-build-connect
+    "bi" 'lsp-metals-build-import
+
+    "dr" 'lsp-metals-doctor-run)
+  )
+
+(use-package sbt-mode
+  :commands sbt-start sbt-command)
 
 (use-package dap-mode
   :straight (dap-mode :type git
