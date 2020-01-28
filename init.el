@@ -365,6 +365,7 @@ if it is not the first event."
 
 ;;; Magit et al.
 (use-package magit
+  :demand t
   :bind (("C-x g"   . magit-status)
          ("C-x M-g" . magit-dispatch-popup))
   :init
@@ -390,6 +391,10 @@ if it is not the first event."
   :config (general-nmap '(magit-mode-map)
             "q" 'magit-mode-bury-buffer)
   )
+
+(use-package forge
+  :demand t
+  :after magit)
 
 ;;; General tooling
 (use-feature abbrev
