@@ -160,7 +160,12 @@
       ;; scroll horizontally 1 column at a time.
       hscroll-step 1
       ;; scroll horizontally 4 lines left and right
-      hscroll-margin 4)
+      hscroll-margin 4
+      ;; update read buffers for subprocess to allow more efficient passing of data
+      ;; https://twitter.com/yonchovski/status/1208476565715202048
+      ;; https://github.com/emacs-mirror/emacs/commit/cc78faee7d23dd0433ba537818a68cbd20fa52a3
+      read-process-output-max (* 1024 1024)
+      )
 (setq-default truncate-lines t
               ;; tabs should be 4 spaces
               tab-width 4
@@ -519,7 +524,8 @@ if it is not the first event."
     "el" 'flycheck-list-errors
     "en" 'flycheck-next-error
     "ep" 'flycheck-previous-error)
-  (add-hook 'after-init-hook #'global-flycheck-mode))
+  ;; (add-hook 'after-init-hook #'global-flycheck-mode)
+  )
 
 (use-feature help
   :config (temp-buffer-resize-mode))
@@ -897,7 +903,11 @@ if it is not the first event."
   :init
   (setq lsp-inhibit-message t
         lsp-eldoc-render-all nil
-        lsp-prefer-flymake nil)
+        lsp-prefer-flymake nil
+        lsp-eslint-server-command '("node"
+                                    "/Users/mhinshaw/.vscode/extensions/dbaeumer.vscode-eslint-2.0.15/server/out/eslintServer.js"
+                                    "--stdio"))
+
   (add-hook 'lsp-after-open-hook 'lsp-enable-imenu)
   (require 'lsp-clients)
   (defadvice xref-find-definitions (before add-evil-jump activate) (evil-set-jump)))
@@ -909,17 +919,8 @@ if it is not the first event."
 
 (use-package lsp-ui
   :init
-  (add-hook 'lsp-mode-hook #'lsp-ui-mode)
   (add-to-list 'lsp-file-watch-ignored "[/\\\\]bin$")
-  (add-to-list 'lsp-file-watch-ignored "[/\\\\]build$")
-  :config
-  (setq lsp-ui-sideline-enable t
-        lsp-ui-sideline-show-symbol t
-        lsp-ui-sideline-show-hover t
-        lsp-ui-sideline-show-code-actions t
-        ;; lsp-ui-sideline-update-mode 'point
-        )
-  (lsp-ui-doc-enable nil))
+  (add-to-list 'lsp-file-watch-ignored "[/\\\\]build$"))
 
 (use-package treemacs)
 
@@ -934,7 +935,7 @@ if it is not the first event."
         company-lsp-cache-candidates t ;; nil
         ;; company-transformers nil
         company-lsp-async t)
-  :config (push 'company-lsp company-backends))
+  )
 
 (defmacro mah:lsp-default-keys (mode-map)
   "Given a MODE-MAP, assign the default keys for lsp based major modes to local leader."
@@ -1052,8 +1053,7 @@ if it is not the first event."
         lsp-java-format-on-type-enabled nil
         lsp-java-save-actions-organize-imports nil
         lsp-java-workspace-dir (no-littering-expand-var-file-name "lsp-java/workspace/")
-        lsp-java-workspace-cache-dir (no-littering-expand-var-file-name "lsp-java/workspace/.cache/")
-        lsp-java-server-install-dir (no-littering-expand-var-file-name "lsp-java/server"))
+        lsp-java-workspace-cache-dir (no-littering-expand-var-file-name "lsp-java/workspace/.cache/"))
   (add-hook 'java-mode-hook #'lsp))
 
 (use-package scala-mode
