@@ -977,7 +977,8 @@ if it is not the first event."
 
      (general-nmap
        :keymaps ,mode-map
-       "gd" '(xref-find-definitions :async true)
+       "gd" 'lsp-find-definition
+       "gi" 'lsp-goto-implementation
        "K" 'lsp-describe-thing-at-point))
   )
 
