@@ -1093,9 +1093,11 @@ if it is not the first event."
 (defun google-java-hook ()
   "Add a hook to to before-save which run google-java-format."
   (add-hook 'before-save-hook #'google-java-format-buffer nil 'local))
-(add-hook 'java-mode-hook #'google-java-hook)
+;; (add-hook 'java-mode-hook #'google-java-hook)
 
-(use-package groovy-mode)
+(use-package groovy-mode
+  :init
+  (setq groovy-indent-offset 2))
 
 (use-package gradle-mode
   :diminish 'gradle-mode
