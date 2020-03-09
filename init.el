@@ -905,7 +905,7 @@ if it is not the first event."
         lsp-eldoc-render-all nil
         lsp-prefer-flymake nil
         lsp-eslint-server-command '("node"
-                                    "/Users/mhinshaw/.vscode/extensions/dbaeumer.vscode-eslint-2.0.15/server/out/eslintServer.js"
+                                    "/Users/mhinshaw/.vscode/extensions/dbaeumer.vscode-eslint-2.1.1/server/out/eslintServer.js"
                                     "--stdio"))
 
   (add-hook 'lsp-after-open-hook 'lsp-enable-imenu)
