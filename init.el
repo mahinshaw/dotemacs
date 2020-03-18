@@ -145,7 +145,11 @@
 (when mah-is-mac
   (setq mac-option-modifier 'super
         mac-command-modifier 'meta
-        ns-use-native-fullscreen nil))
+        ns-use-native-fullscreen nil
+        ;; gnu ls has --dired option
+        insert-directory-program "/usr/local/bin/gls"
+        dired-use-ls-dired t
+        ))
 
 ;; Emacs variable defaults
 
@@ -346,7 +350,8 @@ if it is not the first event."
       "rl" 'ivy-resume
       "ry" 'counsel-yank-pop
       "sa" 'counsel-ag
-      "ss" 'swiper-isearch)
+      "ss" 'swiper-isearch
+      "sS" 'counsel-grep-or-swiper)
     (general-def ivy-minibuffer-map
       "C-f" 'ivy-scroll-down-command
       "C-b" 'ivy-scroll-up-command
@@ -906,7 +911,8 @@ if it is not the first event."
         lsp-prefer-flymake nil
         lsp-eslint-server-command '("node"
                                     "/Users/mhinshaw/.vscode/extensions/dbaeumer.vscode-eslint-2.1.1/server/out/eslintServer.js"
-                                    "--stdio"))
+                                    "--stdio")
+        lsp-eslint-package-manager "yarn")
 
   (add-hook 'lsp-after-open-hook 'lsp-enable-imenu)
   (require 'lsp-clients)
