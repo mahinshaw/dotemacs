@@ -104,6 +104,24 @@
   :config
   (direnv-mode))
 
+;;; epa-file
+(use-feature epa-file
+  :init
+  (when mah-is-mac
+    (setq epa-pinentry-mode 'loopback)))
+
+;;; auth-source and pass
+(use-feature auth-source-pass
+  :demand t
+  :config
+  (auth-source-pass-enable))
+
+(use-feature auth-source
+  :init
+  (setq auth-sources '(password-store)) )
+
+(use-package pass)
+
 ;;; Bindings without a prefix for normal and motion
 (general-create-definer mah-no-pref
   :states '(normal motion)
@@ -176,7 +194,9 @@
               ;; don't want no stinking tabs
               indent-tabs-mode nil)
 
-;; (general-def :keymaps 'override "M-RET" 'toggle-frame-fullscreen)
+(general-def
+  :keymaps 'override
+  "C-M-<return>" 'toggle-frame-fullscreen)
 
 (mah-leader
   ;; Buffers
@@ -626,7 +646,15 @@ if it is not the first event."
     "p'" 'projectile-run-eshell
     )
   (projectile-mode 1)
-  )
+
+  ;; https://emacs.stackexchange.com/questions/26266/projectile-and-magit-branch-checkout/26272
+  (defun run-projectile-invalidate-cache (&rest _args)
+    ;; We ignore the args to `magit-checkout'.
+    (projectile-invalidate-cache nil))
+  (advice-add 'magit-checkout
+              :after #'run-projectile-invalidate-cache)
+  (advice-add 'magit-branch-and-checkout ; This is `b c'.
+              :after #'run-projectile-invalidate-cache))
 
 (use-package counsel-projectile
   :init
