@@ -938,7 +938,7 @@ if it is not the first event."
         lsp-eldoc-render-all nil
         lsp-prefer-flymake nil
         lsp-eslint-server-command '("node"
-                                    "/Users/mhinshaw/.vscode/extensions/dbaeumer.vscode-eslint-2.1.1/server/out/eslintServer.js"
+                                    "/Users/mhinshaw/.vscode/extensions/dbaeumer.vscode-eslint-2.1.2/server/out/eslintServer.js"
                                     "--stdio")
         lsp-eslint-package-manager "yarn")
 
@@ -1084,11 +1084,13 @@ if it is not the first event."
     "tc" 'dap-java-run-test-class
     "tm" 'dap-java-run-test-method)
   (setq c-basic-offset 2
-        lsp-java-format-enabled nil
+        ;; lsp-java-format-enabled nil
         lsp-java-format-on-type-enabled nil
         lsp-java-save-actions-organize-imports nil
         lsp-java-workspace-dir (no-littering-expand-var-file-name "lsp-java/workspace/")
-        lsp-java-workspace-cache-dir (no-littering-expand-var-file-name "lsp-java/workspace/.cache/"))
+        lsp-java-workspace-cache-dir (no-littering-expand-var-file-name "lsp-java/workspace/.cache/")
+        lsp-java-format-settings-url "https://raw.githubusercontent.com/google/styleguide/gh-pages/eclipse-java-google-style.xml"
+        lsp-java-format-settings-profile "GoogleStyle")
   (add-hook 'java-mode-hook #'lsp))
 
 (use-package scala-mode
@@ -1195,53 +1197,6 @@ if it is not the first event."
   (dolist (m '(c-mode-map c++-mode-map objc-mode-map cuda-mode-map))
     (mah:lsp-default-keys m)))
 
-;; (defun cquery//enable ()
-;;   "Enable cquery or throw an error."
-;;   (condition-case nil
-;;       (lsp-cquery-enable)
-;;     (user-error nil)))
-
-;; (use-package cquery
-;;   :commands lsp-cquery-enable
-;;   :init
-;;   (setq cquery-executable (executable-find "cquery")
-;;         cquery-extra-init-params '(:index (:comments 2) :cacheFormat "msgpack" :completion (:detailedLabel t))
-;;         ;; alternatively, (setq cquery-sem-highlight-method 'overlay)
-;;         cquery-sem-highlight-method 'font-lock)
-
-;;   (mah:lsp-default-keys '(c++-mode-map c-mode-map))
-;;   (mah-local-leader
-;;     :keymaps '(c++-mode-map c-mode-map)
-;;     "gb" '(cquery-xref-find-custom "$cquery/base")
-;;     "gc" '(cquery-xref-find-custom "$cquery/callers")
-;;     "gv" '(cquery-xref-find-custom "$cquery/vars")
-
-;;     "hH" 'cquery-member-hierarchy
-
-;;     "sR" 'cquery-freshen-index
-
-;;     "ub" '(lsp-ui-peek-find-custom 'base "$cquery/base")
-;;     "uc" '(lsp-ui-peek-find-custom 'callers "$cquery/callers")
-;;     "uv" '(lsp-ui-peek-find-custom 'random "$cquery/random") ;; jump to a random declaration
-;;     )
-
-;;   (with-eval-after-load 'projectile
-;;     (setq projectile-project-root-files-top-down-recurring
-;;           (append '("compile_commands.json"
-;;                     ".cquery")
-;;                   projectile-project-root-files-top-down-recurring)))
-
-;;   (defun mah/cquery-hook ()
-;;     (progn
-;;       (cquery//enable)
-;;       (flycheck-mode t)
-;;       (lsp-sideline-mode t)))
-;;   (add-hook 'c-mode-hook #'mah/cquery-hook)
-;;   (add-hook 'c++-mode-hook #'mah/cquery-hook)
-;;   :config
-;;   ;; For rainbow semantic highlighting
-;;   (cquery-use-default-rainbow-sem-highlight))
-
 ;; Javascript|Typescript
 (use-feature js-mode
   :init
@@ -1275,7 +1230,13 @@ if it is not the first event."
 
 (use-package prettier-js
   :init
-  (setq prettier-js-args '("--single-quote"))
+  ;; (setq prettier-js-args '("--single-quote"))
+  ;; (add-hook 'rjsx-mode-hook 'prettier-js-mode)
+  ;; (add-hook 'typescript-mode-hook 'prettier-js-mode)
+  )
+
+(use-package eslintd-fix
+  :init
   (add-hook 'rjsx-mode-hook 'prettier-js-mode)
   (add-hook 'typescript-mode-hook 'prettier-js-mode))
 
