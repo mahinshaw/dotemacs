@@ -369,7 +369,7 @@ if it is not the first event."
       "ha" 'counsel-apropos
       "rl" 'ivy-resume
       "ry" 'counsel-yank-pop
-      "sa" 'counsel-ag
+      "sa" 'counsel-rg
       "ss" 'swiper-isearch
       "sS" 'counsel-grep-or-swiper)
     (general-def ivy-minibuffer-map
@@ -381,6 +381,8 @@ if it is not the first event."
       "C-h" 'ivy-backward-delete-char))
   :config
   (setf (alist-get 'counsel-ag ivy-re-builders-alist)
+        #'ivy--regex)
+  (setf (alist-get 'counsel-rg ivy-re-builders-alist)
         #'ivy--regex)
   (ivy-mode 1))
 
@@ -662,7 +664,7 @@ if it is not the first event."
     "pb" 'counsel-projectile-switch-to-buffer
     "pl" 'counsel-projectile-switch-project
     "pf" 'counsel-projectile-find-file
-    "sp" 'counsel-projectile-ag
+    "sp" 'counsel-projectile-rg
     )
   :config
   (counsel-projectile-mode))
@@ -701,14 +703,21 @@ if it is not the first event."
 
 (use-package wgrep)
 
-(use-package wgrep-ag)
+;; (use-package wgrep-ag)
 
-(use-package ag
+;; (use-package ag
+;;   :init
+;;   (mah-leader
+;;     "swa" #'ag)
+;;   (autoload 'wgrep-ag-setup "wgrep-ag")
+;;   (add-hook 'ag-mode-hook 'wgrep-ag-setup))
+
+(use-package rg
   :init
   (mah-leader
-    "swa" #'ag)
-  (autoload 'wgrep-ag-setup "wgrep-ag")
-  (add-hook 'ag-mode-hook 'wgrep-ag-setup))
+    "srr" #'rg
+    "srp" 'rg-project
+    ))
 
 (use-package deadgrep
   :init
