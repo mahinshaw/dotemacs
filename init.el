@@ -799,6 +799,8 @@ if it is not the first event."
   (yas-global-mode 1))
 
 ;;; Dev tooling
+(use-package vterm)
+
 (use-package restclient
   :mode ("\\.http\\'" . restclient-mode)
   :init

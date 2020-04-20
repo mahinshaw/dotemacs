@@ -1,0 +1,10 @@
+# -*- mode: snippet -*-
+# name: autovalue
+# key: autov
+# --
+import com.google.auto.value.AutoValue;
+
+@AutoValue
+public abstract class ${1:`(file-name-sans-extension (buffer-name))`}$2 {
+    $0
+}
