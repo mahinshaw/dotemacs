@@ -645,7 +645,7 @@ if it is not the first event."
   (mah-leader
     "pl" 'projectile-switch-project
     "pI" 'projectile-invalidate-cache
-    "p'" 'projectile-run-eshell
+    "p'" 'projectile-run-vterm
     )
   (projectile-mode 1)
 
@@ -799,7 +799,12 @@ if it is not the first event."
   (yas-global-mode 1))
 
 ;;; Dev tooling
-(use-package vterm)
+(use-package vterm
+  :config
+  (general-nmap vterm-mode-map
+    "C-d" #'vterm--self-insert
+    "i" #'evil-insert-resume
+    "o" #'evil-insert-resume))
 
 (use-package restclient
   :mode ("\\.http\\'" . restclient-mode)
@@ -1202,11 +1207,13 @@ if it is not the first event."
 
 ;; C/C++
 (use-package ccls
-  :hook ((c-mode c++-mode objc-mode cuda-mode) .
+  :hook ((c-mode c++-mode objc-mode) .
          (lambda () (require 'ccls) (lsp)))
   :init
-  (dolist (m '(c-mode-map c++-mode-map objc-mode-map cuda-mode-map))
-    (mah:lsp-default-keys m)))
+  (mah:lsp-default-keys 'c-mode-map)
+  (mah:lsp-default-keys 'c++-mode-map)
+  (mah:lsp-default-keys 'objc-mode-map)
+  )
 
 ;; Javascript|Typescript
 (use-feature js-mode
@@ -1280,6 +1287,9 @@ if it is not the first event."
   (mah-local-leader 'sql-mode-map
     "=" 'pg-format))
 
+;; cql - cassandra
+(use-package cql-mode)
+
 ;; ocaml
 ;; (use-package tuareg)
 
@@ -1287,7 +1297,24 @@ if it is not the first event."
 (use-package protobuf-mode
   :straight (protobuf-mode :type git
                            :host github
-                           :repo "emacsmirror/protobuf-mode"))
+                           :repo "emacsmirror/protobuf-mode"
+                           :files ("protobuf-mode.el")
+                           ))
+
+(defun mah/format-xml ()
+  "Format the current xml buffer."
+  (interactive)
+  (save-excursion
+    (sgml-pretty-print (point-min) (point-max))
+    (indent-region (point-min) (point-max))))
+
+(use-feature nxml-mode
+  :commands (lsp)
+  :init
+  (setq lsp-xml-jar-file (substitute-in-file-name "$HOME/.vscode/extensions/redhat.vscode-xml-0.11.0/server/org.eclipse.lemminx-0.11.1-uber.jar"))
+  (mah:lsp-default-keys 'nxml-mode-map)
+  (general-nmap 'nxml-mode-map
+    ",=" #'mah/format-xml))
 
 ;; Rust
 (use-package rust-mode
