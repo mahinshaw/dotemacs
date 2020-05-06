@@ -1319,6 +1319,7 @@ if it is not the first event."
 ;; Rust
 (use-package rust-mode
   :init
+  (setq lsp-rust-server 'rust-analyzer)
   (mah:lsp-default-keys 'rust-mode-map)
   (add-hook 'rust-mode-hook 'lsp))
 
