@@ -954,7 +954,7 @@ if it is not the first event."
         lsp-eldoc-render-all nil
         lsp-prefer-flymake nil
         lsp-eslint-server-command '("node"
-                                    "/Users/mhinshaw/.vscode/extensions/dbaeumer.vscode-eslint-2.1.2/server/out/eslintServer.js"
+                                    "/Users/mhinshaw/.vscode/extensions/dbaeumer.vscode-eslint-2.1.5/server/out/eslintServer.js"
                                     "--stdio")
         lsp-eslint-package-manager "yarn")
 
