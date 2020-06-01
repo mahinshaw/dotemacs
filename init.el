@@ -664,7 +664,7 @@ if it is not the first event."
     "pb" 'counsel-projectile-switch-to-buffer
     "pl" 'counsel-projectile-switch-project
     "pf" 'counsel-projectile-find-file
-    "sp" 'counsel-projectile-rg
+    "sp" 'counsel-rg                    ;; this seems to be a bit faster than counsel-projectile-rg
     )
   :config
   (counsel-projectile-mode))
