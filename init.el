@@ -691,7 +691,7 @@ if it is not the first event."
 (progn ;    `text-mode'
   (add-hook 'text-mode-hook #'indicate-buffer-boundaries-left))
 
-(use-package tramp
+(use-feature tramp
   :config
   (add-to-list 'tramp-default-proxies-alist '(nil "\\`root\\'" "/ssh:%h:"))
   (add-to-list 'tramp-default-proxies-alist '("localhost" nil nil))
@@ -957,20 +957,24 @@ if it is not the first event."
                                     "/Users/mhinshaw/.vscode/extensions/dbaeumer.vscode-eslint-2.1.5/server/out/eslintServer.js"
                                     "--stdio")
         lsp-eslint-package-manager "yarn")
-
   (add-hook 'lsp-after-open-hook 'lsp-enable-imenu)
   (require 'lsp-clients)
-  (defadvice xref-find-definitions (before add-evil-jump activate) (evil-set-jump)))
+  (defadvice xref-find-definitions (before add-evil-jump activate) (evil-set-jump))
+  :config
+  (add-to-list 'lsp-file-watch-ignored "[/\\\\]bin$")
+  (add-to-list 'lsp-file-watch-ignored "[/\\\\]build$")
+  (add-to-list 'lsp-file-watch-ignored "[/\\\\]\\.log$")
+  (add-to-list 'lsp-file-watch-ignored "[/\\\\]\\.ccls-cache$")
+  (add-to-list 'lsp-file-watch-ignored "[/\\\\]\\.cache$")
+  (add-to-list 'lsp-file-watch-ignored "[/\\\\]\\.vscode$")
+  )
 
 (use-package lsp-ivy
   :straight (lsp-ivy :type git
                      :host github
                      :repo "emacs-lsp/lsp-ivy"))
 
-(use-package lsp-ui
-  :init
-  (add-to-list 'lsp-file-watch-ignored "[/\\\\]bin$")
-  (add-to-list 'lsp-file-watch-ignored "[/\\\\]build$"))
+(use-package lsp-ui)
 
 (use-package treemacs)
 
