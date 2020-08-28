@@ -958,7 +958,6 @@ if it is not the first event."
                                     "--stdio")
         lsp-eslint-package-manager "yarn")
   (add-hook 'lsp-after-open-hook 'lsp-enable-imenu)
-  (require 'lsp-clients)
   (defadvice xref-find-definitions (before add-evil-jump activate) (evil-set-jump))
   :config
   (add-to-list 'lsp-file-watch-ignored "[/\\\\]bin$")
@@ -1131,9 +1130,6 @@ if it is not the first event."
   :commands sbt-start sbt-command)
 
 (use-package dap-mode
-  :straight (dap-mode :type git
-                      :host github
-                      :repo "emacs-lsp/dap-mode")
   :init
   (defun mah-dap-java-hook ()
     (progn
@@ -1142,7 +1138,7 @@ if it is not the first event."
       (require 'dap-java)))
   (add-hook 'java-mode-hook #'mah-dap-java-hook)
   :config
-  (setq dap-java-test-runner (no-littering-expand-var-file-name "lsp-java/test-runner/junit-platform-console-standalone.jar")))
+  (setq dap-java-test-runner (no-littering-expand-var-file-name "lsp-java/eclipse.jdt.ls/test-runner/junit-platform-console-standalone.jar")))
 
 (require 'google-java-format)
 (setq google-java-format-executable "/usr/local/bin/google-java-format")
