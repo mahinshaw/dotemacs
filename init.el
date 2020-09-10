@@ -954,7 +954,7 @@ if it is not the first event."
         lsp-eldoc-render-all nil
         lsp-prefer-flymake nil
         lsp-eslint-server-command '("node"
-                                    "/Users/mhinshaw/.vscode/extensions/dbaeumer.vscode-eslint-2.1.5/server/out/eslintServer.js"
+                                    "/Users/mhinshaw/.vscode/extensions/dbaeumer.vscode-eslint-2.1.8/server/out/eslintServer.js"
                                     "--stdio")
         lsp-eslint-package-manager "yarn")
   (add-hook 'lsp-after-open-hook 'lsp-enable-imenu)
@@ -1317,11 +1317,11 @@ if it is not the first event."
     ",=" #'mah/format-xml))
 
 ;; Rust
-(use-package rust-mode
+(use-package rustic
   :init
-  (setq lsp-rust-server 'rust-analyzer)
-  (mah:lsp-default-keys 'rust-mode-map)
-  (add-hook 'rust-mode-hook 'lsp))
+  (setq rustic-lsp-server 'rust-analyzer)
+  (mah:lsp-default-keys 'rustic-mode-map)
+  (add-hook 'rustic-mode-hook 'lsp))
 
 ;; Ruby
 (use-package chruby
