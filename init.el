@@ -981,15 +981,6 @@ if it is not the first event."
 
 (use-package lsp-treemacs :commands lsp-treemacs-errors-list)
 
-(use-package company-lsp
-  :after company
-  :init
-  (setq company-lsp-enable-snippet t
-        company-lsp-cache-candidates t ;; nil
-        ;; company-transformers nil
-        company-lsp-async t)
-  )
-
 (defmacro mah:lsp-default-keys (mode-map)
   "Given a MODE-MAP, assign the default keys for lsp based major modes to local leader."
   `(progn
