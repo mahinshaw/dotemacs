@@ -962,10 +962,14 @@ if it is not the first event."
   :config
   (add-to-list 'lsp-file-watch-ignored "[/\\\\]bin$")
   (add-to-list 'lsp-file-watch-ignored "[/\\\\]build$")
+  (add-to-list 'lsp-file-watch-ignored "[/\\\\].*/build$")
+  (add-to-list 'lsp-file-watch-ignored "[/\\\\].*/node_modules$")
   (add-to-list 'lsp-file-watch-ignored "[/\\\\]\\.log$")
   (add-to-list 'lsp-file-watch-ignored "[/\\\\]\\.ccls-cache$")
   (add-to-list 'lsp-file-watch-ignored "[/\\\\]\\.cache$")
   (add-to-list 'lsp-file-watch-ignored "[/\\\\]\\.vscode$")
+  (add-to-list 'lsp-file-watch-ignored "[/\\\\]coverage$")
+  (add-to-list 'lsp-file-watch-ignored "[/\\\\].*/dist$")
   )
 
 (use-package lsp-ivy
