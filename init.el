@@ -48,7 +48,8 @@
   (load bootstrap-file nil 'nomessage))
 
 (require 'straight)
-(setq straight-use-package-by-default t)
+(setq straight-use-package-by-default t
+      straight-vc-git-default-clone-depth 1)
 
 (progn ;    `use-package'
   (straight-use-package 'use-package)
