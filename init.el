@@ -955,22 +955,24 @@ if it is not the first event."
         lsp-eldoc-render-all nil
         lsp-prefer-flymake nil
         lsp-eslint-server-command '("node"
-                                    "/Users/mhinshaw/.vscode/extensions/dbaeumer.vscode-eslint-2.1.8/server/out/eslintServer.js"
+                                    ;; "/Users/mhinshaw/.vscode/extensions/dbaeumer.vscode-eslint-2.1.8/server/out/eslintServer.js"
+                                    "/Users/mhinshaw/workspace/typescript/vscode-eslint/server/out/eslintServer.js"
                                     "--stdio")
         lsp-eslint-package-manager "yarn")
   (add-hook 'lsp-after-open-hook 'lsp-enable-imenu)
   (defadvice xref-find-definitions (before add-evil-jump activate) (evil-set-jump))
   :config
-  (add-to-list 'lsp-file-watch-ignored "[/\\\\]bin$")
-  (add-to-list 'lsp-file-watch-ignored "[/\\\\]build$")
-  (add-to-list 'lsp-file-watch-ignored "[/\\\\].*/build$")
-  (add-to-list 'lsp-file-watch-ignored "[/\\\\].*/node_modules$")
-  (add-to-list 'lsp-file-watch-ignored "[/\\\\]\\.log$")
-  (add-to-list 'lsp-file-watch-ignored "[/\\\\]\\.ccls-cache$")
-  (add-to-list 'lsp-file-watch-ignored "[/\\\\]\\.cache$")
-  (add-to-list 'lsp-file-watch-ignored "[/\\\\]\\.vscode$")
-  (add-to-list 'lsp-file-watch-ignored "[/\\\\]coverage$")
-  (add-to-list 'lsp-file-watch-ignored "[/\\\\].*/dist$")
+  (add-to-list 'lsp-file-watch-ignored "[/\\\\]bin\\")
+  (add-to-list 'lsp-file-watch-ignored "[/\\\\]build\\")
+  (add-to-list 'lsp-file-watch-ignored "[/\\\\].*/build\\")
+  (add-to-list 'lsp-file-watch-ignored "[/\\\\].*/node_modules\\")
+  (add-to-list 'lsp-file-watch-ignored "[/\\\\]\\.log\\")
+  (add-to-list 'lsp-file-watch-ignored "[/\\\\]\\.ccls-cache\\")
+  (add-to-list 'lsp-file-watch-ignored "[/\\\\]\\.cache\\")
+  (add-to-list 'lsp-file-watch-ignored "[/\\\\]\\.vscode\\")
+  (add-to-list 'lsp-file-watch-ignored "[/\\\\]coverage\\")
+  (add-to-list 'lsp-file-watch-ignored "[/\\\\].*/dist\\")
+  (add-to-list 'lsp-file-watch-ignored "[/\\\\].*/ksdk/packages/.*/lib\\")
   )
 
 (use-package lsp-ivy
