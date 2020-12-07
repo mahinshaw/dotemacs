@@ -299,7 +299,10 @@ if it is not the first event."
   :demand t
   :config
   (setq evil-collection-setup-minibuffer nil) ;; TODO this messes with helm bindings.
-  (evil-collection-init))
+  (evil-collection-init)
+  ;; from evil-magit
+  (general-nmap '(magit-mode-map)
+    "q" 'magit-mode-bury-buffer))
 
 (use-package evil-commentary
   :demand t
@@ -417,13 +420,6 @@ if it is not the first event."
       "c" 'with-editor-finish
       "k" 'with-editor-cancel
       )))
-
-(use-package evil-magit
-  :demand t
-  :after magit
-  :config (general-nmap '(magit-mode-map)
-            "q" 'magit-mode-bury-buffer)
-  )
 
 (use-package forge
   :demand t
@@ -1319,6 +1315,11 @@ if it is not the first event."
   :init
   (setq rustic-lsp-server 'rust-analyzer)
   (mah:lsp-default-keys 'rustic-mode-map)
+  (mah-local-leader 'rustic-mode-map
+    "bb" 'rustic-cargo-build
+    "br" 'rustic-cargo-run
+    "bl" 'rustic-cargo-clippy
+    "tt" 'rustic-cargo-test)
   (add-hook 'rustic-mode-hook 'lsp))
 
 ;; Ruby
