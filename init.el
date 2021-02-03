@@ -950,11 +950,14 @@ if it is not the first event."
   (setq lsp-inhibit-message t
         lsp-eldoc-render-all nil
         lsp-prefer-flymake nil
-        lsp-eslint-server-command '("node"
-                                    ;; "/Users/mhinshaw/.vscode/extensions/dbaeumer.vscode-eslint-2.1.8/server/out/eslintServer.js"
-                                    "/Users/mhinshaw/workspace/typescript/vscode-eslint/server/out/eslintServer.js"
+        lsp-eslint-server-command `("node"
+                                    ;; "/Users/mhinshaw/.vscode/extensions/dbaeumer.vscode-eslint-2.1.13/server/out/eslintServer.js"
+                                    ;; "/Users/mhinshaw/workspace/typescript/vscode-eslint/server/out/eslintServer.js"
+                                    ,(no-littering-expand-var-file-name "lsp/server/eslint/unzipped/extension/server/out/eslintServer.js")
                                     "--stdio")
-        lsp-eslint-package-manager "yarn")
+        lsp-eslint-package-manager "yarn"
+        lsp-headerline-breadcrumb-segments '(project file symbols)
+        )
   (add-hook 'lsp-after-open-hook 'lsp-enable-imenu)
   (defadvice xref-find-definitions (before add-evil-jump activate) (evil-set-jump))
   :config
