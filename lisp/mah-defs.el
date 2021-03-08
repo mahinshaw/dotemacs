@@ -20,11 +20,10 @@ eg -> or =>"
   (let ((arrow (pcase major-mode
                  ('csharp-mode "=> ")
                  ('ruby-mode "=> ")
-                 ((or 'js-mode 'js2-mode 'rjsx-mode 'typescript-mode) "=> ")
+                 ((or 'js-mode 'js2-mode 'rjsx-mode 'typescript-mode 'web-mode) "=> ")
 		         (_ "-> ")
 		         )))
-    (insert arrow)
-    ))
+    (insert arrow)))
 
 (defun mah-refresh-buffer-optional-auto ()
   "Refresh buffer, optionally from autosave."

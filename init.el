@@ -1203,6 +1203,8 @@ if it is not the first event."
   (add-hook 'go-mode-hook 'lsp))
 
 ;; C/C++
+(use-package cmake-mode)
+
 (use-package ccls
   :hook ((c-mode c++-mode objc-mode) .
          (lambda () (require 'ccls) (lsp)))
@@ -1211,6 +1213,13 @@ if it is not the first event."
   (mah:lsp-default-keys 'c++-mode-map)
   (mah:lsp-default-keys 'objc-mode-map)
   )
+
+(use-package web-mode
+  :init
+  (add-to-list 'auto-mode-alist '("\\.tsx\\'" . web-mode))
+  (add-hook 'web-mode-hook 'prettier-js-mode)
+  (add-hook 'web-mode-hook 'lsp)
+  (mah:lsp-default-keys 'web-mode-map))
 
 ;; Javascript|Typescript
 (use-feature js-mode
@@ -1268,6 +1277,7 @@ if it is not the first event."
 (use-package json-mode
   :init
   (add-to-list 'auto-mode-alist '("\\.avsc$" . json-mode))
+  (add-hook 'json-mode-hook 'prettier-js-mode)
   (setq js-indent-level 2
         json-reformat:pretty-string? t)
   (mah-local-leader 'json-mode-map
