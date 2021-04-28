@@ -354,53 +354,78 @@ if it is not the first event."
   (progn
     (global-company-mode)))
 
-;;; Ivy et al.
-(use-package ivy
-  :diminish (ivy-mode . " I")
-  :init
-  (progn
-    (setq ivy-use-virtual-buffers t
-          ivy-use-selectable-prompt t
-          ivy-height 15
-          ivy-count-format "(%d/%d) ")
-    (mah-leader
-      "SPC" 'counsel-M-x
-      "bb" 'ivy-switch-buffer
-      "ff" 'counsel-find-file
-      "fr" 'counsel-recentf
-      "FF" 'make-frame
-      "Fo" 'other-frame
-      "ha" 'counsel-apropos
-      "rl" 'ivy-resume
-      "ry" 'counsel-yank-pop
-      "sa" 'counsel-rg
-      "ss" 'swiper-isearch
-      "sS" 'counsel-grep-or-swiper)
-    (general-def ivy-minibuffer-map
-      "C-f" 'ivy-scroll-down-command
-      "C-b" 'ivy-scroll-up-command
-      "C-j" 'ivy-next-line
-      "C-k" 'ivy-previous-line
-      "C-l" 'ivy-alt-done
-      "C-h" 'ivy-backward-delete-char))
-  :config
-  (setf (alist-get 'counsel-ag ivy-re-builders-alist)
-        #'ivy--regex)
-  (setf (alist-get 'counsel-rg ivy-re-builders-alist)
-        #'ivy--regex)
-  (ivy-mode 1))
+(mah-leader
+  "SPC" 'execute-extended-command
+  "ff" 'find-file
+  "FF" 'make-frame
+  "Fo" 'other-frame
+  "jd" 'find-dired)
 
-(use-package ivy-hydra)
+(use-package selectrum
+  :demand t
+  :init
+  (mah-leader
+    "rl" #'selectrum-repeat
+    )
+  (general-def selectrum-minibuffer-map
+    "C-f" 'selectrum-next-page
+    "C-b" 'selectrum-previous-page
+    "C-j" 'selectrum-next-candidate
+    "C-k" 'selectrum-previous-candidate
+    "C-l" 'selectrum-insert-current-candidate
+    "C-h" 'selectrum-backward-kill-sexp)
+  :config
+  (selectrum-mode +1))
 
 (use-package prescient
+  :demand t
   :config
   (prescient-persist-mode +1))
 
-(use-package ivy-prescient)
 (use-package company-prescient)
+(use-package selectrum-prescient
+  :demand t
+  :config
+  (selectrum-prescient-mode +1))
 
-(use-package ivy-xref
-  :init (setq xref-show-xrefs-function #'ivy-xref-show-xrefs))
+(use-package consult
+  :demand t
+  :init
+  (mah-leader
+    "bb" 'consult-buffer
+    "fr" 'consult-recent-file
+    "ha" 'consult-apropos
+    "pi" 'consult-project-imenu
+    "sp" 'consult-ripgrep
+    "ss" 'consult-line
+    "ry" 'consult-yank-pop)
+  (setq xref-show-xrefs-function #'consult-xref
+        xref-show-definitions-function #'consult-xref)
+  :config
+  (autoload 'projectile-project-root "projectile")
+  (setq consult-project-root-function #'projectile-project-root))
+
+;; Enable richer annotations using the Marginalia package
+(use-package marginalia
+  ;; Either bind `marginalia-cycle` globally or only in the minibuffer
+  :bind (("M-A" . marginalia-cycle)
+         :map minibuffer-local-map
+         ("M-A" . marginalia-cycle))
+
+  ;; The :init configuration is always executed (Not lazy!)
+  :init
+
+  ;; Must be in the :init section of use-package such that the mode gets
+  ;; enabled right away. Note that this forces loading the package.
+  (marginalia-mode)
+
+  ;; Prefer richer, more heavy, annotations over the lighter default variant.
+  ;; E.g. M-x will show the documentation string additional to the keybinding.
+  ;; By default only the keybinding is shown as annotation.
+  ;; Note that there is the command `marginalia-cycle' to
+  ;; switch between the annotators.
+  ;; (setq marginalia-annotators '(marginalia-annotators-heavy marginalia-annotators-light nil))
+  )
 
 ;;; Magit et al.
 (use-package magit
@@ -468,7 +493,6 @@ if it is not the first event."
   (progn
     (mah-leader
       "jc" 'avy-goto-char-timer
-      "jd" 'counsel-dired-jump
       "jl" 'avy-goto-line
       "jw" 'avy-goto-word-1
       )))
@@ -595,6 +619,7 @@ if it is not the first event."
   :config
   (add-hook 'lisp-mode-hook #'lispy-mode))
 
+;; TODO: this imports swiper/ivy
 (use-package lispy
   :diminish lispy-mode
   :config
@@ -636,13 +661,16 @@ if it is not the first event."
   (add-hook 'prog-mode-hook #'indicate-buffer-boundaries-left))
 
 (use-package projectile
+  :demand t
   :init
   :config
   (setq projectile-enable-caching t
-        projectile-completion-system 'ivy)
+        projectile-completion-system 'default)
   (add-to-list 'projectile-globally-ignored-directories "~/Dropbox/Books")
   (add-to-list 'projectile-globally-ignored-directories "~/.emacs.d/var/lsp-java/workspace")
   (mah-leader
+    "pb" 'projectile-switch-to-buffer
+    "pf" 'projectile-find-file
     "pl" 'projectile-switch-project
     "pI" 'projectile-invalidate-cache
     "p'" 'projectile-run-vterm
@@ -658,20 +686,11 @@ if it is not the first event."
   (advice-add 'magit-branch-and-checkout ; This is `b c'.
               :after #'run-projectile-invalidate-cache))
 
-(use-package counsel-projectile
-  :init
-  (mah-leader
-    "pb" 'counsel-projectile-switch-to-buffer
-    "pl" 'counsel-projectile-switch-project
-    "pf" 'counsel-projectile-find-file
-    "sp" 'counsel-rg                    ;; this seems to be a bit faster than counsel-projectile-rg
-    )
-  :config
-  (counsel-projectile-mode))
-
 (use-package recentf
   :demand t
-  :config (add-to-list 'recentf-exclude "^/\\(?:ssh\\|su\\|sudo\\)?:"))
+  :config
+  (add-to-list 'recentf-exclude "^/\\(?:ssh\\|su\\|sudo\\)?:")
+  (recentf-mode +1))
 
 (use-feature reveal
   :diminish 'reveal-mode)
@@ -868,7 +887,7 @@ if it is not the first event."
     "er" 'eval-region
     "es" 'eval-last-sexp
 
-    "hi" 'counsel-imenu))
+    "hi" 'consult-imenu))
 
 (use-package elisp-slime-nav
   :diminish 'elisp-slime-nav-mode
@@ -975,12 +994,8 @@ if it is not the first event."
   (add-to-list 'lsp-file-watch-ignored "[/\\\\]coverage\\")
   (add-to-list 'lsp-file-watch-ignored "[/\\\\].*/dist\\")
   (add-to-list 'lsp-file-watch-ignored "[/\\\\].*/ksdk/packages/.*/lib\\")
+  (add-to-list 'lsp-file-watch-ignored "[/\\\\]pkg\\")
   )
-
-(use-package lsp-ivy
-  :straight (lsp-ivy :type git
-                     :host github
-                     :repo "emacs-lsp/lsp-ivy"))
 
 (use-package lsp-ui)
 
@@ -1008,7 +1023,7 @@ if it is not the first event."
 
        "ha" 'xref-find-apropos
        "hh" 'lsp-describe-thing-at-point
-       "hi" 'counsel-imenu
+       "hi" 'consult-imenu
 
        "rn" 'lsp-rename
 
