@@ -392,9 +392,12 @@ if it is not the first event."
 
 (use-package ivy-hydra)
 
-(use-package amx
+(use-package prescient
   :config
-  (amx-mode t))
+  (prescient-persist-mode +1))
+
+(use-package ivy-prescient)
+(use-package company-prescient)
 
 (use-package ivy-xref
   :init (setq xref-show-xrefs-function #'ivy-xref-show-xrefs))
@@ -1326,7 +1329,9 @@ if it is not the first event."
 ;; Rust
 (use-package rustic
   :init
-  (setq rustic-lsp-server 'rust-analyzer)
+  (setq
+   rustic-indent-offset 2
+   rustic-lsp-server 'rust-analyzer)
   (mah:lsp-default-keys 'rustic-mode-map)
   (mah-local-leader 'rustic-mode-map
     "bb" 'rustic-cargo-build
