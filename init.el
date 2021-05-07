@@ -197,7 +197,9 @@
 
 (general-def
   :keymaps 'override
-  "C-M-<return>" 'toggle-frame-fullscreen)
+  "C-M-<return>" 'toggle-frame-fullscreen
+  "M-`" 'other-frame
+  )
 
 (mah-leader
   ;; Buffers
@@ -368,6 +370,7 @@ if it is not the first event."
     "rl" #'selectrum-repeat
     )
   (general-def selectrum-minibuffer-map
+    "<escape>"  #'abort-recursive-edit
     "C-f" 'selectrum-next-page
     "C-b" 'selectrum-previous-page
     "C-j" 'selectrum-next-candidate
@@ -617,13 +620,13 @@ if it is not the first event."
   (mah-local-leader 'lisp-mode-map
     "'" 'sly)
   :config
-  (add-hook 'lisp-mode-hook #'lispy-mode))
+  (add-hook 'lisp-mode-hook #'lispyville-mode))
 
 ;; TODO: this imports swiper/ivy
-(use-package lispy
-  :diminish lispy-mode
-  :config
-  (lispy-set-key-theme '(lispy c-digits)))
+;; (use-package lispy
+;;   :diminish lispy-mode
+;;   :config
+;;   (lispy-set-key-theme '(lispy c-digits)))
 
 (use-package lispyville
   :diminish '(lispyville-mode . " ()");; (lispyville-mode-line-string " 🍰" " 🍰"))
@@ -638,8 +641,7 @@ if it is not the first event."
                               operators
                               slurp/barf-cp
                               ;; wrap
-                              ))
-  (add-hook 'lispy-mode-hook #'lispyville-mode))
+                              )))
 
 (use-package man
   :config (setq Man-width 80))
@@ -878,7 +880,7 @@ if it is not the first event."
   (progn
     (mah-company emacs-lisp-mode company-capf)
     (add-hook 'emacs-lisp-mode-hook #'flycheck-mode)
-    (add-hook 'emacs-lisp-mode-hook #'lispy-mode))
+    (add-hook 'emacs-lisp-mode-hook #'lispyville-mode))
   :config
   (mah-local-leader
     :keymaps 'emacs-lisp-mode-map
@@ -902,7 +904,7 @@ if it is not the first event."
 
 (use-package clojure-mode
   :init
-  (add-hook 'clojure-mode-hook #'lispy-mode)
+  (add-hook 'clojure-mode-hook #'lispyville-mode)
   :config
   (progn
     (mah-local-leader 'clojure-mode-map
@@ -957,7 +959,7 @@ if it is not the first event."
 
 (use-package cider
   :init
-  (add-hook 'cider-repl-mode-hook #'lispy-mode)
+  (add-hook 'cider-repl-mode-hook #'lispyville-mode)
   :config
   (mah-local-leader 'cider-repl-mode-map
     "sC" 'cider-repl-clear-buffer
