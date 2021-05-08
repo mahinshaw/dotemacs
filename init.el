@@ -1242,6 +1242,11 @@ if it is not the first event."
   (mah:lsp-default-keys 'web-mode-map))
 
 ;; Javascript|Typescript
+(use-package nvm
+  :demand t
+  :config
+  (nvm-use "14.16"))
+
 (use-feature js-mode
   :init
   (setq-default js-indent-level 2))
