@@ -33,6 +33,9 @@
 
 (push (concat user-emacs-directory "lisp") load-path)
 
+;; https://github.com/raxod502/straight.el/issues/757
+;; Currently I don't expect native comp, so turn it off when using version 28
+(setq straight-disable-native-compile t)
 ;;; mah-straight.el - get the package manager going.
 (defvar bootstrap-version)
 (let ((bootstrap-file
@@ -379,6 +382,11 @@ if it is not the first event."
     "C-h" 'selectrum-backward-kill-sexp)
   :config
   (selectrum-mode +1))
+
+(use-package ctrlf
+  :demand t
+  :config
+  (ctrlf-mode +1))
 
 (use-package prescient
   :demand t
