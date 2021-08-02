@@ -848,6 +848,15 @@ if it is not the first event."
   :config
   (add-to-list 'company-backends 'company-restclient) )
 
+(use-package tree-sitter
+  :demand t)
+
+(use-package tree-sitter-langs
+  :demand t
+  :init
+  (global-tree-sitter-mode)
+  (add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode))
+
 ;;; language specific
 (use-package csv-mode
   :init
@@ -1244,7 +1253,7 @@ if it is not the first event."
 
 (use-package web-mode
   :init
-  (add-to-list 'auto-mode-alist '("\\.tsx\\'" . web-mode))
+  ;; (add-to-list 'auto-mode-alist '("\\.tsx\\'" . web-mode))
   (add-hook 'web-mode-hook 'prettier-js-mode)
   (add-hook 'web-mode-hook 'lsp)
   (mah:lsp-default-keys 'web-mode-map))
@@ -1272,6 +1281,7 @@ if it is not the first event."
 
 (use-package typescript-mode
   :init
+  (add-to-list 'auto-mode-alist '("\\.tsx\\'" . typescript-mode))
   (setq-default typescript-indent-level 2)
   (mah:lsp-default-keys 'typescript-mode-map)
   (mah-local-leader 'typescript-mode-map
