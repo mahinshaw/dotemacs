@@ -675,7 +675,8 @@ if it is not the first event."
   :init
   :config
   (setq projectile-enable-caching t
-        projectile-completion-system 'default)
+        projectile-completion-system 'default
+        projectile-ignored-projects '("~/"))
   (add-to-list 'projectile-globally-ignored-directories "~/Dropbox/Books")
   (add-to-list 'projectile-globally-ignored-directories "~/.emacs.d/var/lsp-java/workspace")
   (mah-leader
@@ -1311,6 +1312,8 @@ if it is not the first event."
 (use-package json-reformat)
 (use-package json-snatcher)
 (use-package json-navigator)
+
+(use-package graphql-mode)
 
 (defun mah/json-reformat-buffer ()
   "Format from `point-min' to `point-max'."
