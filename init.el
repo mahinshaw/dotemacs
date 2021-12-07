@@ -1387,7 +1387,9 @@ if it is not the first event."
 (use-package rustic
   :init
   (setq
-   rustic-indent-offset 2
+   ;; Disable proc macro because it's annoying and sometimes broken.
+   ;; https://github.com/rust-analyzer/rust-analyzer/issues/6835
+   lsp-rust-analyzer-diagnostics-disabled ["unresolved-proc-macro"]
    rustic-lsp-server 'rust-analyzer)
   (mah:lsp-default-keys 'rustic-mode-map)
   (mah-local-leader 'rustic-mode-map
