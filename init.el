@@ -151,7 +151,7 @@
   (progn
     (setq doom-themes-enable-bold t
           doom-themes-enable-italic t)
-    (load-theme 'doom-spacegrey t)
+    (load-theme 'doom-oceanic-next t)
     (doom-themes-org-config)))
 
 (use-package poet-theme
@@ -482,7 +482,8 @@ if it is not the first event."
     (toggle-read-only)
     (ansi-color-apply-on-region compilation-filter-start (point))
     (toggle-read-only))
-  (add-hook 'compilation-filter-hook 'colorize-compilation-buffer))
+  (add-hook 'compilation-filter-hook 'colorize-compilation-buffer)
+  (add-to-list 'comint-output-filter-functions 'ansi-color-process-output))
 
 (use-package anzu
   :config
@@ -992,11 +993,11 @@ if it is not the first event."
   (setq lsp-inhibit-message t
         lsp-eldoc-render-all nil
         lsp-prefer-flymake nil
-        lsp-eslint-server-command `("node"
-                                    ;; "/Users/mhinshaw/.vscode/extensions/dbaeumer.vscode-eslint-2.1.13/server/out/eslintServer.js"
-                                    ;; "/Users/mhinshaw/workspace/typescript/vscode-eslint/server/out/eslintServer.js"
-                                    ,(no-littering-expand-var-file-name "lsp/server/eslint/unzipped/extension/server/out/eslintServer.js")
-                                    "--stdio")
+        ;; lsp-eslint-server-command `("node"
+        ;;                             ;; "/Users/mhinshaw/.vscode/extensions/dbaeumer.vscode-eslint-2.1.13/server/out/eslintServer.js"
+        ;;                             ;; "/Users/mhinshaw/workspace/typescript/vscode-eslint/server/out/eslintServer.js"
+        ;;                             ,(no-littering-expand-var-file-name "lsp/server/eslint/unzipped/extension/server/out/eslintServer.js")
+        ;;                             "--stdio")
         lsp-eslint-package-manager "yarn"
         lsp-headerline-breadcrumb-segments '(project file symbols)
         )
