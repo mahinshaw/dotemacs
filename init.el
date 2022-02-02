@@ -888,6 +888,8 @@ if it is not the first event."
          ("\\.markdown\\'" . markdown-mode))
   :init
   (setq markdown-command "multimarkdown")
+  ;; use prettier to format markdown
+  (add-hook 'markdown-mode-hook 'prettier-js-mode)
   (mah-local-leader '(markdown-mode-map gfm-mode-map)
     "il" 'markdown-insert-link
     "iL" 'markdown-insert-reference-link-dwim
