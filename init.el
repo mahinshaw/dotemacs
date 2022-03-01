@@ -7,6 +7,8 @@
 ;;; Code:
 
 ;;; Early birds
+;; Setting gc cons to a higher value can help with up front churn
+;; (setq gc-cons-threshold 100000000)
 (progn ;     startup
   (defvar before-user-init-time (current-time)
     "Value of `current-time' when Emacs begins loading `user-init-file'.")
@@ -437,6 +439,36 @@ if it is not the first event."
   ;; switch between the annotators.
   ;; (setq marginalia-annotators '(marginalia-annotators-heavy marginalia-annotators-light nil))
   )
+
+(use-package embark
+
+  :bind
+  (("C-." . embark-act)         ;; pick some comfortable binding
+   ("C-;" . embark-dwim))       ;; good alternative: M-.
+
+  :init
+
+  ;; Optionally replace the key help with a completing-read interface
+  (setq prefix-help-command #'embark-prefix-help-command)
+  (mah-leader
+    "hdB" 'embark-bindings)  ;; alternative for `describe-bindings'
+
+  :config
+
+  ;; Hide the mode line of the Embark live/completions buffers
+  (add-to-list 'display-buffer-alist
+               '("\\`\\*Embark Collect \\(Live\\|Completions\\)\\*"
+                 nil
+                 (window-parameters (mode-line-format . none)))))
+
+;; Consult users will also want the embark-consult package.
+(use-package embark-consult
+  :after (embark consult)
+  :demand t ; only necessary if you have the hook below
+  ;; if you want to have consult previews as you move around an
+  ;; auto-updating embark collect buffer
+  :hook
+  (embark-collect-mode . consult-preview-at-point-mode))
 
 ;;; Magit et al.
 (use-package magit
