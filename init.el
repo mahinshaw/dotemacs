@@ -171,7 +171,7 @@
         mac-command-modifier 'meta
         ns-use-native-fullscreen nil
         ;; gnu ls has --dired option
-        insert-directory-program "/usr/local/bin/gls"
+        insert-directory-program (executable-find "gls")
         dired-use-ls-dired t
         ))
 
@@ -1312,7 +1312,7 @@ if it is not the first event."
 (use-package nvm
   :demand t
   :config
-  (nvm-use "14.16"))
+  (nvm-use "14"))
 
 (use-feature js-mode
   :init
