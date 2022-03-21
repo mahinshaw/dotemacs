@@ -846,6 +846,10 @@ if it is not the first event."
 ;;   (moody-replace-mode-line-buffer-identification)
 ;;   (moody-replace-vc-mode))
 
+;; if you see Japanese/Chinese icons, run `all-the-icons-install-fonts`
+(use-package all-the-icons
+  :if (display-graphic-p))
+
 (use-package doom-modeline
   :hook (after-init . doom-modeline-mode)
   :init
