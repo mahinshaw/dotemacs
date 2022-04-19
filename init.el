@@ -100,7 +100,7 @@
   :demand t
   :init
   (setq exec-path-from-shell-arguments '()
-        exec-path-from-shell-variables '("PATH" "MANPATH" "GOPATH" "GOROOT" "JAVA_HOME"))
+        exec-path-from-shell-variables '("PATH" "MANPATH" "GOPATH" "JAVA_HOME"))
   (when (memq window-system '(mac ns x))
     (exec-path-from-shell-initialize)))
 
@@ -1315,8 +1315,10 @@ if it is not the first event."
 ;; Javascript|Typescript
 (use-package nvm
   :demand t
-  :config
-  (nvm-use "14"))
+  ;; TODO - Failing at startup.
+  ;; :config
+  ;; (nvm-use "14")
+  )
 
 (use-feature js-mode
   :init
