@@ -1144,6 +1144,7 @@ if it is not the first event."
 
 (use-package lsp-java
   :init
+  (setq lsp-java-jdt-download-url "https://download.eclipse.org/jdtls/milestones/1.12.0/jdt-language-server-1.12.0-202206011637.tar.gz")
   (mah:lsp-default-keys 'java-mode-map)
   (mah:dap-default-keys 'java-mode-map)
   (mah-local-leader 'java-mode-map
@@ -1215,7 +1216,7 @@ if it is not the first event."
   (setq dap-java-test-runner (no-littering-expand-var-file-name "lsp-java/eclipse.jdt.ls/test-runner/junit-platform-console-standalone.jar")))
 
 (require 'google-java-format)
-(setq google-java-format-executable "/usr/local/bin/google-java-format")
+(setq google-java-format-executable (executable-find "google-java-format"))
 (defun google-java-hook ()
   "Add a hook to to before-save which run google-java-format."
   (add-hook 'before-save-hook #'google-java-format-buffer nil 'local))
