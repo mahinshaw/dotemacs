@@ -930,6 +930,7 @@ if it is not the first event."
     "il" 'markdown-insert-link
     "iL" 'markdown-insert-reference-link-dwim
     "ih" 'markdown-insert-header
+    "=" 'prettier-js
     ))
 
 (use-feature elisp-mode
