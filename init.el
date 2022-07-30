@@ -655,14 +655,6 @@ if it is not the first event."
     (setq indent-tabs-mode nil))
   (add-hook 'lisp-interaction-mode-hook #'indent-spaces-mode))
 
-(use-package sly
-  :init
-  (setq inferior-lisp-program (executable-find "sbcl"))
-  (mah-local-leader 'lisp-mode-map
-    "'" 'sly)
-  :config
-  (add-hook 'lisp-mode-hook #'lispyville-mode))
-
 ;; TODO: this imports swiper/ivy
 ;; (use-package lispy
 ;;   :diminish lispy-mode
@@ -1188,23 +1180,6 @@ if it is not the first event."
         lsp-java-format-settings-profile "GoogleStyle")
   (add-hook 'java-mode-hook #'lsp))
 
-(use-package scala-mode
-  :mode "\\.s\\(cala\\|bt\\)$"
-  :init
-  (mah:lsp-default-keys 'scala-mode-map)
-  (mah:dap-default-keys 'scala-mode-map)
-  (add-hook 'scala-mode-hook 'lsp)
-  (mah-local-leader 'java-mode-map
-
-    "bc" 'lsp-metals-build-connect
-    "bi" 'lsp-metals-build-import
-
-    "dr" 'lsp-metals-doctor-run)
-  )
-
-(use-package sbt-mode
-  :commands sbt-start sbt-command)
-
 (use-package dap-mode
   :init
   (defun mah-dap-java-hook ()
@@ -1259,20 +1234,6 @@ if it is not the first event."
 
 (use-package lsp-python-ms
   :hook (python-mode . python-hook))
-
-;; swift
-(use-package swift-mode
-  :hook (swift-mode . (lambda () (lsp)))
-  :init
-  (mah:lsp-default-keys 'swift-mode-map)
-  :config
-  ;; Needed for lsp to know about the source kit executable.
-  (require 'lsp-sourcekit))
-
-(use-package lsp-sourcekit
-  :after lsp
-  :init
-  (setq lsp-sourcekit-executable (string-trim (shell-command-to-string "xcrun --find sourcekit-lsp"))))
 
 ;; golang
 (use-package go-mode
@@ -1442,37 +1403,10 @@ if it is not the first event."
     "tt" 'rustic-cargo-test)
   (add-hook 'rustic-mode-hook 'lsp))
 
-;; Ruby
-(use-package chruby
-  :config
-  ;; run chruby at startup for tooling.
-  (progn (chruby-use-corresponding)))
-
-;; Terraform
-(use-package terraform-mode
-  :config (add-hook 'terraform-mode-hook #'terraform-format-on-save-mode))
-
-(use-package company-terraform
-  :config (add-hook 'terraform-mode-hook #'company-terraform-init))
-
-;; Ansible
-(use-package jinja2-mode
-  ;; :mode ("\\.j2\\'" .jinja2-mode)
-  :init )
-
+;; Yaml
 (use-package yaml-mode
   ;; (add-to-list 'auto-mode-alist '("\\(group_vars/.+\\|host_vars/.+\\)" . yaml-mode))
   )
-
-(use-package ansible)
-
-(use-package ansible-doc
-  :init
-  (add-hook 'ansible-mode-hook #'ansible-doc-mode))
-
-(use-package company-ansible
-  :init
-  (add-to-list 'company-backends 'company-ansible))
 
 (require 'mah-org)
 
