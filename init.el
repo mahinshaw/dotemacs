@@ -1259,14 +1259,20 @@ if it is not the first event."
 ;; C/C++
 (use-package cmake-mode)
 
-(use-package ccls
-  :hook ((c-mode c++-mode objc-mode) .
-         (lambda () (require 'ccls) (lsp)))
+(use-feature c-mode
+  :hook (c-mode . lsp)
   :init
-  (mah:lsp-default-keys 'c-mode-map)
-  (mah:lsp-default-keys 'c++-mode-map)
-  (mah:lsp-default-keys 'objc-mode-map)
-  )
+  (mah:lsp-default-keys 'c-mode-map))
+
+(use-feature c++-mode
+  :hook (c++-mode . lsp)
+  :init
+  (mah:lsp-default-keys 'c++-mode-map))
+
+(use-feature objc-mode
+  :hook (objc-mode . lsp)
+  :init
+  (mah:lsp-default-keys 'objc-mode-map))
 
 (use-package web-mode
   :init
