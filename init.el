@@ -1237,6 +1237,7 @@ if it is not the first event."
 
 ;; golang
 (use-package go-mode
+  :hook (go-mode . lsp)
   :init
   (setq gofmt-command "goimports")
   ;; (mah-local-leader '(go-mode-map)
@@ -1253,8 +1254,7 @@ if it is not the first event."
   ;; (general-nmap '(go-mode-map)
   ;;   "gd" 'godef-jump
   ;;   "K" 'godef-describe)
-  (mah:lsp-default-keys 'go-mode-map)
-  (add-hook 'go-mode-hook 'lsp))
+  (mah:lsp-default-keys 'go-mode-map))
 
 ;; C/C++
 (use-package cmake-mode)
