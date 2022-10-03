@@ -1414,7 +1414,8 @@ if it is not the first event."
   ;; (add-to-list 'auto-mode-alist '("\\(group_vars/.+\\|host_vars/.+\\)" . yaml-mode))
   )
 
-(require 'mah-org)
+;; TODO - org load order is a pain
+;; (require 'mah-org)
 
 ;; Kubernetes
 (use-package kubernetes
