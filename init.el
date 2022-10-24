@@ -368,22 +368,33 @@ if it is not the first event."
   "Fo" 'other-frame
   "jd" 'find-dired)
 
-(use-package selectrum
-  :demand t
+(use-package vertico
+  :straight (:files (:defaults "extensions/*"))
   :init
+  (vertico-mode)
   (mah-leader
-    "rl" #'selectrum-repeat
-    )
-  (general-def selectrum-minibuffer-map
+    "rl" #'vertico-repeat)
+  (general-def vertico-map
     "<escape>"  #'abort-recursive-edit
-    "C-f" 'selectrum-next-page
-    "C-b" 'selectrum-previous-page
-    "C-j" 'selectrum-next-candidate
-    "C-k" 'selectrum-previous-candidate
-    "C-l" 'selectrum-insert-current-candidate
-    "C-h" 'selectrum-backward-kill-sexp)
+    "C-f" 'vertico-next-group
+    "C-b" 'vertico-previous-group
+    "C-j" 'vertico-next
+    "C-k" 'vertico-previous
+    "C-l" 'vertico-insert
+    "C-h" 'vertico-directory-delete-word)
   :config
-  (selectrum-mode +1))
+  ;; Gathered from https://github.com/minad/vertico/wiki#using-prescientel-filtering-and-sorting
+  (setq completion-styles '(prescient basic))
+  ;; Use `prescient-completion-sort' after filtering.
+  (setq vertico-sort-function #'prescient-completion-sort)
+
+  (defun vertico-prescient-remember ()
+    "Remember the chosen candidate with Prescient."
+    (when (>= vertico--index 0)
+      (prescient-remember
+       (substring-no-properties
+        (nth vertico--index vertico--candidates)))))
+  (advice-add #'vertico-insert :after #'vertico-prescient-remember))
 
 (use-package ctrlf
   :demand t
@@ -396,10 +407,6 @@ if it is not the first event."
   (prescient-persist-mode +1))
 
 (use-package company-prescient)
-(use-package selectrum-prescient
-  :demand t
-  :config
-  (selectrum-prescient-mode +1))
 
 (use-package consult
   :demand t
@@ -441,20 +448,15 @@ if it is not the first event."
   )
 
 (use-package embark
-
   :bind
   (("C-." . embark-act)         ;; pick some comfortable binding
    ("C-;" . embark-dwim))       ;; good alternative: M-.
-
   :init
-
   ;; Optionally replace the key help with a completing-read interface
   (setq prefix-help-command #'embark-prefix-help-command)
   (mah-leader
     "hdB" 'embark-bindings)  ;; alternative for `describe-bindings'
-
   :config
-
   ;; Hide the mode line of the Embark live/completions buffers
   (add-to-list 'display-buffer-alist
                '("\\`\\*Embark Collect \\(Live\\|Completions\\)\\*"
