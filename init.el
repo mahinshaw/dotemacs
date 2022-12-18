@@ -1200,6 +1200,8 @@ if it is not the first event."
   (add-hook 'before-save-hook #'google-java-format-buffer nil 'local))
 ;; (add-hook 'java-mode-hook #'google-java-hook)
 
+(use-package kotlin-mode)
+
 (use-package groovy-mode
   :init
   (setq groovy-indent-offset 2))
