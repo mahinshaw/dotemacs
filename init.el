@@ -35,9 +35,9 @@
 
 (push (concat user-emacs-directory "lisp") load-path)
 
-;; https://github.com/raxod502/straight.el/issues/757
-;; Currently I don't expect native comp, so turn it off when using version 28
-(setq straight-disable-native-compile t)
+;; disable native comp warnings for now
+(setq native-comp-async-report-warnings-errors nil)
+
 ;;; mah-straight.el - get the package manager going.
 (defvar bootstrap-version)
 (let ((bootstrap-file
@@ -889,6 +889,8 @@ if it is not the first event."
   (global-tree-sitter-mode)
   (add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode))
 
+(use-package just-mode)
+
 ;;; language specific
 (use-package csv-mode
   :init
@@ -925,6 +927,8 @@ if it is not the first event."
     "iL" 'markdown-insert-reference-link-dwim
     "ih" 'markdown-insert-header
     "=" 'prettier-js
+    ">" 'markdown-indent-region
+    "<" 'markdown-outdent-region
     ))
 
 (use-feature elisp-mode
@@ -940,7 +944,6 @@ if it is not the first event."
     "ef" 'eval-defun
     "er" 'eval-region
     "es" 'eval-last-sexp
-
     "hi" 'consult-imenu))
 
 (use-package elisp-slime-nav
