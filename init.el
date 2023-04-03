@@ -35,8 +35,10 @@
 
 (push (concat user-emacs-directory "lisp") load-path)
 
-;; disable native comp warnings for now
-(setq native-comp-async-report-warnings-errors nil)
+(when (native-comp-available-p)
+    (defvar native-comp-deferred-compilation-deny-list nil)
+    ;; disable native comp warnings for now
+    (setq native-comp-async-report-warnings-errors nil))
 
 ;;; mah-straight.el - get the package manager going.
 (defvar bootstrap-version)
@@ -494,9 +496,9 @@ if it is not the first event."
       "k" 'with-editor-cancel
       )))
 
-(use-package forge
-  :demand t
-  :after magit)
+;; (use-package forge
+;;   :demand t
+;;   :after magit)
 
 ;;; General tooling
 (use-feature abbrev
@@ -854,10 +856,12 @@ if it is not the first event."
 
 (use-package rainbow-mode)
 
-(use-package yasnippet
-  :demand t
-  :config
-  (yas-global-mode 1))
+;; TODO - error below
+;; Error in post-command-hook (yas--post-command-handler): (wrong-number-of-arguments #<subr signal> 1)
+;; (use-package yasnippet
+;;   :demand t
+;;   :config
+;;   (yas-global-mode))
 
 ;;; Dev tooling
 (use-package vterm
@@ -1303,6 +1307,7 @@ if it is not the first event."
 (use-package rjsx-mode
   :init
   (add-to-list 'auto-mode-alist '("\\.js\\'" . rjsx-mode))
+  (add-to-list 'auto-mode-alist '("\\.cjs\\'" . rjsx-mode))
   (setq-default js-indent-level 2)
   (mah:lsp-default-keys 'rjsx-mode-map)
   (mah-local-leader 'rjsx-mode-map
