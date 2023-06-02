@@ -85,6 +85,7 @@
 (use-package no-littering
   :demand t
   :config
+  (no-littering-theme-backups)
   (setq auto-save-file-name-transforms
         `((".*" ,(no-littering-expand-var-file-name "auto-save/") t))))
 
