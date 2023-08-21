@@ -1147,7 +1147,8 @@ if it is not the first event."
 
 (use-package lsp-java
   :init
-  (setq lsp-java-jdt-download-url "https://download.eclipse.org/jdtls/milestones/1.12.0/jdt-language-server-1.12.0-202206011637.tar.gz")
+  ;; TODO - remove?
+  ;; (setq lsp-java-jdt-download-url "https://download.eclipse.org/jdtls/milestones/1.12.0/jdt-language-server-1.12.0-202206011637.tar.gz")
   (mah:lsp-default-keys 'java-mode-map)
   (mah:dap-default-keys 'java-mode-map)
   (mah-local-leader 'java-mode-map
