@@ -936,6 +936,9 @@ if it is not the first event."
     "<" 'markdown-outdent-region
     ))
 
+(use-package adoc-mode
+  :ensure t)
+
 (use-feature elisp-mode
   :init
   (progn
@@ -1239,14 +1242,11 @@ if it is not the first event."
 ;;   :init
 ;;   (setq pipenv-projectile-after-switch-function #'pipenv-projectile-after-switch-extended))
 
-(defun python-hook ()
-  "Hook for python mode."
-  (progn
-    (require 'lsp-python-ms)
-    (lsp)))
-
-(use-package lsp-python-ms
-  :hook (python-mode . python-hook))
+(use-package lsp-pyright
+  :ensure t
+  :hook (python-mode . (lambda ()
+                         (require 'lsp-pyright)
+                         (lsp))))
 
 ;; golang
 (use-package go-mode
@@ -1414,7 +1414,7 @@ if it is not the first event."
    ;; Disable proc macro because it's annoying and sometimes broken.
    ;; https://github.com/rust-analyzer/rust-analyzer/issues/6835
    lsp-rust-analyzer-diagnostics-disabled ["unresolved-proc-macro"]
-   rustic-lsp-server 'rust-analyzer)
+   )
   (mah:lsp-default-keys 'rustic-mode-map)
   (mah-local-leader 'rustic-mode-map
     "bb" 'rustic-cargo-build
@@ -1432,13 +1432,14 @@ if it is not the first event."
 ;; (require 'mah-org)
 
 ;; Kubernetes
-(use-package kubernetes
-  :demand t
-  :commands (kubernetes-overview))
+;; Not in use
+;; (use-package kubernetes
+;;   :demand t
+;;   :commands (kubernetes-overview))
 
-(use-package kubernetes-evil
-  :demand t
-  :after kubernetes)
+;; (use-package kubernetes-evil
+;;   :demand t
+;;   :after kubernetes)
 
 ;; epub
 (use-package nov
