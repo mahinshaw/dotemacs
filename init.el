@@ -1248,6 +1248,19 @@ if it is not the first event."
                          (require 'lsp-pyright)
                          (lsp))))
 
+(use-package swift-mode
+  :hook (swift-mode . (lambda () (lsp)))
+  :init
+  (mah:lsp-default-keys 'swift-mode-map)
+  :config
+  ;; Needed for lsp to know about the source kit executable.
+  (require 'lsp-sourcekit))
+
+(use-package lsp-sourcekit
+  :after lsp
+  :init
+  (setq lsp-sourcekit-executable (string-trim (shell-command-to-string "xcrun --find sourcekit-lsp"))))
+
 ;; golang
 (use-package go-mode
   :hook (go-mode . lsp)
