@@ -522,29 +522,29 @@ if it is not the first event."
   (add-hook 'compilation-filter-hook 'colorize-compilation-buffer)
   (add-to-list 'comint-output-filter-functions 'ansi-color-process-output))
 
-(use-package anzu
-  :config
-  (progn
-    (global-anzu-mode +1)
-    (general-def
-      :keymaps 'override
-      [remap query-replace] 'anzu-query-replace
-      [remap query-replace-regexp] 'anzu-query-replace-regexp
-      )))
+;; (use-package anzu
+;;   :config
+;;   (progn
+;;     (global-anzu-mode +1)
+;;     (general-def
+;;       :keymaps 'override
+;;       [remap query-replace] 'anzu-query-replace
+;;       [remap query-replace-regexp] 'anzu-query-replace-regexp
+;;       )))
 
-(use-package evil-anzu)
+;; (use-package evil-anzu)
 
 (use-feature autorevert
   :diminish 'auto-revert-mode)
 
-(use-package avy
-  :config
-  (progn
-    (mah-leader
-      "jc" 'avy-goto-char-timer
-      "jl" 'avy-goto-line
-      "jw" 'avy-goto-word-1
-      )))
+;; (use-package avy
+;;   :config
+;;   (progn
+;;     (mah-leader
+;;       "jc" 'avy-goto-char-timer
+;;       "jl" 'avy-goto-line
+;;       "jw" 'avy-goto-word-1
+;;       )))
 
 (use-package dash
   :config (dash-enable-font-lock))
@@ -736,7 +736,7 @@ if it is not the first event."
 (use-feature reveal
   :diminish 'reveal-mode)
 
-(use-package rmsbolt)
+;; (use-package rmsbolt)
 
 (use-package savehist
   :config (savehist-mode))
@@ -762,15 +762,6 @@ if it is not the first event."
   :diminish 'undo-tree-mode)
 
 (use-package wgrep)
-
-;; (use-package wgrep-ag)
-
-;; (use-package ag
-;;   :init
-;;   (mah-leader
-;;     "swa" #'ag)
-;;   (autoload 'wgrep-ag-setup "wgrep-ag")
-;;   (add-hook 'ag-mode-hook 'wgrep-ag-setup))
 
 (use-package rg
   :init
@@ -865,12 +856,12 @@ if it is not the first event."
 ;;   (yas-global-mode))
 
 ;;; Dev tooling
-(use-package vterm
-  :config
-  (general-nmap vterm-mode-map
-    "C-d" #'vterm--self-insert
-    "i" #'evil-insert-resume
-    "o" #'evil-insert-resume))
+;; (use-package vterm
+;;   :config
+;;   (general-nmap vterm-mode-map
+;;     "C-d" #'vterm--self-insert
+;;     "i" #'evil-insert-resume
+;;     "o" #'evil-insert-resume))
 
 (use-package restclient
   :mode ("\\.http\\'" . restclient-mode)
@@ -965,72 +956,72 @@ if it is not the first event."
     "gd" 'elisp-slime-nav-find-elisp-thing-at-point
     "K" 'elisp-slime-nav-describe-elisp-thing-at-point))
 
-(use-package clojure-mode
-  :init
-  (add-hook 'clojure-mode-hook #'lispyville-mode)
-  :config
-  (progn
-    (mah-local-leader 'clojure-mode-map
-      "'" 'cider-jack-in
-      "\"" 'cider-jack-in-cljs
-      "="  'cider-format-buffer
+;; (use-package clojure-mode
+;;   :init
+;;   (add-hook 'clojure-mode-hook #'lispyville-mode)
+;;   :config
+;;   (progn
+;;     (mah-local-leader 'clojure-mode-map
+;;       "'" 'cider-jack-in
+;;       "\"" 'cider-jack-in-cljs
+;;       "="  'cider-format-buffer
 
-      "db" 'cider-debug-defun-at-point
+;;       "db" 'cider-debug-defun-at-point
 
-      "e;" 'cider-eval-defun-to-comment
-      "eb" 'cider-eval-buffer
-      "ee" 'cider-eval-last-sexp
-      "ef" 'cider-eval-defun-at-point
-      "em" 'cider-macroexpand-1
-      "eM" 'cider-macroexpand-all
-      "eP" 'cider-pprint-eval-last-sexp
-      "er" 'cider-eval-region
-      "ew" 'cider-eval-last-sexp-and-replace
+;;       "e;" 'cider-eval-defun-to-comment
+;;       "eb" 'cider-eval-buffer
+;;       "ee" 'cider-eval-last-sexp
+;;       "ef" 'cider-eval-defun-at-point
+;;       "em" 'cider-macroexpand-1
+;;       "eM" 'cider-macroexpand-all
+;;       "eP" 'cider-pprint-eval-last-sexp
+;;       "er" 'cider-eval-region
+;;       "ew" 'cider-eval-last-sexp-and-replace
 
-      "gb" 'cider-pop-back
-      "gc" 'cider-classpath
-      "ge" 'cider-jump-to-compilation-error
-      "gn" 'cider-find-ns
-      "gr" 'cider-find-resource
-      "gs" 'cider-browse-spec
-      "gS" 'cider-browse-spec-all
+;;       "gb" 'cider-pop-back
+;;       "gc" 'cider-classpath
+;;       "ge" 'cider-jump-to-compilation-error
+;;       "gn" 'cider-find-ns
+;;       "gr" 'cider-find-resource
+;;       "gs" 'cider-browse-spec
+;;       "gS" 'cider-browse-spec-all
 
-      "ha" 'cider-apropos
-      "hc" 'clojure-cheatsheet
-      "hg" 'cider-grimoire
-      "hh" 'cider-doc
-      "hj" 'cider-javadoc
-      "hn" 'cider-browse-ns
-      "hN" 'cider-browse-ns-all
+;;       "ha" 'cider-apropos
+;;       "hc" 'clojure-cheatsheet
+;;       "hg" 'cider-grimoire
+;;       "hh" 'cider-doc
+;;       "hj" 'cider-javadoc
+;;       "hn" 'cider-browse-ns
+;;       "hN" 'cider-browse-ns-all
 
-      "sq" 'cider-quit
-      "ss" 'cider-switch-to-repl-buffer
-      "sn" 'cider-repl-set-ns
+;;       "sq" 'cider-quit
+;;       "ss" 'cider-switch-to-repl-buffer
+;;       "sn" 'cider-repl-set-ns
 
-      "tf" 'cider-test-rerun-failed-tests
-      "tn" 'cider-test-run-ns-tests
-      "tt" 'cider-test-run-test
-      "tr" 'cider-test-rerun-test
-      "tR" 'cider-test-show-report
+;;       "tf" 'cider-test-rerun-failed-tests
+;;       "tn" 'cider-test-run-ns-tests
+;;       "tt" 'cider-test-run-test
+;;       "tr" 'cider-test-rerun-test
+;;       "tR" 'cider-test-show-report
 
-      "Te" 'cider-enlighten-mode
-      "Tt" 'cider-auto-test-mode
-      )
-    (general-nmap 'clojure-mode-map
-      "gd" 'cider-find-var
-      "K" 'cider-doc)))
+;;       "Te" 'cider-enlighten-mode
+;;       "Tt" 'cider-auto-test-mode
+;;       )
+;;     (general-nmap 'clojure-mode-map
+;;       "gd" 'cider-find-var
+;;       "K" 'cider-doc)))
 
-(use-package cider
-  :init
-  (add-hook 'cider-repl-mode-hook #'lispyville-mode)
-  :config
-  (mah-local-leader 'cider-repl-mode-map
-    "sC" 'cider-repl-clear-buffer
-    "sc" 'cider-repl-clear-output
-    "sq" 'cider-quit
-    "ss" 'cider-switch-to-last-clojure-buffer
-    )
-  )
+;; (use-package cider
+;;   :init
+;;   (add-hook 'cider-repl-mode-hook #'lispyville-mode)
+;;   :config
+;;   (mah-local-leader 'cider-repl-mode-map
+;;     "sC" 'cider-repl-clear-buffer
+;;     "sc" 'cider-repl-clear-output
+;;     "sq" 'cider-quit
+;;     "ss" 'cider-switch-to-last-clojure-buffer
+;;     )
+;;   )
 
 (use-package lsp-mode
   :init
@@ -1455,33 +1446,33 @@ if it is not the first event."
 ;;   :after kubernetes)
 
 ;; epub
-(use-package nov
-  :init
-  (add-to-list 'auto-mode-alist '("\\.epub\\'" . nov-mode))
-  ;; (add-hook 'nov-mode-hook (lambda () (evil-set-initial-state 'nov-mode 'emacs)))
-  (general-nmap 'nov-mode-map
-    ;; "" 'nov-render-document
-    "v" 'nov-view-source
-    "V" 'nov-view-content-source
-    "m" 'nov-display-metadata
-    "J" 'nov-next-document
-    "]" 'nov-next-document
-    "K" 'nov-previous-document
-    "[" 'nov-previous-document
-    "t" 'nov-goto-toc
-    "RET" 'nov-browse-url
-    ;; "<follow-link>" 'mouse-face
-    ;; "<mouse-2>" 'nov-browse-url
-    "TAB" 'shr-next-link
-    "M-TAB" 'shr-previous-link
-    "<backtab>" 'shr-previous-link
-    "SPC" 'nov-scroll-up
-    "S-SPC" 'nov-scroll-down
-    "DEL" 'nov-scroll-down
-    ;; "<home>" 'beginning-of-buffer ;; implemented with `gg'
-    ;; "<end>" 'end-of-buffer ;; implemented with `G'
-    )
-  )
+;; (use-package nov
+;;   :init
+;;   (add-to-list 'auto-mode-alist '("\\.epub\\'" . nov-mode))
+;;   ;; (add-hook 'nov-mode-hook (lambda () (evil-set-initial-state 'nov-mode 'emacs)))
+;;   (general-nmap 'nov-mode-map
+;;     ;; "" 'nov-render-document
+;;     "v" 'nov-view-source
+;;     "V" 'nov-view-content-source
+;;     "m" 'nov-display-metadata
+;;     "J" 'nov-next-document
+;;     "]" 'nov-next-document
+;;     "K" 'nov-previous-document
+;;     "[" 'nov-previous-document
+;;     "t" 'nov-goto-toc
+;;     "RET" 'nov-browse-url
+;;     ;; "<follow-link>" 'mouse-face
+;;     ;; "<mouse-2>" 'nov-browse-url
+;;     "TAB" 'shr-next-link
+;;     "M-TAB" 'shr-previous-link
+;;     "<backtab>" 'shr-previous-link
+;;     "SPC" 'nov-scroll-up
+;;     "S-SPC" 'nov-scroll-down
+;;     "DEL" 'nov-scroll-down
+;;     ;; "<home>" 'beginning-of-buffer ;; implemented with `gg'
+;;     ;; "<end>" 'end-of-buffer ;; implemented with `G'
+;;     )
+;;   )
 
 ;;; End packages
 (progn                                  ;     startup
