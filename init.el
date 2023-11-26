@@ -40,20 +40,33 @@
     ;; disable native comp warnings for now
     (setq native-comp-async-report-warnings-errors nil))
 
+;; gfind is faster than find on a mac. woop
+(setq straight-find-executable "/opt/homebrew/bin/gfind")
+;; using this mode removes 2 seconds of startup time in bootstrap!
+(setq straight-check-for-modifications 'live)
+;; Check cost of boostrap
+;; (benchmark 1 '(unwind-protect (straight--cache-package-modifications) (straight--uncache-package-modifications)))
+
 ;;; mah-straight.el - get the package manager going.
 (defvar bootstrap-version)
 (let ((bootstrap-file
-       (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
-      (bootstrap-version 5))
+       (expand-file-name
+        "straight/repos/straight.el/bootstrap.el"
+        (or (bound-and-true-p straight-base-dir)
+            user-emacs-directory)))
+      (bootstrap-version 7))
   (unless (file-exists-p bootstrap-file)
     (with-current-buffer
         (url-retrieve-synchronously
-         "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
+         "https://raw.githubusercontent.com/radian-software/straight.el/develop/install.el"
          'silent 'inhibit-cookies)
       (goto-char (point-max))
       (eval-print-last-sexp)))
   (load bootstrap-file nil 'nomessage))
 
+(message "Loading bootstrap...done (%.3fs)"
+         (float-time (time-subtract (current-time)
+                                    before-user-init-time)))
 (require 'straight)
 (setq straight-use-package-by-default t
       straight-vc-git-default-clone-depth 1)
@@ -99,7 +112,13 @@
                                       before-user-init-time))))
 
 ;;; Long tail
+(use-package esup
+  :config
+  (setq esup-depth 0))
+
 (use-package exec-path-from-shell
+  ;; Loading from script now to capture shell env on mac
+  :disabled
   :demand t
   :init
   (setq exec-path-from-shell-arguments '()
@@ -477,7 +496,7 @@ if it is not the first event."
 
 ;;; Magit et al.
 (use-package magit
-  :demand t
+  :commands (magit-status)
   :bind (("C-x g"   . magit-status)
          ("C-x M-g" . magit-dispatch-popup))
   :init
@@ -666,7 +685,9 @@ if it is not the first event."
 ;;   :config
 ;;   (lispy-set-key-theme '(lispy c-digits)))
 
+;; Switch to evil-cleverparens
 (use-package lispyville
+  :disabled
   :diminish '(lispyville-mode . " ()");; (lispyville-mode-line-string " 🍰" " 🍰"))
   :init
   (general-def '(insert emacs) 'lispyville-mode-map
@@ -701,14 +722,8 @@ if it is not the first event."
   (add-hook 'prog-mode-hook #'indicate-buffer-boundaries-left))
 
 (use-package projectile
-  :demand t
+  :commands (projectile-switch-project projectile-find-file)
   :init
-  :config
-  (setq projectile-enable-caching t
-        projectile-completion-system 'default
-        projectile-ignored-projects '("~/"))
-  (add-to-list 'projectile-globally-ignored-directories "~/Dropbox/Books")
-  (add-to-list 'projectile-globally-ignored-directories "~/.emacs.d/var/lsp-java/workspace")
   (mah-leader
     "pb" 'projectile-switch-to-buffer
     "pf" 'projectile-find-file
@@ -716,7 +731,13 @@ if it is not the first event."
     "pI" 'projectile-invalidate-cache
     "p'" 'projectile-run-vterm
     )
-  (projectile-mode 1)
+  :config
+  (projectile-mode +1)
+  (setq projectile-enable-caching t
+        projectile-completion-system 'default
+        projectile-ignored-projects '("~/"))
+  (add-to-list 'projectile-globally-ignored-directories "~/Dropbox/Books")
+  (add-to-list 'projectile-globally-ignored-directories "~/.emacs.d/var/lsp-java/workspace")
 
   ;; https://emacs.stackexchange.com/questions/26266/projectile-and-magit-branch-checkout/26272
   (defun run-projectile-invalidate-cache (&rest _args)
@@ -856,12 +877,13 @@ if it is not the first event."
 ;;   (yas-global-mode))
 
 ;;; Dev tooling
-;; (use-package vterm
-;;   :config
-;;   (general-nmap vterm-mode-map
-;;     "C-d" #'vterm--self-insert
-;;     "i" #'evil-insert-resume
-;;     "o" #'evil-insert-resume))
+(use-package vterm
+  :disabled
+  :config
+  (general-nmap vterm-mode-map
+    "C-d" #'vterm--self-insert
+    "i" #'evil-insert-resume
+    "o" #'evil-insert-resume))
 
 (use-package restclient
   :mode ("\\.http\\'" . restclient-mode)
@@ -935,7 +957,8 @@ if it is not the first event."
   (progn
     (mah-company emacs-lisp-mode company-capf)
     (add-hook 'emacs-lisp-mode-hook #'flycheck-mode)
-    (add-hook 'emacs-lisp-mode-hook #'lispyville-mode))
+    ;; (add-hook 'emacs-lisp-mode-hook #'lispyville-mode)
+    )
   :config
   (mah-local-leader
     :keymaps 'emacs-lisp-mode-map
@@ -956,72 +979,74 @@ if it is not the first event."
     "gd" 'elisp-slime-nav-find-elisp-thing-at-point
     "K" 'elisp-slime-nav-describe-elisp-thing-at-point))
 
-;; (use-package clojure-mode
-;;   :init
-;;   (add-hook 'clojure-mode-hook #'lispyville-mode)
-;;   :config
-;;   (progn
-;;     (mah-local-leader 'clojure-mode-map
-;;       "'" 'cider-jack-in
-;;       "\"" 'cider-jack-in-cljs
-;;       "="  'cider-format-buffer
+(use-package clojure-mode
+  :disabled
+  :init
+  (add-hook 'clojure-mode-hook #'lispyville-mode)
+  :config
+  (progn
+    (mah-local-leader 'clojure-mode-map
+      "'" 'cider-jack-in
+      "\"" 'cider-jack-in-cljs
+      "="  'cider-format-buffer
 
-;;       "db" 'cider-debug-defun-at-point
+      "db" 'cider-debug-defun-at-point
 
-;;       "e;" 'cider-eval-defun-to-comment
-;;       "eb" 'cider-eval-buffer
-;;       "ee" 'cider-eval-last-sexp
-;;       "ef" 'cider-eval-defun-at-point
-;;       "em" 'cider-macroexpand-1
-;;       "eM" 'cider-macroexpand-all
-;;       "eP" 'cider-pprint-eval-last-sexp
-;;       "er" 'cider-eval-region
-;;       "ew" 'cider-eval-last-sexp-and-replace
+      "e;" 'cider-eval-defun-to-comment
+      "eb" 'cider-eval-buffer
+      "ee" 'cider-eval-last-sexp
+      "ef" 'cider-eval-defun-at-point
+      "em" 'cider-macroexpand-1
+      "eM" 'cider-macroexpand-all
+      "eP" 'cider-pprint-eval-last-sexp
+      "er" 'cider-eval-region
+      "ew" 'cider-eval-last-sexp-and-replace
 
-;;       "gb" 'cider-pop-back
-;;       "gc" 'cider-classpath
-;;       "ge" 'cider-jump-to-compilation-error
-;;       "gn" 'cider-find-ns
-;;       "gr" 'cider-find-resource
-;;       "gs" 'cider-browse-spec
-;;       "gS" 'cider-browse-spec-all
+      "gb" 'cider-pop-back
+      "gc" 'cider-classpath
+      "ge" 'cider-jump-to-compilation-error
+      "gn" 'cider-find-ns
+      "gr" 'cider-find-resource
+      "gs" 'cider-browse-spec
+      "gS" 'cider-browse-spec-all
 
-;;       "ha" 'cider-apropos
-;;       "hc" 'clojure-cheatsheet
-;;       "hg" 'cider-grimoire
-;;       "hh" 'cider-doc
-;;       "hj" 'cider-javadoc
-;;       "hn" 'cider-browse-ns
-;;       "hN" 'cider-browse-ns-all
+      "ha" 'cider-apropos
+      "hc" 'clojure-cheatsheet
+      "hg" 'cider-grimoire
+      "hh" 'cider-doc
+      "hj" 'cider-javadoc
+      "hn" 'cider-browse-ns
+      "hN" 'cider-browse-ns-all
 
-;;       "sq" 'cider-quit
-;;       "ss" 'cider-switch-to-repl-buffer
-;;       "sn" 'cider-repl-set-ns
+      "sq" 'cider-quit
+      "ss" 'cider-switch-to-repl-buffer
+      "sn" 'cider-repl-set-ns
 
-;;       "tf" 'cider-test-rerun-failed-tests
-;;       "tn" 'cider-test-run-ns-tests
-;;       "tt" 'cider-test-run-test
-;;       "tr" 'cider-test-rerun-test
-;;       "tR" 'cider-test-show-report
+      "tf" 'cider-test-rerun-failed-tests
+      "tn" 'cider-test-run-ns-tests
+      "tt" 'cider-test-run-test
+      "tr" 'cider-test-rerun-test
+      "tR" 'cider-test-show-report
 
-;;       "Te" 'cider-enlighten-mode
-;;       "Tt" 'cider-auto-test-mode
-;;       )
-;;     (general-nmap 'clojure-mode-map
-;;       "gd" 'cider-find-var
-;;       "K" 'cider-doc)))
+      "Te" 'cider-enlighten-mode
+      "Tt" 'cider-auto-test-mode
+      )
+    (general-nmap 'clojure-mode-map
+      "gd" 'cider-find-var
+      "K" 'cider-doc)))
 
-;; (use-package cider
-;;   :init
-;;   (add-hook 'cider-repl-mode-hook #'lispyville-mode)
-;;   :config
-;;   (mah-local-leader 'cider-repl-mode-map
-;;     "sC" 'cider-repl-clear-buffer
-;;     "sc" 'cider-repl-clear-output
-;;     "sq" 'cider-quit
-;;     "ss" 'cider-switch-to-last-clojure-buffer
-;;     )
-;;   )
+(use-package cider
+  :disabled
+  :init
+  (add-hook 'cider-repl-mode-hook #'lispyville-mode)
+  :config
+  (mah-local-leader 'cider-repl-mode-map
+    "sC" 'cider-repl-clear-buffer
+    "sc" 'cider-repl-clear-output
+    "sq" 'cider-quit
+    "ss" 'cider-switch-to-last-clojure-buffer
+    )
+  )
 
 (use-package lsp-mode
   :init
