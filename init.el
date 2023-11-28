@@ -825,7 +825,6 @@ if it is not the first event."
   (add-to-list 'company-backends 'company-restclient) )
 
 ;;; Built in tree sitter modes
-;;; install all -> (mapc #'treesit-install-language-grammar (mapcar #'car treesit-language-source-alist))
 (setq treesit-language-source-alist
       '((bash "https://github.com/tree-sitter/tree-sitter-bash")
         (cmake "https://github.com/uyha/tree-sitter-cmake")
@@ -846,6 +845,11 @@ if it is not the first event."
         (tsx "https://github.com/tree-sitter/tree-sitter-typescript" "master" "tsx/src")
         (typescript "https://github.com/tree-sitter/tree-sitter-typescript" "master" "typescript/src")
         (yaml "https://github.com/ikatyang/tree-sitter-yaml")))
+
+(defun mah/treesit-install-language-grammars ()
+  ;;; Install all treesit gramars defined in `treesit-language-source-alist'
+  (interactive)
+  (mapc #'treesit-install-language-grammar (mapcar #'car treesit-language-source-alist)))
 
 (use-package just-mode)
 
