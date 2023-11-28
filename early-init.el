@@ -1,7 +1,11 @@
 ;;; package --- early-init.el -*- lexical-binding: t -*-
 ;;; Commentary:
-;; * Kill package.el
+;;; Early init configs
+
+;;; Startup docs https://www.gnu.org/software/emacs/manual/html_node/elisp/Startup-Summary.html#Startup-Summary
+
 ;;; Code:
+
 ;; Must use early init file as of Emacs 27
 ;; improves startup speed when using an alternative package manager
 (setq package-enable-at-startup nil
@@ -14,5 +18,10 @@
 (scroll-bar-mode 0)
 (tool-bar-mode 0)
 (menu-bar-mode 0)
+
+;; See https://www.gnu.org/software/emacs/manual/html_node/emacs/Fonts.html
+(add-to-list 'default-frame-alist
+             '(font . "Source Code Pro Semibold-14"))
+
 ;; can check later that `package--initialized' is nil
 ;;; early-init.el ends here

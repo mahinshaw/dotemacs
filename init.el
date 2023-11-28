@@ -171,6 +171,7 @@
     (setq doom-themes-enable-bold t
           doom-themes-enable-italic t)
     (load-theme 'doom-oceanic-next t)
+    (doom-themes-treemacs-config)
     (doom-themes-org-config)))
 
 (use-package poet-theme
@@ -179,8 +180,6 @@
   ;; (add-hook 'text-mode-hook (lambda () (variable-pitch-mode 1)))
   ;; (load-theme 'poet t)
   )
-
-(set-face-attribute 'default nil :font "Source Code Pro Semibold" :height 140)
 
 ;;; General emacs
 
@@ -362,9 +361,12 @@ if it is not the first event."
     "C-p" 'evil-multiedit-prev)
   (evil-ex-define-cmd "ie[dit]" 'evil-multiedit-ex-match))
 
+;;; TODO look into replacing company with Cape and Corfu
+;;; Cape is the completion at point handler. Corfu is the ui layer.
+;;; helpful note - https://kristofferbalintona.me/posts/202203130102/
 ;;; Company
-
 (use-package company
+  :hook (after-init . global-company-mode)
   :diminish (company-mode . " C")
   :init
   (setq company-idle-delay 0.2
@@ -375,9 +377,7 @@ if it is not the first event."
   (general-def company-active-map
    "C-j" 'company-select-next-or-abort
    "C-k" 'company-select-previous-or-abort
-   "C-l" 'company-complete-selection)
-  (progn
-    (global-company-mode)))
+   "C-l" 'company-complete-selection))
 
 (mah-leader
   "SPC" 'execute-extended-command
@@ -402,40 +402,57 @@ if it is not the first event."
     "C-h" 'vertico-directory-delete-word)
   :config
   ;; Gathered from https://github.com/minad/vertico/wiki#using-prescientel-filtering-and-sorting
-  (setq completion-styles '(prescient basic))
+  ;; (setq completion-styles '(prescient basic))
   ;; Use `prescient-completion-sort' after filtering.
-  (setq vertico-sort-function #'prescient-completion-sort)
+  ;; (setq vertico-sort-function #'prescient-completion-sort)
 
-  (defun vertico-prescient-remember ()
-    "Remember the chosen candidate with Prescient."
-    (when (>= vertico--index 0)
-      (prescient-remember
-       (substring-no-properties
-        (nth vertico--index vertico--candidates)))))
-  (advice-add #'vertico-insert :after #'vertico-prescient-remember))
+  ;; (defun vertico-prescient-remember ()
+  ;;   "Remember the chosen candidate with Prescient."
+  ;;   (when (>= vertico--index 0)
+  ;;     (prescient-remember
+  ;;      (substring-no-properties
+  ;;       (nth vertico--index vertico--candidates)))))
+  ;; (advice-add #'vertico-insert :after #'vertico-prescient-remember)
+  )
 
-(use-package ctrlf
-  :demand t
-  :config
-  (ctrlf-mode +1))
-
+;; TODOD - do I want prescient every where?
 (use-package prescient
   :demand t
   :config
   (prescient-persist-mode +1))
 
-(use-package company-prescient)
+(use-package corfu-prescient
+  :demand t
+  :config
+  (corfu-prescient-mode 1))
+
+(use-package company-prescient
+  :after company
+  :config
+  (company-prescient-mode 1)
+  )
+
+(use-package vertico-prescient
+  :demand t
+  :config
+  (vertico-prescient-mode 1))
 
 (use-package consult
   :demand t
   :init
   (mah-leader
     "bb" 'consult-buffer
+    "fd" 'consult-fd
     "fr" 'consult-recent-file
+    "gl" 'consult-goto-line
+    "go" 'consult-outline
     "ha" 'consult-apropos
-    "pi" 'consult-project-imenu
+    "pi" 'consult-imenu-multi
     "sp" 'consult-ripgrep
     "ss" 'consult-line
+    ;; TODO - remap?
+    ;; find line accross project buffers
+    "sS" 'consult-line-multi
     "ry" 'consult-yank-pop)
   (setq xref-show-xrefs-function #'consult-xref
         xref-show-definitions-function #'consult-xref)
@@ -537,42 +554,18 @@ if it is not the first event."
   (add-hook 'compilation-filter-hook 'colorize-compilation-buffer)
   (add-to-list 'comint-output-filter-functions 'ansi-color-process-output))
 
-;; (use-package anzu
-;;   :config
-;;   (progn
-;;     (global-anzu-mode +1)
-;;     (general-def
-;;       :keymaps 'override
-;;       [remap query-replace] 'anzu-query-replace
-;;       [remap query-replace-regexp] 'anzu-query-replace-regexp
-;;       )))
-
-;; (use-package evil-anzu)
-
 (use-feature autorevert
   :diminish 'auto-revert-mode)
-
-;; (use-package avy
-;;   :config
-;;   (progn
-;;     (mah-leader
-;;       "jc" 'avy-goto-char-timer
-;;       "jl" 'avy-goto-line
-;;       "jw" 'avy-goto-word-1
-;;       )))
 
 (use-package dash
   :config (dash-enable-font-lock))
 
 (use-package diff-hl
-  :demand t
-  :init
-  (add-hook 'magit-post-refresh-hook #'diff-hl-magit-post-refresh)
-  (add-hook 'dired-mode-hook #'diff-hl-dired-mode-unless-remote)
-  :config
-  ;; (setq diff-hl-draw-borders nil)
-  (global-diff-hl-mode)
-  (diff-hl-margin-mode))
+  :hook ((emacs-startup . (lambda ()
+                             (global-diff-hl-mode)
+                             (diff-hl-margin-mode)))
+         (magit-post-refresh . diff-hl-magit-post-refresh)
+         (dired-mode . diff-hl-dired-mode-unless-remote)))
 
 (use-feature dired
   :config
@@ -682,7 +675,16 @@ if it is not the first event."
 
 (use-package evil-cleverparens
   :hook ((emacs-lisp-mode clojure-mode cider-repl-mode) . evil-cleverparens-mode)
-  :diminish '(evil-cleverparens-mode . " ()"))
+  :diminish '(evil-cleverparens-mode . " ()")
+  :init
+  (setq evil-cleverparens-use-s-and-S nil)
+  :config
+  ;; remap s and S with config off
+  ;; s should also create splits as it normally does
+  (general-nmap evil-cleverparens-mode-map "s" (general-key-dispatch 'evil-cp-substitute
+                    :timeout 0.2
+                    "s" 'split-window-vertically))
+  (general-nmap evil-cleverparens-mode-map "S" 'evil-cp-change-whole-line))
 
 (use-package man
   :config (setq Man-width 80))
@@ -707,7 +709,7 @@ if it is not the first event."
   :commands (projectile-switch-project projectile-find-file)
   :init
   (mah-leader
-    "pb" 'projectile-switch-to-buffer
+    "pb" 'consult-project-buffer ;;'projectile-switch-to-buffer
     "pf" 'projectile-find-file
     "pl" 'projectile-switch-project
     "pI" 'projectile-invalidate-cache
@@ -730,8 +732,7 @@ if it is not the first event."
   (advice-add 'magit-branch-and-checkout ; This is `b c'.
               :after #'run-projectile-invalidate-cache))
 
-(use-package recentf
-  :demand t
+(use-feature recentf
   :config
   (add-to-list 'recentf-exclude "^/\\(?:ssh\\|su\\|sudo\\)?:")
   (recentf-mode +1))
@@ -1315,13 +1316,6 @@ if it is not the first event."
   (mah:lsp-default-keys 'web-mode-map))
 
 ;; Javascript|Typescript
-(use-package nvm
-  :demand t
-  ;; TODO - Failing at startup.
-  ;; :config
-  ;; (nvm-use "14")
-  )
-
 (use-feature js-ts-mode
   :hook (js-ts-mode . lsp)
   :mode ("\\(\\.js[mx]\\|\\.har\\)\\'" "\\.cjs\\'" "\\.mjs\\'")
