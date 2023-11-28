@@ -2,6 +2,10 @@
 
 Personal emacs config.
 
+### TODO
+
+- [ ] Use wgrep
+
 ### Yasnippet
 
 Originally taken from:

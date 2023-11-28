@@ -354,30 +354,63 @@ if it is not the first event."
     "C-p" 'evil-multiedit-prev)
   (evil-ex-define-cmd "ie[dit]" 'evil-multiedit-ex-match))
 
-;;; TODO look into replacing company with Cape and Corfu
-;;; Cape is the completion at point handler. Corfu is the ui layer.
-;;; helpful note - https://kristofferbalintona.me/posts/202203130102/
-;;; Company
-(use-package company
-  :hook (after-init . global-company-mode)
-  :diminish (company-mode . " C")
-  :init
-  (setq company-idle-delay 0.2
-        company-minimum-prefix-length 2
-        company-require-match nil
-        company-tooltip-align-annotations t
-        company-tooltip-minimum-width 60)
-  (general-def company-active-map
-   "C-j" 'company-select-next-or-abort
-   "C-k" 'company-select-previous-or-abort
-   "C-l" 'company-complete-selection))
-
 (mah-leader
   "SPC" 'execute-extended-command
   "ff" 'find-file
   "FF" 'make-frame
   "Fo" 'other-frame
   "jd" 'find-dired)
+
+;;; helpful note - https://kristofferbalintona.me/posts/202203130102/
+(use-package cape
+  :demand t
+  :init
+  ;; Add to the global default value of `completion-at-point-functions' which is
+  ;; used by `completion-at-point'.  The order of the functions matters, the
+  ;; first function returning a result wins.  Note that the list of buffer-local
+  ;; completion functions takes precedence over the global list.
+  ;; (add-to-list 'completion-at-point-functions #'cape-dabbrev)
+  (add-to-list 'completion-at-point-functions #'cape-file)
+  ;; buffer local for markdown
+  ;; (add-to-list 'completion-at-point-functions #'cape-elisp-block)
+  ;;(add-to-list 'completion-at-point-functions #'cape-history)
+  (add-to-list 'completion-at-point-functions #'cape-keyword)
+  ;;(add-to-list 'completion-at-point-functions #'cape-tex)
+  ;;(add-to-list 'completion-at-point-functions #'cape-sgml)
+  ;;(add-to-list 'completion-at-point-functions #'cape-rfc1345)
+  ;;(add-to-list 'completion-at-point-functions #'cape-abbrev)
+  ;;(add-to-list 'completion-at-point-functions #'cape-dict)
+  ;; buffer local for elisp
+  ;;(add-to-list 'completion-at-point-functions #'cape-elisp-symbol)
+  ;;(add-to-list 'completion-at-point-functions #'cape-line)
+  )
+
+(use-feature emacs
+  :init
+  ;; TAB cycle if there are only few candidates
+  (setq completion-cycle-threshold 3)
+
+  ;; Emacs 28: Hide commands in M-x which do not apply to the current mode.
+  ;; Corfu commands are hidden, since they are not supposed to be used via M-x.
+  ;; (setq read-extended-command-predicate
+  ;;       #'command-completion-default-include-p)
+
+  ;; Enable indentation+completion using the TAB key.
+  ;; `completion-at-point' is often bound to M-TAB.
+  (setq tab-always-indent 'complete))
+
+;;; dig into corfu
+(use-package corfu
+  :hook (after-init . global-corfu-mode)
+  :custom
+  ;; TODO - tab only auto compelete? -> https://github.com/minad/corfu#tab-only-completion
+  (corfu-auto t)         ;; enable auto completion
+  (corfu-auto-delay 0.2) ;; default - delay before auto completion
+  (corfu-auto-prefix 3)  ;; default - chars before attempting completion
+  (corfu-cycle t)        ;; enable next/prev cycling - no need yet to bind keys
+  (corfu-preselect 'prompt)
+  (corfu-scroll-margin 5)
+  (corfu-preselect 'prompt))
 
 (use-package vertico
   :straight (:files (:defaults "extensions/*"))
@@ -405,12 +438,6 @@ if it is not the first event."
   :demand t
   :config
   (corfu-prescient-mode 1))
-
-(use-package company-prescient
-  :after company
-  :config
-  (company-prescient-mode 1)
-  )
 
 (use-package vertico-prescient
   :demand t
@@ -611,9 +638,7 @@ if it is not the first event."
     "ec" 'flycheck-clear
     "el" 'flycheck-list-errors
     "en" 'flycheck-next-error
-    "ep" 'flycheck-previous-error)
-  ;; (add-hook 'after-init-hook #'global-flycheck-mode)
-  )
+    "ep" 'flycheck-previous-error))
 
 (use-feature help
   :config (temp-buffer-resize-mode))
@@ -640,13 +665,13 @@ if it is not the first event."
 
 (use-feature lisp-mode
   :diminish (lisp-mode . " l")
+  :hook ((emacs-lisp-mode . (lambda () ;; TODO investigate these modes.
+                              (outline-minor-mode)
+                              (reveal-mode)))
+         (lisp-interaction-mode . indent-space-mode))
   :init
-  ;; TODO investigate these modes.
-  (add-hook 'emacs-lisp-mode-hook 'outline-minor-mode)
-  (add-hook 'emacs-lisp-mode-hook 'reveal-mode)
   (defun indent-spaces-mode ()
-    (setq indent-tabs-mode nil))
-  (add-hook 'lisp-interaction-mode-hook #'indent-spaces-mode))
+    (setq indent-tabs-mode nil)))
 
 (use-package smartparens
   :hook ((emacs-lisp-mode clojure-mode cider-repl-mode) . smartparens-strict-mode)
@@ -670,20 +695,18 @@ if it is not the first event."
   :config (setq Man-width 80))
 
 (use-feature outline
-  :diminish 'outline-minor-mode
-  :config
-   ;; show org ediffs unfolded (from 'outline).
-  (add-hook 'ediff-prepare-buffer-hook #'show-all))
+  :hook (ediff-prepare-buffer . show-all) ;; show org ediffs unfolded (from 'outline).
+  :diminish 'outline-minor-mode)
 
 (use-package paren
   :config (show-paren-mode))
 
 (use-feature prog-mode
+  :hook (prog-mode . indicate-buffer-boundaries-left)
   :config
   ;; (global-prettify-symbols-mode)
   (defun indicate-buffer-boundaries-left ()
-    (setq indicate-buffer-boundaries 'left))
-  (add-hook 'prog-mode-hook #'indicate-buffer-boundaries-left))
+    (setq indicate-buffer-boundaries 'left)))
 
 (use-package projectile
   :commands (projectile-switch-project projectile-find-file)
@@ -777,10 +800,9 @@ if it is not the first event."
     (concat mah-leader " t") "toggle"))
 
 (use-feature winner-mode
+  :hook (ediff-quit . winner-undo) ;; restore window layout when done.
   :init
-  (winner-mode t)
-  ;; restore window layout when done.
-  (add-hook 'ediff-quit-hook #'winner-undo))
+  (winner-mode t))
 
 (use-package with-editor
   :diminish with-editor-mode)
@@ -819,10 +841,6 @@ if it is not the first event."
     "eE" 'restclient-http-send-current-raw
     "ew" 'restclient-http-send-current-stay-in-window
     "y" 'restclient-copy-curl-command))
-
-(use-package company-restclient
-  :config
-  (add-to-list 'company-backends 'company-restclient) )
 
 ;;; Built in tree sitter modes
 (setq treesit-language-source-alist
@@ -882,7 +900,9 @@ if it is not the first event."
   :mode (("README\\.md\\'" . gfm-mode)
          ("\\.md\\'" . markdown-mode)
          ("\\.markdown\\'" . markdown-mode))
-  :hook (markdown-mode . prettier-js-mode)
+  :hook (markdown-mode . (lambda ()
+                           (add-to-list 'completion-at-point-functions #'cape-elisp-block)
+                           (prettier-js-mode)))
   :init
   (setq markdown-command "multimarkdown")
   ;; use prettier to format markdown
@@ -895,13 +915,12 @@ if it is not the first event."
     "<" 'markdown-outdent-region
     ))
 
-(use-package adoc-mode
-  :ensure t)
+(use-package adoc-mode)
 
 (use-feature elisp-mode
-  :hook (emacs-lisp-mode . flycheck-mode)
-  :init
-  (mah-company emacs-lisp-mode company-capf)
+  :hook (emacs-lisp-mode . (lambda ()
+                             (add-to-list 'completion-at-point-functions #'cape-elisp-symbol)
+                             (flycheck-mode)))
   :config
   (mah-local-leader
     :keymaps 'emacs-lisp-mode-map
@@ -913,10 +932,7 @@ if it is not the first event."
 
 (use-package elisp-slime-nav
   :diminish 'elisp-slime-nav-mode
-  :init
-  (progn
-    (dolist (hook '(emacs-lisp-mode-hook ielm-mode-hook))
-      (add-hook hook 'elisp-slime-nav-mode)))
+  :hook ((emacs-lisp-mode ielm-mode) . elisp-slime-nav-mode)
   :config
   (general-nmap emacs-lisp-mode-map
     "gd" 'elisp-slime-nav-find-elisp-thing-at-point
@@ -1265,14 +1281,14 @@ if it is not the first event."
     "ict" 'js-doc-insert-tag))
 
 (use-feature typescript-ts-mode
+  :hook (typescript-ts-mode . lsp)
   :init
   (add-to-list 'auto-mode-alist '("\\.ts\\'" . typescript-ts-mode))
   (mah:lsp-default-keys 'typescript-ts-mode-map)
   (mah-local-leader 'typescript-ts-mode-map
     "icc" 'js-doc-insert-function-doc
     "icf" 'js-doc-insert-file-doc
-    "ict" 'js-doc-insert-tag)
-  (add-hook 'typescript-ts-mode-hook 'lsp))
+    "ict" 'js-doc-insert-tag))
 
 (use-feature tsx-ts-mode
   :hook (tsx-ts-mode . lsp)
