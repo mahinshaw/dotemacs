@@ -174,13 +174,6 @@
     (doom-themes-treemacs-config)
     (doom-themes-org-config)))
 
-(use-package poet-theme
-  :disabled
-  ;; :init
-  ;; (add-hook 'text-mode-hook (lambda () (variable-pitch-mode 1)))
-  ;; (load-theme 'poet t)
-  )
-
 ;;; General emacs
 
 (when mah-is-mac
@@ -400,19 +393,6 @@ if it is not the first event."
     "C-k" 'vertico-previous
     "C-l" 'vertico-insert
     "C-h" 'vertico-directory-delete-word)
-  :config
-  ;; Gathered from https://github.com/minad/vertico/wiki#using-prescientel-filtering-and-sorting
-  ;; (setq completion-styles '(prescient basic))
-  ;; Use `prescient-completion-sort' after filtering.
-  ;; (setq vertico-sort-function #'prescient-completion-sort)
-
-  ;; (defun vertico-prescient-remember ()
-  ;;   "Remember the chosen candidate with Prescient."
-  ;;   (when (>= vertico--index 0)
-  ;;     (prescient-remember
-  ;;      (substring-no-properties
-  ;;       (nth vertico--index vertico--candidates)))))
-  ;; (advice-add #'vertico-insert :after #'vertico-prescient-remember)
   )
 
 ;; TODOD - do I want prescient every where?
@@ -805,38 +785,8 @@ if it is not the first event."
 (use-package with-editor
   :diminish with-editor-mode)
 
-;;; mode line
-;; (use-package minions
-;;   :demand t
-;;   :config (minions-mode 1))
-
 (display-time-mode 1)
 (setq display-time-string-forms '(dayname " " 12-hours ":" minutes " " am-pm))
-
-;; (setq mode-line-format
-;;       (list
-;;        "%e"
-;;        mode-line-front-space
-;;        mode-line-mule-info
-;;        mode-line-client
-;;        mode-line-modified
-;;        mode-line-remote
-;;        mode-line-frame-identification
-;;        mode-line-buffer-identification
-;;        "   "
-;;        mode-line-position
-;;        evil-mode-line-tag
-;;        (vc-mode vc-mode)
-;;        "  "
-;;        mode-line-modes
-;;        mode-line-misc-info
-;;        mode-line-end-spaces
-;;        ))
-;; (use-package moody
-;;   :demand t
-;;   :config
-;;   (moody-replace-mode-line-buffer-identification)
-;;   (moody-replace-vc-mode))
 
 ;; if you see Japanese/Chinese icons, run `all-the-icons-install-fonts`
 (use-package all-the-icons
@@ -851,13 +801,6 @@ if it is not the first event."
         doom-modeline-lsp t))
 
 (use-package rainbow-mode)
-
-;; TODO - error below
-;; Error in post-command-hook (yas--post-command-handler): (wrong-number-of-arguments #<subr signal> 1)
-;; (use-package yasnippet
-;;   :demand t
-;;   :config
-;;   (yas-global-mode))
 
 ;;; Dev tooling
 (use-package vterm
@@ -903,16 +846,6 @@ if it is not the first event."
         (tsx "https://github.com/tree-sitter/tree-sitter-typescript" "master" "tsx/src")
         (typescript "https://github.com/tree-sitter/tree-sitter-typescript" "master" "typescript/src")
         (yaml "https://github.com/ikatyang/tree-sitter-yaml")))
-
-;; (use-package tree-sitter
-;;   :demand t)
-
-;; (use-package tree-sitter-langs
-;;   :demand t
-;;   :init
-;;   (global-tree-sitter-mode)
-;;   (add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode)
-;;   )
 
 (use-package just-mode)
 
@@ -1456,45 +1389,6 @@ if it is not the first event."
 
 ;; TODO - org load order is a pain
 ;; (require 'mah-org)
-
-;; Kubernetes
-;; Not in use
-;; (use-package kubernetes
-;;   :demand t
-;;   :commands (kubernetes-overview))
-
-;; (use-package kubernetes-evil
-;;   :demand t
-;;   :after kubernetes)
-
-;; epub
-;; (use-package nov
-;;   :init
-;;   (add-to-list 'auto-mode-alist '("\\.epub\\'" . nov-mode))
-;;   ;; (add-hook 'nov-mode-hook (lambda () (evil-set-initial-state 'nov-mode 'emacs)))
-;;   (general-nmap 'nov-mode-map
-;;     ;; "" 'nov-render-document
-;;     "v" 'nov-view-source
-;;     "V" 'nov-view-content-source
-;;     "m" 'nov-display-metadata
-;;     "J" 'nov-next-document
-;;     "]" 'nov-next-document
-;;     "K" 'nov-previous-document
-;;     "[" 'nov-previous-document
-;;     "t" 'nov-goto-toc
-;;     "RET" 'nov-browse-url
-;;     ;; "<follow-link>" 'mouse-face
-;;     ;; "<mouse-2>" 'nov-browse-url
-;;     "TAB" 'shr-next-link
-;;     "M-TAB" 'shr-previous-link
-;;     "<backtab>" 'shr-previous-link
-;;     "SPC" 'nov-scroll-up
-;;     "S-SPC" 'nov-scroll-down
-;;     "DEL" 'nov-scroll-down
-;;     ;; "<home>" 'beginning-of-buffer ;; implemented with `gg'
-;;     ;; "<end>" 'end-of-buffer ;; implemented with `G'
-;;     )
-;;   )
 
 ;;; End packages
 (progn                                  ;     startup
