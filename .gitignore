@@ -7,5 +7,6 @@
 /places
 /recentf
 straight
+tree-sitter
 # native comp cache
 eln-cache

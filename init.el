@@ -26,12 +26,7 @@
         inhibit-startup-echo-area-message "mhinshaw"
         initial-buffer-choice t
         initial-scratch-message ""
-        load-prefer-newer t)
-  ;; bells and flash no more
-  (setq ring-bell-function 'ignore)
-  (scroll-bar-mode 0)
-  (tool-bar-mode 0)
-  (menu-bar-mode 0))
+        load-prefer-newer t))
 
 (push (concat user-emacs-directory "lisp") load-path)
 
@@ -179,6 +174,7 @@
     (doom-themes-org-config)))
 
 (use-package poet-theme
+  :disabled
   ;; :init
   ;; (add-hook 'text-mode-hook (lambda () (variable-pitch-mode 1)))
   ;; (load-theme 'poet t)
@@ -898,14 +894,38 @@ if it is not the first event."
   :config
   (add-to-list 'company-backends 'company-restclient) )
 
-(use-package tree-sitter
-  :demand t)
+;;; Built in tree sitter modes
+;;; install all -> (mapc #'treesit-install-language-grammar (mapcar #'car treesit-language-source-alist))
+(setq treesit-language-source-alist
+      '((bash "https://github.com/tree-sitter/tree-sitter-bash")
+        (cmake "https://github.com/uyha/tree-sitter-cmake")
+        (css "https://github.com/tree-sitter/tree-sitter-css")
+        (dockerfile "https://github.com/camdencheek/tree-sitter-dockerfile")
+        (elisp "https://github.com/Wilfred/tree-sitter-elisp")
+        (go "https://github.com/tree-sitter/tree-sitter-go")
+        (html "https://github.com/tree-sitter/tree-sitter-html")
+        (java "https://github.com/tree-sitter/tree-sitter-java")
+        (javascript "https://github.com/tree-sitter/tree-sitter-javascript" "master" "src")
+        (jsdoc "https://github.com/tree-sitter/tree-sitter-jsdoc")
+        (json "https://github.com/tree-sitter/tree-sitter-json")
+        (make "https://github.com/alemuller/tree-sitter-make")
+        (markdown "https://github.com/ikatyang/tree-sitter-markdown")
+        (python "https://github.com/tree-sitter/tree-sitter-python")
+        (rust "https://github.com/tree-sitter/tree-sitter-rust")
+        (toml "https://github.com/tree-sitter/tree-sitter-toml")
+        (tsx "https://github.com/tree-sitter/tree-sitter-typescript" "master" "tsx/src")
+        (typescript "https://github.com/tree-sitter/tree-sitter-typescript" "master" "typescript/src")
+        (yaml "https://github.com/ikatyang/tree-sitter-yaml")))
 
-(use-package tree-sitter-langs
-  :demand t
-  :init
-  (global-tree-sitter-mode)
-  (add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode))
+;; (use-package tree-sitter
+;;   :demand t)
+
+;; (use-package tree-sitter-langs
+;;   :demand t
+;;   :init
+;;   (global-tree-sitter-mode)
+;;   (add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode)
+;;   )
 
 (use-package just-mode)
 
@@ -929,17 +949,19 @@ if it is not the first event."
 
 (use-package docker)
 
-(use-package dockerfile-mode)
+(use-feature dockerfile-ts-mode
+  ;; copied from dockerfile-ts-mode:189
+  :mode "\\(?:Dockerfile\\(?:\\..*\\)?\\|\\.[Dd]ockerfile\\)\\'")
 
 (use-package markdown-mode
   :commands (markdown-mode gfm-mode)
   :mode (("README\\.md\\'" . gfm-mode)
          ("\\.md\\'" . markdown-mode)
          ("\\.markdown\\'" . markdown-mode))
+  :hook (markdown-mode . prettier-js-mode)
   :init
   (setq markdown-command "multimarkdown")
   ;; use prettier to format markdown
-  (add-hook 'markdown-mode-hook 'prettier-js-mode)
   (mah-local-leader '(markdown-mode-map gfm-mode-map)
     "il" 'markdown-insert-link
     "iL" 'markdown-insert-reference-link-dwim
@@ -1049,6 +1071,7 @@ if it is not the first event."
   )
 
 (use-package lsp-mode
+  :hook (lsp-after-open . lsp-enable-imenu)
   :init
   (setq lsp-inhibit-message t
         lsp-eldoc-render-all nil
@@ -1061,7 +1084,6 @@ if it is not the first event."
         lsp-eslint-package-manager "yarn"
         lsp-headerline-breadcrumb-segments '(project file symbols)
         )
-  (add-hook 'lsp-after-open-hook 'lsp-enable-imenu)
   (defadvice xref-find-definitions (before add-evil-jump activate) (evil-set-jump))
   :config
   (add-to-list 'lsp-file-watch-ignored "[/\\\\]bin\\")
@@ -1075,8 +1097,7 @@ if it is not the first event."
   (add-to-list 'lsp-file-watch-ignored "[/\\\\]coverage\\")
   (add-to-list 'lsp-file-watch-ignored "[/\\\\].*/dist\\")
   (add-to-list 'lsp-file-watch-ignored "[/\\\\].*/ksdk/packages/.*/lib\\")
-  (add-to-list 'lsp-file-watch-ignored "[/\\\\]pkg\\")
-  )
+  (add-to-list 'lsp-file-watch-ignored "[/\\\\]pkg\\"))
 
 (use-package lsp-ui)
 
@@ -1164,13 +1185,19 @@ if it is not the first event."
 ;;; java
 (use-package keystore-mode)
 
+(use-feature java-ts-mode
+  :mode "\\.java\\'"
+  :config
+  (setq java-ts-mode-indent-offset 2))
+
 (use-package lsp-java
+  :hook (java-ts-mode . lsp)
   :init
   ;; TODO - remove?
   ;; (setq lsp-java-jdt-download-url "https://download.eclipse.org/jdtls/milestones/1.12.0/jdt-language-server-1.12.0-202206011637.tar.gz")
-  (mah:lsp-default-keys 'java-mode-map)
-  (mah:dap-default-keys 'java-mode-map)
-  (mah-local-leader 'java-mode-map
+  (mah:lsp-default-keys 'java-ts-mode-map)
+  (mah:dap-default-keys 'java-ts-mode-map)
+  (mah-local-leader 'java-ts-mode-map
     "="  'google-java-format-buffer
     "an" 'lsp-java-actionable-notifications
 
@@ -1207,17 +1234,16 @@ if it is not the first event."
         lsp-java-workspace-dir (no-littering-expand-var-file-name "lsp-java/workspace/")
         lsp-java-workspace-cache-dir (no-littering-expand-var-file-name "lsp-java/workspace/.cache/")
         lsp-java-format-settings-url "https://raw.githubusercontent.com/google/styleguide/gh-pages/eclipse-java-google-style.xml"
-        lsp-java-format-settings-profile "GoogleStyle")
-  (add-hook 'java-mode-hook #'lsp))
+        lsp-java-format-settings-profile "GoogleStyle"))
 
 (use-package dap-mode
+  :hook (java-ts-mode . mah-dap-java-hook)
   :init
   (defun mah-dap-java-hook ()
     (progn
       (dap-mode t)
       (dap-ui-mode t)
       (require 'dap-java)))
-  (add-hook 'java-mode-hook #'mah-dap-java-hook)
   :config
   (setq dap-java-test-runner (no-littering-expand-var-file-name "lsp-java/eclipse.jdt.ls/test-runner/junit-platform-console-standalone.jar")))
 
@@ -1226,7 +1252,6 @@ if it is not the first event."
 (defun google-java-hook ()
   "Add a hook to to before-save which run google-java-format."
   (add-hook 'before-save-hook #'google-java-format-buffer nil 'local))
-;; (add-hook 'java-mode-hook #'google-java-hook)
 
 (use-package kotlin-mode)
 
@@ -1235,10 +1260,10 @@ if it is not the first event."
   (setq groovy-indent-offset 2))
 
 (use-package gradle-mode
+  :hook (java-ts-mode . gradle-mode)
   :diminish 'gradle-mode
   :init
-  (add-hook 'java-mode-hook 'gradle-mode)
-  (mah-local-leader '(java-mode-map groovy-mode-map)
+  (mah-local-leader '(java-ts-mode-map groovy-mode-map)
     "bgb" 'gradle-build
     "bgB" 'gradle-build--daemon
     "bge" 'gradle-execute
@@ -1251,8 +1276,9 @@ if it is not the first event."
 ;;   :demand t)
 
 (use-feature python
+  :mode ("\\.py\\'" . python-ts-mode)
   :init
-  (mah:lsp-default-keys 'python-mode-map))
+  (mah:lsp-default-keys 'python-ts-mode-map))
 
 ;; (use-package pipenv
 ;;   :init
@@ -1260,7 +1286,7 @@ if it is not the first event."
 
 (use-package lsp-pyright
   :ensure t
-  :hook (python-mode . (lambda ()
+  :hook (python-ts-mode . (lambda ()
                          (require 'lsp-pyright)
                          (lsp))))
 
@@ -1278,49 +1304,37 @@ if it is not the first event."
   (setq lsp-sourcekit-executable (string-trim (shell-command-to-string "xcrun --find sourcekit-lsp"))))
 
 ;; golang
-(use-package go-mode
-  :hook (go-mode . lsp)
+(use-package go-ts-mode
+  :mode "\\.go\\'"
+  :hook (go-ts-mode . lsp)
   :init
-  (setq gofmt-command "goimports")
-  ;; (mah-local-leader '(go-mode-map)
-  ;;   "ga" 'go-goto-arguments
-  ;;   "gD" 'go-goto-docstring
-  ;;   "gf" 'go-goto-function
-  ;;   "gg" 'godef-jump
-  ;;   "gG" 'godef-jump-other-window
-  ;;   "gn" 'go-goto-function-name
-  ;;   "gr" 'go-goto-return-values
-  ;;   "gm" 'go-goto-method-receiver
-
-  ;;   "hh" 'godef-describe)
-  ;; (general-nmap '(go-mode-map)
-  ;;   "gd" 'godef-jump
-  ;;   "K" 'godef-describe)
-  (mah:lsp-default-keys 'go-mode-map))
+  (mah:lsp-default-keys 'go-ts-mode-map))
 
 ;; C/C++
 (use-package cmake-mode)
 
-(use-feature c-mode
-  :hook (c-mode . lsp)
+(use-feature c-ts-mode
+  :mode ("\\(\\.[chi]\\|\\.lex\\|\\.y\\(acc\\)?\\)\\'" "\\.x[pb]m\\'")
+  :hook (c-ts-mode . lsp)
   :init
-  (mah:lsp-default-keys 'c-mode-map))
+  (mah:lsp-default-keys 'c-ts-mode-map))
 
-(use-feature c++-mode
-  :hook (c++-mode . lsp)
+(use-feature c++-ts-mode
+  :mode "\\(\\.ii\\|\\.\\(CC?\\|HH?\\)\\|\\.[ch]\\(pp\\|xx\\|\\+\\+\\)\\|\\.\\(cc\\|hh\\)\\)\\'"
+  :hook (c++-ts-mode . lsp)
   :init
-  (mah:lsp-default-keys 'c++-mode-map))
+  (mah:lsp-default-keys 'c++-ts-mode-map))
 
 (use-feature objc-mode
   :hook (objc-mode . lsp)
   :init
   (mah:lsp-default-keys 'objc-mode-map))
 
+;; is this viable for html-ts-mode replacement
 (use-package web-mode
+  :hook ((web-mode . prettier-js-mode)
+         (web-mode . lsp))
   :init
-  ;; (add-to-list 'auto-mode-alist '("\\.tsx\\'" . web-mode))
-  (add-hook 'web-mode-hook 'prettier-js-mode)
-  (add-hook 'web-mode-hook 'lsp)
   (mah:lsp-default-keys 'web-mode-map))
 
 ;; Javascript|Typescript
@@ -1331,32 +1345,36 @@ if it is not the first event."
   ;; (nvm-use "14")
   )
 
-(use-feature js-mode
+(use-feature js-ts-mode
+  :hook (js-ts-mode . lsp)
+  :mode ("\\(\\.js[mx]\\|\\.har\\)\\'" "\\.cjs\\'" "\\.mjs\\'")
   :init
-  (setq-default js-indent-level 2))
-
-(use-package rjsx-mode
-  :init
-  (add-to-list 'auto-mode-alist '("\\.js\\'" . rjsx-mode))
-  (add-to-list 'auto-mode-alist '("\\.cjs\\'" . rjsx-mode))
   (setq-default js-indent-level 2)
-  (mah:lsp-default-keys 'rjsx-mode-map)
-  (mah-local-leader 'rjsx-mode-map
+  (mah:lsp-default-keys 'js-ts-mode-map)
+  (mah-local-leader 'js-ts-mode-map
     "icc" 'js-doc-insert-function-doc
     "icf" 'js-doc-insert-file-doc
-    "ict" 'js-doc-insert-tag)
-  (add-hook 'rjsx-mode-hook 'lsp))
+    "ict" 'js-doc-insert-tag))
 
-(use-package typescript-mode
+(use-feature typescript-ts-mode
   :init
-  (add-to-list 'auto-mode-alist '("\\.tsx\\'" . typescript-mode))
-  (setq-default typescript-indent-level 2)
-  (mah:lsp-default-keys 'typescript-mode-map)
-  (mah-local-leader 'typescript-mode-map
+  (add-to-list 'auto-mode-alist '("\\.ts\\'" . typescript-ts-mode))
+  (mah:lsp-default-keys 'typescript-ts-mode-map)
+  (mah-local-leader 'typescript-ts-mode-map
     "icc" 'js-doc-insert-function-doc
     "icf" 'js-doc-insert-file-doc
     "ict" 'js-doc-insert-tag)
-  (add-hook 'typescript-mode-hook 'lsp))
+  (add-hook 'typescript-ts-mode-hook 'lsp))
+
+(use-feature tsx-ts-mode
+  :hook (tsx-ts-mode . lsp)
+  :mode "\\.tsx\\'"
+  :init
+  (mah:lsp-default-keys 'tsx-ts-mode-map)
+  (mah-local-leader 'tsx-ts-mode-map
+    "icc" 'js-doc-insert-function-doc
+    "icf" 'js-doc-insert-file-doc
+    "ict" 'js-doc-insert-tag))
 
 (use-package js-doc
   :init
@@ -1364,16 +1382,9 @@ if it is not the first event."
         js-doc-author (format "Mark Hinshaw <%s>" js-doc-mail-address)))
 
 (use-package prettier-js
-  :init
-  ;; (setq prettier-js-args '("--single-quote"))
-  ;; (add-hook 'rjsx-mode-hook 'prettier-js-mode)
-  ;; (add-hook 'typescript-mode-hook 'prettier-js-mode)
-  )
+  :hook ((js-ts-mode typescript-ts-mode tsx-ts-mode) . prettier-js-mode))
 
-(use-package eslintd-fix
-  :init
-  (add-hook 'rjsx-mode-hook 'prettier-js-mode)
-  (add-hook 'typescript-mode-hook 'prettier-js-mode))
+(use-package eslintd-fix)
 
 ;; json
 (use-package json-reformat)
@@ -1387,17 +1398,17 @@ if it is not the first event."
   (interactive)
   (save-excursion (json-reformat-region (point-min) (point-max))))
 
-(use-package json-mode
+(use-feature json-ts-mode
+  :mode ("\\.json$" "\\.avsc$")
+  :hook (json-ts-mode . prettier-js)
   :init
-  (add-to-list 'auto-mode-alist '("\\.avsc$" . json-mode))
-  (add-hook 'json-mode-hook 'prettier-js-mode)
-  (setq js-indent-level 2
-        json-reformat:pretty-string? t)
-  (mah-local-leader 'json-mode-map
+  ;; js-indent-level 2
+  (setq json-reformat:pretty-string? t)
+  (mah-local-leader 'json-ts-mode-map
     "=" 'mah/json-reformat-buffer
     "p" 'jsons-print-path
     "jq" 'jsons-print-path-jq)
-  (general-vmap 'json-mode-map
+  (general-vmap 'json-ts-mode-map
     ",=" 'json-reformat-region))
 
 ;; SQL (Postgres)
@@ -1409,9 +1420,6 @@ if it is not the first event."
 
 ;; cql - cassandra
 (use-package cql-mode)
-
-;; ocaml
-;; (use-package tuareg)
 
 ;; protobuf
 (use-package protobuf-mode
@@ -1436,8 +1444,26 @@ if it is not the first event."
   (general-nmap 'nxml-mode-map
     ",=" #'mah/format-xml))
 
+;; toml
+(use-feature toml-ts-mode
+  :mode "\\.toml\\'")
+
 ;; Rust
+
+(use-feature rust-ts-mode
+  :mode "\\.rs\\'"
+  :hook (rust-ts-mode . lsp)
+  :init
+  (setq
+   ;; Disable proc macro because it's annoying and sometimes broken.
+   ;; https://github.com/rust-analyzer/rust-analyzer/issues/6835
+   lsp-rust-analyzer-diagnostics-disabled ["unresolved-proc-macro"]
+   )
+  (mah:lsp-default-keys 'rust-ts-mode-map))
+
 (use-package rustic
+  :disabled
+  :hook (rustic-mode . lsp)
   :init
   (setq
    ;; Disable proc macro because it's annoying and sometimes broken.
@@ -1450,12 +1476,12 @@ if it is not the first event."
     "br" 'rustic-cargo-run
     "bl" 'rustic-cargo-clippy
     "tt" 'rustic-cargo-test)
-  (add-hook 'rustic-mode-hook 'lsp))
+  )
 
 ;; Yaml
-(use-package yaml-mode
+(use-package yaml-ts-mode
   ;; (add-to-list 'auto-mode-alist '("\\(group_vars/.+\\|host_vars/.+\\)" . yaml-mode))
-  )
+  :mode "\\.ya?ml\\'")
 
 ;; TODO - org load order is a pain
 ;; (require 'mah-org)
