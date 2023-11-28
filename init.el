@@ -675,28 +675,14 @@ if it is not the first event."
     (setq indent-tabs-mode nil))
   (add-hook 'lisp-interaction-mode-hook #'indent-spaces-mode))
 
-;; TODO: this imports swiper/ivy
-;; (use-package lispy
-;;   :diminish lispy-mode
-;;   :config
-;;   (lispy-set-key-theme '(lispy c-digits)))
+(use-package smartparens
+  :hook ((emacs-lisp-mode clojure-mode cider-repl-mode) . smartparens-strict-mode)
+  :config
+  (require 'smartparens-config))
 
-;; Switch to evil-cleverparens
-(use-package lispyville
-  :disabled
-  :diminish '(lispyville-mode . " ()");; (lispyville-mode-line-string " 🍰" " 🍰"))
-  :init
-  (general-def '(insert emacs) 'lispyville-mode-map
-    "\"" 'lispy-doublequote
-    "(" 'lispy-parens
-    "[" 'lispy-brackets
-    "{" 'lispy-braces)
-  (lispyville-set-key-theme '(additional
-                              additional-wrap
-                              operators
-                              slurp/barf-cp
-                              ;; wrap
-                              )))
+(use-package evil-cleverparens
+  :hook ((emacs-lisp-mode clojure-mode cider-repl-mode) . evil-cleverparens-mode)
+  :diminish '(evil-cleverparens-mode . " ()"))
 
 (use-package man
   :config (setq Man-width 80))
@@ -975,12 +961,9 @@ if it is not the first event."
   :ensure t)
 
 (use-feature elisp-mode
+  :hook (emacs-lisp-mode . flycheck-mode)
   :init
-  (progn
-    (mah-company emacs-lisp-mode company-capf)
-    (add-hook 'emacs-lisp-mode-hook #'flycheck-mode)
-    ;; (add-hook 'emacs-lisp-mode-hook #'lispyville-mode)
-    )
+  (mah-company emacs-lisp-mode company-capf)
   :config
   (mah-local-leader
     :keymaps 'emacs-lisp-mode-map
@@ -1003,8 +986,6 @@ if it is not the first event."
 
 (use-package clojure-mode
   :disabled
-  :init
-  (add-hook 'clojure-mode-hook #'lispyville-mode)
   :config
   (progn
     (mah-local-leader 'clojure-mode-map
@@ -1059,16 +1040,12 @@ if it is not the first event."
 
 (use-package cider
   :disabled
-  :init
-  (add-hook 'cider-repl-mode-hook #'lispyville-mode)
   :config
   (mah-local-leader 'cider-repl-mode-map
     "sC" 'cider-repl-clear-buffer
     "sc" 'cider-repl-clear-output
     "sq" 'cider-quit
-    "ss" 'cider-switch-to-last-clojure-buffer
-    )
-  )
+    "ss" 'cider-switch-to-last-clojure-buffer))
 
 (use-package lsp-mode
   :hook (lsp-after-open . lsp-enable-imenu)
