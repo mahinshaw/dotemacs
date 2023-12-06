@@ -36,7 +36,7 @@
     (setq native-comp-async-report-warnings-errors nil))
 
 ;; gfind is faster than find on a mac. woop
-(setq straight-find-executable "/opt/homebrew/bin/gfind")
+(setq straight-find-executable (executable-find "gfind"))
 ;; using this mode removes 2 seconds of startup time in bootstrap!
 (setq straight-check-for-modifications 'live)
 ;; Check cost of boostrap
@@ -850,6 +850,7 @@ if it is not the first event."
         (dockerfile "https://github.com/camdencheek/tree-sitter-dockerfile")
         (elisp "https://github.com/Wilfred/tree-sitter-elisp")
         (go "https://github.com/tree-sitter/tree-sitter-go")
+        (gomod "https://github.com/camdencheek/tree-sitter-go-mod")
         (html "https://github.com/tree-sitter/tree-sitter-html")
         (java "https://github.com/tree-sitter/tree-sitter-java")
         (javascript "https://github.com/tree-sitter/tree-sitter-javascript" "master" "src")
@@ -1123,9 +1124,9 @@ if it is not the first event."
 
 (use-package lsp-java
   :hook (java-ts-mode . lsp)
+  :custom
+  (lsp-java-jdt-download-url "https://www.eclipse.org/downloads/download.php?file=/jdtls/milestones/1.30.0/jdt-language-server-1.30.0-202311301503.tar.gz")
   :init
-  ;; TODO - remove?
-  ;; (setq lsp-java-jdt-download-url "https://download.eclipse.org/jdtls/milestones/1.12.0/jdt-language-server-1.12.0-202206011637.tar.gz")
   (mah:lsp-default-keys 'java-ts-mode-map)
   (mah:dap-default-keys 'java-ts-mode-map)
   (mah-local-leader 'java-ts-mode-map
@@ -1240,6 +1241,9 @@ if it is not the first event."
   :hook (go-ts-mode . lsp)
   :init
   (mah:lsp-default-keys 'go-ts-mode-map))
+
+(use-feature go-mod-ts-mode
+ :mode  "/go\\.mod\\'")
 
 ;; C/C++
 (use-package cmake-mode)
