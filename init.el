@@ -113,10 +113,11 @@
 
 (use-package exec-path-from-shell
   ;; Loading from script now to capture shell env on mac
-  :disabled
   :demand t
   :init
-  (setq exec-path-from-shell-arguments '()
+  ;; See this article for the rational behind the args https://pickard.cc/posts/why-does-zsh-start-slowly/
+  (setq exec-path-from-shell-arguments '("-l")
+        ;; exec-path-from-shell-debug t
         exec-path-from-shell-variables '("PATH" "MANPATH" "GOPATH" "JAVA_HOME"))
   (when (memq window-system '(mac ns x))
     (exec-path-from-shell-initialize)))
