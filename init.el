@@ -252,7 +252,8 @@
 ;; insert mode helpers
 (general-def
   :states 'insert
-  :keymaps 'override
+  ;; Don't use in override as it clobbers transient maps like corfu-map
+  ;; :keymaps 'override
   "C-l" 'mah-insert-lambda-arrow-for-major-mode)
 
 ;; window movements
@@ -411,7 +412,11 @@ if it is not the first event."
   (corfu-cycle t)        ;; enable next/prev cycling - no need yet to bind keys
   (corfu-preselect 'prompt)
   (corfu-scroll-margin 5)
-  (corfu-preselect 'prompt))
+  (corfu-preselect 'prompt)
+  :init
+  :general
+  (:states 'insert :keymaps 'corfu-map
+           "C-l" 'corfu-complete))
 
 (use-package vertico
   :straight (:files (:defaults "extensions/*"))
