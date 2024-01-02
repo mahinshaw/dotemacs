@@ -589,6 +589,21 @@ if it is not the first event."
       "-" 'dired-up-directory)
     (setq dired-listing-switches "-alh")))
 
+(use-package dirvish
+  ;; https://github.com/alexluigit/dirvish/blob/main/docs/CUSTOMIZING.org#dirvish
+  :init
+  (dirvish-override-dired-mode)
+  :general
+  (:keymaps 'dirvish-mode-map :states '(normal motion)
+   "?" 'dirvish-dispatch
+   "q" 'dirvish-quit
+   "TAB" 'dirvish-subtree-toggle)
+  :custom
+  (dirvish-quick-access-entries
+   '(("h" "~/" "Home")
+     ("w" "~/workspace/")))
+  )
+
 (use-feature ediff
   :init
   (setq-default
