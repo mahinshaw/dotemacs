@@ -33,13 +33,13 @@
 ;;; Code:
 
 (defgroup pg-formatter nil
-  "Minor mode to format JS code on file save"
+  "Minor mode to format JS code on file save."
   :group 'languages
   :prefix "pg-formatter"
   :link '(url-link :tag "Repository" "https://github.com/darold/pgFormatter"))
 
 (defcustom pg-formatter-command "pg_format"
-  "The 'pg_format' command."
+  "The \='pg_format' command."
   :type 'string
   :group 'pg-formatter)
 

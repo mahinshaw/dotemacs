@@ -1146,7 +1146,7 @@ if it is not the first event."
 (use-package lsp-java
   :hook (java-ts-mode . lsp)
   :custom
-  (lsp-java-jdt-download-url "https://www.eclipse.org/downloads/download.php?file=/jdtls/milestones/1.30.0/jdt-language-server-1.30.0-202311301503.tar.gz")
+  (lsp-java-jdt-download-url "https://www.eclipse.org/downloads/download.php?file=/jdtls/milestones/1.30.1/jdt-language-server-1.30.1-202312071447.tar.gz")
   :init
   (mah:lsp-default-keys 'java-ts-mode-map)
   (mah:dap-default-keys 'java-ts-mode-map)
