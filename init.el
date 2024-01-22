@@ -867,6 +867,8 @@ if it is not the first event."
 (setq treesit-language-source-alist
       '((bash "https://github.com/tree-sitter/tree-sitter-bash")
         (cmake "https://github.com/uyha/tree-sitter-cmake")
+        (c "https://github.com/tree-sitter/tree-sitter-c")
+        (cpp "https://github.com/tree-sitter/tree-sitter-cpp")
         (css "https://github.com/tree-sitter/tree-sitter-css")
         (dockerfile "https://github.com/camdencheek/tree-sitter-dockerfile")
         (elisp "https://github.com/Wilfred/tree-sitter-elisp")
@@ -1025,6 +1027,8 @@ if it is not the first event."
 
 (use-package lsp-mode
   :hook (lsp-after-open . lsp-enable-imenu)
+  :custom
+  (lsp-completion-provider :none)
   :init
   (setq lsp-inhibit-message t
         lsp-eldoc-render-all nil
