@@ -8,7 +8,14 @@
 
 ;;; Early birds
 ;; Setting gc cons to a higher value can help with up front churn
-;; (setq gc-cons-threshold 100000000)
+(setq gc-cons-threshold (* 1024 1024 50))
+
+(defun mah/restore-post-init-settings ()
+  "Reset to default values after init."
+  (setq gc-cons-threshold (* 1024 1024)))
+
+(add-hook 'emacs-startup-hook #'mah/restore-post-init-settings)
+
 (progn ;     startup
   (defvar before-user-init-time (current-time)
     "Value of `current-time' when Emacs begins loading `user-init-file'.")
