@@ -657,7 +657,9 @@ if it is not the first event."
         kept-old-versions 0))
 
 (use-package flycheck
+  :demand t
   :diminish (flycheck-mode ." FlyC")
+  :hook (emacs-lisp-mode . flycheck-mode)
   :init
   (setq flycheck-emacs-lisp-load-path 'inherit)
   (mah-leader
@@ -696,7 +698,7 @@ if it is not the first event."
   :hook ((emacs-lisp-mode . (lambda () ;; TODO investigate these modes.
                               (outline-minor-mode)
                               (reveal-mode)))
-         (lisp-interaction-mode . indent-space-mode))
+         (lisp-interaction-mode . indent-spaces-mode))
   :init
   (defun indent-spaces-mode ()
     (setq indent-tabs-mode nil)))
@@ -891,8 +893,10 @@ if it is not the first event."
         (python "https://github.com/tree-sitter/tree-sitter-python")
         (rust "https://github.com/tree-sitter/tree-sitter-rust")
         (toml "https://github.com/tree-sitter/tree-sitter-toml")
-        (tsx "https://github.com/tree-sitter/tree-sitter-typescript" "master" "tsx/src")
-        (typescript "https://github.com/tree-sitter/tree-sitter-typescript" "master" "typescript/src")
+        ;; Some issue with either emacs or tree-sitter. Cannot use master
+        ;; https://github.com/tree-sitter/tree-sitter-typescript/issues/278
+        (tsx "https://github.com/tree-sitter/tree-sitter-typescript" "v0.20.3" "tsx/src")
+        (typescript "https://github.com/tree-sitter/tree-sitter-typescript" "v0.20.3" "typescript/src")
         (yaml "https://github.com/ikatyang/tree-sitter-yaml")))
 
 (defun mah/treesit-install-language-grammars ()
@@ -950,8 +954,7 @@ if it is not the first event."
 
 (use-feature elisp-mode
   :hook (emacs-lisp-mode . (lambda ()
-                             (add-to-list 'completion-at-point-functions #'cape-elisp-symbol)
-                             (flycheck-mode)))
+                             (add-to-list 'completion-at-point-functions #'cape-elisp-symbol)))
   :config
   (mah-local-leader
     :keymaps 'emacs-lisp-mode-map
@@ -1036,6 +1039,8 @@ if it is not the first event."
   :hook (lsp-after-open . lsp-enable-imenu)
   :custom
   (lsp-completion-provider :none)
+  ;; not currently using yasnippet
+  (lsp-enable-snippet nil)
   :init
   (setq lsp-inhibit-message t
         lsp-eldoc-render-all nil
