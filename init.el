@@ -904,6 +904,9 @@ if it is not the first event."
   (interactive)
   (mapc #'treesit-install-language-grammar (mapcar #'car treesit-language-source-alist)))
 
+(use-package jinx
+  :hook (emacs-startup . global-jinx-mode))
+
 (use-package just-mode)
 
 ;;; language specific
