@@ -856,7 +856,8 @@ if it is not the first event."
 
 ;;; Dev tooling
 (use-package vterm
-  :disabled
+  ;; :disabled
+  :ensure t
   :config
   (general-nmap vterm-mode-map
     "C-d" #'vterm--self-insert
