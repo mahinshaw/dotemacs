@@ -906,7 +906,13 @@ if it is not the first event."
   (mapc #'treesit-install-language-grammar (mapcar #'car treesit-language-source-alist)))
 
 (use-package jinx
-  :hook (emacs-startup . global-jinx-mode))
+  :hook (emacs-startup . global-jinx-mode)
+  :init
+  (mah-leader
+    "est" 'global-jinx-mode
+    "esn" 'jinx-next
+    "esp" 'jinx-previous
+    "ess" 'jinx-correct))
 
 (use-package just-mode)
 
@@ -1419,9 +1425,9 @@ if it is not the first event."
 
 ;; Rust
 
-(use-package rust-mode
+(use-package rust-ts-mode
   :mode "\\.rs\\'"
-  :hook (rust-mode . lsp)
+  :hook (rust-ts-mode . lsp)
   :init
   (setq
    ;; Disable proc macro because it's annoying and sometimes broken.
@@ -1429,7 +1435,7 @@ if it is not the first event."
    lsp-rust-analyzer-diagnostics-disabled ["unresolved-proc-macro"]
    rust-mode-treesitter-derive t
    )
-  (mah:lsp-default-keys 'rust-mode-map))
+  (mah:lsp-default-keys 'rust-ts-mode-map))
 
 (use-package rustic
   :disabled
