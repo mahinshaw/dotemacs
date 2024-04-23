@@ -42,11 +42,11 @@
     ;; disable native comp warnings for now
     (setq native-comp-async-report-warnings-errors nil))
 
-;; gfind is faster than find on a mac. woop
+;; gfind is faster than find on a mac.
 (setq straight-find-executable (executable-find "gfind"))
 ;; using this mode removes 2 seconds of startup time in bootstrap!
 (setq straight-check-for-modifications 'live)
-;; Check cost of boostrap
+;; Check cost of bootstrap
 ;; (benchmark 1 '(unwind-protect (straight--cache-package-modifications) (straight--uncache-package-modifications)))
 
 ;;; mah-straight.el - get the package manager going.
