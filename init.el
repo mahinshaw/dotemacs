@@ -86,6 +86,11 @@
 ;; (when (file-exists-p custom-file)
 ;;   (load custom-file))
 
+;; disable the OS level menu bar.
+(use-feature menu-bar
+  :init
+  (menu-bar-mode -1))
+
 (use-package diminish
   :demand t)
 
