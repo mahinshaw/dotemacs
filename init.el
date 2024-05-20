@@ -959,7 +959,10 @@ if it is not the first event."
   (mah-local-leader '(markdown-mode-map gfm-mode-map)
     "il" 'markdown-insert-link
     "iL" 'markdown-insert-reference-link-dwim
-    "ih" 'markdown-insert-header
+    "ih1" 'markdown-insert-header
+    "ih2" 'markdown-insert-header-atx-2
+    "ih3" 'markdown-insert-header-atx-3
+    "ih4" 'markdown-insert-header-atx-4
     "=" 'prettier-js
     ">" 'markdown-indent-region
     "<" 'markdown-outdent-region
