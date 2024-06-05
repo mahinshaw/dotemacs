@@ -1433,7 +1433,7 @@ if it is not the first event."
 
 ;; Rust
 
-(use-package rust-ts-mode
+(use-package rust-mode
   :mode "\\.rs\\'"
   :hook (rust-ts-mode . lsp)
   :init
@@ -1443,7 +1443,7 @@ if it is not the first event."
    lsp-rust-analyzer-diagnostics-disabled ["unresolved-proc-macro"]
    rust-mode-treesitter-derive t
    )
-  (mah:lsp-default-keys 'rust-ts-mode-map))
+  (mah:lsp-default-keys 'rust-mode-map))
 
 (use-package rustic
   :disabled
