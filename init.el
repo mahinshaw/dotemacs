@@ -567,6 +567,7 @@ if it is not the first event."
   (progn
     (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l))
     (mah-leader
+      "wd" 'ace-delete-window
       "ws" 'ace-swap-window
       "ww" 'ace-window)))
 
