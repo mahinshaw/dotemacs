@@ -304,8 +304,7 @@
         evil-emacs-state-cursor '("SkyBlue3" box)
         evil-replace-state-cursor '("chocolate" (hbar . 2))
         evil-visual-state-cursor '("gray" (hbar . 2))
-        evil-motion-state-cursor '("plum3" box)
-        )
+        evil-motion-state-cursor '("plum3" box))
   :config
   (evil-mode 1))
 
