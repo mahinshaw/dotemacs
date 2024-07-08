@@ -752,6 +752,7 @@ if it is not the first event."
     "pl" 'projectile-switch-project
     "pI" 'projectile-invalidate-cache
     "p'" 'projectile-run-vterm
+    "p!" 'projectile-run-shell-command-in-root
     )
   :config
   (projectile-mode +1)
