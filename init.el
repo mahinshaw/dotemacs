@@ -1435,8 +1435,9 @@ if it is not the first event."
 ;; Rust
 
 (use-package rust-mode
+  :disabled
   :mode "\\.rs\\'"
-  :hook (rust-ts-mode . lsp)
+  :hook (rust-mode . lsp)
   :init
   (setq
    ;; Disable proc macro because it's annoying and sometimes broken.
@@ -1447,13 +1448,14 @@ if it is not the first event."
   (mah:lsp-default-keys 'rust-mode-map))
 
 (use-package rustic
-  :disabled
   :hook (rustic-mode . lsp)
   :init
   (setq
    ;; Disable proc macro because it's annoying and sometimes broken.
    ;; https://github.com/rust-analyzer/rust-analyzer/issues/6835
    lsp-rust-analyzer-diagnostics-disabled ["unresolved-proc-macro"]
+   ;; use rust-modes switch for treesitter based syntax highlighting.
+   rust-mode-treesitter-derive t
    )
   (mah:lsp-default-keys 'rustic-mode-map)
   (mah-local-leader 'rustic-mode-map
