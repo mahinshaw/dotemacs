@@ -135,10 +135,8 @@
     (exec-path-from-shell-initialize)))
 
 ;;; Direnv is my friend
-(use-package direnv
-  :demand t
-  :config
-  (direnv-mode))
+(use-package envrc
+  :hook (after-init . envrc-global-mode))
 
 ;;; epa-file
 (use-feature epa-file
@@ -761,6 +759,7 @@ if it is not the first event."
         projectile-ignored-projects '("~/"))
   (add-to-list 'projectile-globally-ignored-directories "~/Dropbox/Books")
   (add-to-list 'projectile-globally-ignored-directories "~/.emacs.d/var/lsp-java/workspace")
+  (add-to-list 'projectile-globally-ignored-directories "~/.cargo")
 
   ;; https://emacs.stackexchange.com/questions/26266/projectile-and-magit-branch-checkout/26272
   (defun run-projectile-invalidate-cache (&rest _args)
