@@ -1365,7 +1365,7 @@ if it is not the first event."
         js-doc-author (format "Mark Hinshaw <%s>" js-doc-mail-address)))
 
 (use-package prettier-js
-  :hook ((js-ts-mode typescript-ts-mode tsx-ts-mode) . prettier-js-mode))
+  :hook ((js-ts-mode typescript-ts-mode tsx-ts-mode json-ts-mode) . prettier-js-mode))
 
 (use-package eslintd-fix)
 
@@ -1383,7 +1383,7 @@ if it is not the first event."
 
 (use-feature json-ts-mode
   :mode ("\\.json$" "\\.avsc$")
-  :hook (json-ts-mode . prettier-js)
+  ;; :hook (json-ts-mode . prettier-js)
   :init
   ;; js-indent-level 2
   (setq json-reformat:pretty-string? t)
@@ -1465,9 +1465,11 @@ if it is not the first event."
   )
 
 ;; Yaml
-(use-package yaml-ts-mode
+(use-package yaml-mode
   ;; (add-to-list 'auto-mode-alist '("\\(group_vars/.+\\|host_vars/.+\\)" . yaml-mode))
-  :mode "\\.ya?ml\\'")
+  :mode "\\.ya?ml\\'"
+  :init
+  (setq yaml-indent-offset 2))
 
 ;; TODO - org load order is a pain
 ;; (require 'mah-org)
