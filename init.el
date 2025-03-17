@@ -231,7 +231,7 @@
   ;; Buffers
   "bn" 'next-buffer
   "bp" 'previous-buffer
-  "bd" 'kill-this-buffer
+  "bd" 'kill-current-buffer
   "bR" 'mah-refresh-buffer
 
   ;; Files
