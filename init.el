@@ -130,7 +130,7 @@
   ;; See this article for the rational behind the args https://pickard.cc/posts/why-does-zsh-start-slowly/
   (setq exec-path-from-shell-arguments '("-l")
         ;; exec-path-from-shell-debug t
-        exec-path-from-shell-variables '("PATH" "MANPATH" "GOPATH" "JAVA_HOME"))
+        exec-path-from-shell-variables '("PATH" "MANPATH" "GOPATH" "JAVA_HOME" "GITHUB_USER" "GITHUB_TOKEN"))
   (when (memq window-system '(mac ns x))
     (exec-path-from-shell-initialize)))
 
@@ -152,7 +152,7 @@
 
 (use-feature auth-source
   :init
-  (setq auth-sources '(password-store)) )
+  (setq auth-sources '(password-store)))
 
 (use-package pass)
 
@@ -1053,6 +1053,15 @@ if it is not the first event."
     "sq" 'cider-quit
     "ss" 'cider-switch-to-last-clojure-buffer))
 
+(use-package copilot)
+
+(use-package copilot-chat
+  :straight (:host github :repo "chep/copilot-chat.el" :files ("*.el"))
+  :after (markdown-mode)
+  :init
+  (setq copilot-chat-frontend 'markdown
+        copilot-chat-default-model "gpt-4.1"))
+
 (use-package lsp-mode
   :hook (lsp-after-open . lsp-enable-imenu)
   :custom
@@ -1070,6 +1079,7 @@ if it is not the first event."
         ;;                             "--stdio")
         lsp-eslint-package-manager "yarn"
         lsp-headerline-breadcrumb-segments '(project file symbols)
+        lsp-copilot-enabled t
         )
   (defadvice xref-find-definitions (before add-evil-jump activate) (evil-set-jump))
   :config
