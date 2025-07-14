@@ -21,7 +21,7 @@
 
 ;; See https://www.gnu.org/software/emacs/manual/html_node/emacs/Fonts.html
 (add-to-list 'default-frame-alist
-             '(font . "Source Code Pro Semibold-14"))
+             '(font . "SauceCodePro Nerd Font-14"))
 
 ;; can check later that `package--initialized' is nil
 ;;; early-init.el ends here
